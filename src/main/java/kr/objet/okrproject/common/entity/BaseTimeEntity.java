@@ -1,4 +1,4 @@
-package kr.objet.okrproject.domain.common;
+package kr.objet.okrproject.common.entity;
 
 import java.time.LocalDateTime;
 
