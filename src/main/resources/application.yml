@@ -1,0 +1,31 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        format_sql: true
+        default_batch_fetch_size: 100
+        show_sql: true
+  h2:
+    console:
+      enabled: true
+  datasource:
+    url:  jdbc:h2:mem:testdb
+    username: sa
+    password:
+
+
+
+jwt:
+  secret-key : okr-project-application-2022-11-29.secret-key
+  #  30day
+  token.expired-time-ms : 259200000
