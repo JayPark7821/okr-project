@@ -16,49 +16,48 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.gson.GsonFactory;
 
-import kr.objet.okrproject.domain.user.ProviderType;
 import kr.objet.okrproject.domain.user.auth.OAuth2UserInfo;
-import kr.objet.okrproject.domain.user.auth.TokenVerifyProcessor;
+import kr.objet.okrproject.domain.user.enums.ProviderType;
 import kr.objet.okrproject.infrastructure.user.auth.info.GoogleOAuth2UserInfo;
 
 @Component
 public class GoogleVerify implements TokenVerifier {
-    @Value("${google.clientId}")
-    private String clientId;
-    private final NetHttpTransport transport = new NetHttpTransport();
-    private final JsonFactory jsonFactory = new GsonFactory();
+	@Value("${google.clientId}")
+	private String clientId;
+	private final NetHttpTransport transport = new NetHttpTransport();
+	private final JsonFactory jsonFactory = new GsonFactory();
 
-    @Override
-    public boolean support(ProviderType providerType) {
-        return ProviderType.GOOGLE == providerType;
-    }
+	@Override
+	public boolean support(ProviderType providerType) {
+		return ProviderType.GOOGLE == providerType;
+	}
 
-    @Override
-    public OAuth2UserInfo varifyIdToken(String token) {
-        GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(transport, jsonFactory)
-                .setIssuers(Arrays.asList("https://accounts.google.com", "accounts.google.com"))
-                .setAudience(Collections.singletonList(clientId))
-                .build();
+	@Override
+	public OAuth2UserInfo varifyIdToken(String token) {
+		GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(transport, jsonFactory)
+			.setIssuers(Arrays.asList("https://accounts.google.com", "accounts.google.com"))
+			.setAudience(Collections.singletonList(clientId))
+			.build();
 
-        GoogleIdToken idToken = null;
-        try {
-            idToken = verifier.verify(token);
-        } catch (GeneralSecurityException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        if (idToken != null) {
-            GoogleIdToken.Payload payload = idToken.getPayload();
-            Map<String, Object> attributes = new HashMap<String, Object>();
-            attributes.put("id", payload.getSubject());
-            attributes.put("name", payload.get("name"));
-            attributes.put("email", payload.get("email"));
-            attributes.put("picture", payload.get("picture"));
-            return new GoogleOAuth2UserInfo(attributes);
+		GoogleIdToken idToken = null;
+		try {
+			idToken = verifier.verify(token);
+		} catch (GeneralSecurityException e) {
+			throw new RuntimeException(e);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		if (idToken != null) {
+			GoogleIdToken.Payload payload = idToken.getPayload();
+			Map<String, Object> attributes = new HashMap<String, Object>();
+			attributes.put("id", payload.getSubject());
+			attributes.put("name", payload.get("name"));
+			attributes.put("email", payload.get("email"));
+			attributes.put("picture", payload.get("picture"));
+			return new GoogleOAuth2UserInfo(attributes);
 
-        } else {
-            throw new IllegalArgumentException("Invalid ID token");
-        }
-    }
+		} else {
+			throw new IllegalArgumentException("Invalid ID token");
+		}
+	}
 }

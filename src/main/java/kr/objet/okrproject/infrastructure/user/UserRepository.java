@@ -11,4 +11,6 @@ import kr.objet.okrproject.domain.user.User;
 public interface UserRepository extends JpaRepository<User, Long> {
 
 	Optional<User> findUserByUsername(String username);
+
+	Optional<User> findUserByUserId(String userId);
 }

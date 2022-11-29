@@ -13,7 +13,6 @@ public class JwtTokenUtils {
 
 	public static String getUsername(String token, String key) {
 		return extractClaims(token, key).get("username", String.class);
-
 	}
 
 	public static boolean isExpired(String token, String key) {
@@ -26,7 +25,7 @@ public class JwtTokenUtils {
 			.build().parseClaimsJws(token).getBody();
 	}
 
-	public static String generateToken(String username, String key, Long expiredTimMs) {
+	private static String generateToken(String username, String key, Long expiredTimMs) {
 		Claims claims = Jwts.claims();
 		claims.put("username", username);
 

@@ -1,19 +1,20 @@
 package kr.objet.okrproject.interfaces.user;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import kr.objet.okrproject.domain.user.ProviderType;
-import kr.objet.okrproject.domain.user.RoleType;
 import kr.objet.okrproject.domain.user.User;
-import kr.objet.okrproject.domain.user.jobtype.JobFieldDetail;
+import kr.objet.okrproject.domain.user.enums.ProviderType;
+import kr.objet.okrproject.domain.user.enums.RoleType;
+import kr.objet.okrproject.domain.user.enums.jobtype.JobFieldDetail;
+import lombok.Builder;
 import lombok.Getter;
 
 public class UserDto {
 
 	@Getter
-	public static class LoginResponse{
+	public static class LoginResponse {
 
 		@Schema(description = "신규 사용자 임시 id", example = "1")
-		private String tempUserId;
+		private String guestUserId;
 		@Schema(description = "사용자 email", example = "okr@okr.com")
 		private String email;
 
@@ -38,6 +39,7 @@ public class UserDto {
 		@Schema(description = "RefreshToken", example = "RefreshToken")
 		private String refreshToken;
 
+		@Builder
 		public LoginResponse(User user, String accessToken, String refreshToken) {
 			this.email = user.getEmail();
 			this.name = user.getUsername();

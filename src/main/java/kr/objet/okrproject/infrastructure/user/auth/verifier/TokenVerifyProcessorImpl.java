@@ -6,9 +6,9 @@ import org.springframework.stereotype.Component;
 
 import kr.objet.okrproject.common.exception.ErrorCode;
 import kr.objet.okrproject.common.exception.OkrApplicationException;
-import kr.objet.okrproject.domain.user.ProviderType;
 import kr.objet.okrproject.domain.user.auth.OAuth2UserInfo;
 import kr.objet.okrproject.domain.user.auth.TokenVerifyProcessor;
+import kr.objet.okrproject.domain.user.enums.ProviderType;
 import lombok.RequiredArgsConstructor;
 
 @Component

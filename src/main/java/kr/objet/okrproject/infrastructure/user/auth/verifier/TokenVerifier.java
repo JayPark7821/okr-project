@@ -1,7 +1,7 @@
 package kr.objet.okrproject.infrastructure.user.auth.verifier;
 
-import kr.objet.okrproject.domain.user.ProviderType;
 import kr.objet.okrproject.domain.user.auth.OAuth2UserInfo;
+import kr.objet.okrproject.domain.user.enums.ProviderType;
 
 public interface TokenVerifier {
 
