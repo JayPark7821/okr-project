@@ -22,3 +22,10 @@ spring:
     url:  jdbc:h2:mem:testdb
     username: sa
     password:
+
+
+
+jwt:
+  secret-key : okr-project-application-2022-11-29.secret-key
+  #  30day
+  token.expired-time-ms : 259200000

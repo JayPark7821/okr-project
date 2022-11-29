@@ -1,4 +1,4 @@
-package kr.objet.okrproject.utils;
+package kr.objet.okrproject.common.utils;
 
 import java.util.Optional;
 
