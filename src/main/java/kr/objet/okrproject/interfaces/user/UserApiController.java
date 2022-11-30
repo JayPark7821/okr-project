@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import io.swagger.v3.oas.annotations.Operation;
 import kr.objet.okrproject.application.user.UserFacade;
 import kr.objet.okrproject.common.Response;
-import kr.objet.okrproject.domain.user.UserInfo;
+import kr.objet.okrproject.application.user.UserInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

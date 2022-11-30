@@ -5,7 +5,6 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import kr.objet.okrproject.common.exception.ErrorCode;
@@ -15,7 +14,7 @@ import kr.objet.okrproject.domain.guest.GuestCommand;
 import kr.objet.okrproject.domain.guest.GuestInfo;
 import kr.objet.okrproject.domain.guest.service.GuestService;
 import kr.objet.okrproject.domain.token.service.RefreshTokenService;
-import kr.objet.okrproject.domain.user.UserInfo;
+import kr.objet.okrproject.domain.user.User;
 import kr.objet.okrproject.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -52,19 +51,20 @@ public class UserFacade {
 	}
 
 	public UserInfo.Response loginWithSocialIdToken(String provider, String idToken) {
-		UserInfo.Main userInfo = userService.getUserInfoFromIdToken(provider, idToken);
+		User user = userService.getUserInfoFromIdToken(provider, idToken);
 
-		boolean isJoining = userService.isJoining(userInfo, provider);
+		boolean isJoining = userService.isJoining(user, provider);
 
 		if (isJoining) {
-			GuestInfo.Main guestInfo = guestService.registerGuest(new GuestCommand.RegisterGuest(userInfo));
+			GuestInfo.Main guestInfo = guestService.registerGuest(new GuestCommand.RegisterGuest(user));
 			return UserInfo.Response.join(guestInfo);
 
-		} else {
-			String accessToken = JwtTokenUtils.generateToken(userInfo.getEmail(), secretKey, expiredTimeMs);
-			String refreshToken = refreshTokenService.generateRefreshToken(userInfo.getEmail());
 
-			return UserInfo.Response.login(userInfo,accessToken,refreshToken);
+		} else {
+			String accessToken = JwtTokenUtils.generateToken(user.getEmail(), secretKey, expiredTimeMs);
+			String refreshToken = refreshTokenService.generateRefreshToken(user.getEmail());
+
+			return UserInfo.Response.login(user,accessToken,refreshToken);
 		}
 	}
 

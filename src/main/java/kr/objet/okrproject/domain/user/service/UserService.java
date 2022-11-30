@@ -1,15 +1,14 @@
 package kr.objet.okrproject.domain.user.service;
 
 import kr.objet.okrproject.domain.user.User;
-import kr.objet.okrproject.domain.user.UserInfo;
 
 public interface UserService {
-	UserInfo.Main getUserInfoFromIdToken(String providerType, String idToken);
+	User getUserInfoFromIdToken(String providerType, String idToken);
 
-	boolean isJoining(UserInfo.Main userInfo, String providerType);
+	boolean isJoining(User user, String providerType);
 
-	UserInfo.Main store(User user);
+	User store(User user);
 
-	UserInfo.Main findUserInfoBy(String email);
-	UserInfo.UserEntity loadUserByEmail(String email);
+	User findUserInfoBy(String email);
+	User loadUserByEmail(String email);
 }
