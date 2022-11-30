@@ -8,5 +8,8 @@ public interface UserService {
 
 	boolean isJoining(UserInfo.Main userInfo, String providerType);
 
-	User loadUserByEmail(String email);
+	UserInfo.Main store(User user);
+
+	UserInfo.Main findUserInfoBy(String email);
+	UserInfo.UserEntity loadUserByEmail(String email);
 }

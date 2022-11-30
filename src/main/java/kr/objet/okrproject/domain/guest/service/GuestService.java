@@ -7,4 +7,6 @@ public interface GuestService {
 
 	GuestInfo.Main registerGuest(GuestCommand.RegisterGuest command);
 
+	GuestInfo.Main retrieveGuest(GuestCommand.Join command);
+
 }

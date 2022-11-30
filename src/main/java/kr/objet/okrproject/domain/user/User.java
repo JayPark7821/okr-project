@@ -95,8 +95,6 @@ public class User extends BaseTimeEntity implements UserDetails {
 		@Size(max = 512) String profileImageUrl,
 		ProviderType providerType,
 		@NotNull RoleType roleType,
-		@NotNull LocalDateTime createdDate,
-		@NotNull LocalDateTime lastModifiedDate,
 		@NotNull String password,
 		@NotNull JobFieldDetail jobField
 	) {
@@ -109,8 +107,6 @@ public class User extends BaseTimeEntity implements UserDetails {
 		this.profileImageUrl = profileImageUrl != null ? profileImageUrl : "";
 		this.providerType = providerType;
 		this.roleType = roleType;
-		this.createdDate = createdDate;
-		this.lastModifiedDate = lastModifiedDate;
 		this.jobField = jobField;
 	}
 

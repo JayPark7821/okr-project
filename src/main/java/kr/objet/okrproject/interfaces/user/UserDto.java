@@ -1,14 +1,56 @@
 package kr.objet.okrproject.interfaces.user;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 import io.swagger.v3.oas.annotations.media.Schema;
+import kr.objet.okrproject.domain.guest.GuestCommand;
 import kr.objet.okrproject.domain.user.UserInfo;
 import kr.objet.okrproject.domain.user.enums.ProviderType;
 import kr.objet.okrproject.domain.user.enums.RoleType;
 import kr.objet.okrproject.domain.user.enums.jobtype.JobFieldDetail;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 public class UserDto {
 
+	@Getter
+	@NoArgsConstructor
+	public static class RegisterRequest {
+		@Valid
+		@NotNull(message = "임시 유저ID는 필수 값입니다.")
+		@Schema(description = "임시 번호", example = "1")
+		private String guestUuid;
+
+		@Valid
+		@NotNull(message = "사용자 이름은 필수 값입니다.")
+		@Size(min=1,max =100)
+		@Schema(description = "사용자 이름", example = "홍길동")
+		private String name;
+
+		@Valid
+		@NotNull(message = "사용자 email은 필수 값입니다.")
+		@Schema(description = "사용자 email", example = "okr@okr.com")
+		@Size(max = 512)
+		@Email
+		private String email;
+
+		@Size(min=1,max =100)
+		@Schema(description = "대표 분야", example = "백엔드 개발자")
+		private String jobField;
+
+		public GuestCommand.Join toCommand() {
+			return GuestCommand.Join.builder()
+				.guestUuId(this.guestUuid)
+				.name(this.name)
+				.email(this.email)
+				.jobField(this.jobField)
+				.build();
+		}
+
+	}
 	@Getter
 	public static class LoginResponse {
 

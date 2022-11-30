@@ -1,5 +1,7 @@
 package kr.objet.okrproject.domain.guest.service.impl;
 
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 
 import kr.objet.okrproject.domain.guest.Guest;
@@ -23,6 +25,13 @@ public class GuestServiceImpl implements GuestService {
 	public GuestInfo.Main registerGuest(GuestCommand.RegisterGuest command) {
 		Guest guest = guestStore.store(command.toEntity());
 		return new GuestInfo.Main(guest);
+	}
+
+	@Override
+	public GuestInfo.Main retrieveGuest(GuestCommand.Join command) {
+		Optional<Guest> guest = guestReader.findGuestByUuidAndEmail(command.getGuestUuId(),
+			command.getEmail());
+		return guest.map(GuestInfo.Main::new).orElse(null);
 	}
 
 }

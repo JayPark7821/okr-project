@@ -32,4 +32,4 @@ jwt:
     access-expired-time-ms : 259200000
 
 google:
-    clientId: google-client-id-test
+    clientId: 30536199705-2sg1uhnfad1png6biv8clh22gtd5i006.apps.googleusercontent.com

@@ -1,5 +1,6 @@
 package kr.objet.okrproject.domain.user;
 
+
 import kr.objet.okrproject.common.utils.TokenGenerator;
 import kr.objet.okrproject.domain.guest.GuestInfo;
 import kr.objet.okrproject.domain.user.enums.ProviderType;
@@ -98,9 +99,50 @@ public class UserInfo {
 				null,
 				null
 			);
+		}
+	}
 
+
+	@Getter
+	public static class UserEntity{
+		private final Long userSeq;
+		private final String userId;
+		private final String username;
+		private final String password;
+		private final String email;
+		private final String emailVerifiedYn;
+		private final String profileImageUrl;
+		private final ProviderType providerType;
+		private final RoleType roleType;
+		private final JobFieldDetail jobField;
+
+		public UserEntity(User user) {
+			this.userSeq = user.getUserSeq();
+			this.userId = user.getUserId();
+			this.username = user.getUsername();
+			this.password = user.getPassword();
+			this.email = user.getEmail();
+			this.emailVerifiedYn = user.getEmailVerifiedYn();
+			this.profileImageUrl = user.getProfileImageUrl();
+			this.providerType = user.getProviderType();
+			this.roleType = user.getRoleType();
+			this.jobField = user.getJobField();
 		}
 
+		public User toEntity() {
+			return new User(
+				this.userSeq,
+				this.userId,
+				this.username,
+				this.password,
+				this.email,
+				this.emailVerifiedYn,
+				this.profileImageUrl,
+				this.providerType,
+				this.roleType,
+				this.jobField
+			);
+		}
 	}
 
 }
