@@ -85,7 +85,7 @@ public class UserInfo {
 			);
 		}
 
-		public static Response join(GuestInfo.Main guestInfo, String accessToken, String refreshToken) {
+		public static Response join(GuestInfo.Main guestInfo) {
 			return new Response(
 				guestInfo.getGuestId(),
 				guestInfo.getEmail(),
@@ -95,8 +95,8 @@ public class UserInfo {
 				null,
 				guestInfo.getProfileImageUrl(),
 				TokenGenerator.randomCharacterWithPrefix(GUEST_PREFIX),
-				accessToken,
-				refreshToken
+				null,
+				null
 			);
 
 		}

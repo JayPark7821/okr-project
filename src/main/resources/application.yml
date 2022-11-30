@@ -27,5 +27,9 @@ spring:
 
 jwt:
   secret-key : okr-project-application-2022-11-29.secret-key
-  #  30day
-  token.expired-time-ms : 259200000
+  token:
+    refresh-expired-time-ms : 259200000
+    access-expired-time-ms : 259200000
+
+google:
+    clientId: google-client-id-test
