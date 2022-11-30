@@ -30,8 +30,8 @@ public class UserServiceImpl implements UserService {
 		return savedUser.map(UserInfo.Main::new).orElse(null);
 	}
 
-	public User loadUserByUsername(String username) {
-		return userReader.getUserByUsername(username);
+	public User loadUserByEmail(String email) {
+		return userReader.getUserByEmail(email);
 	}
 
 	public boolean isJoining(UserInfo.Main userInfo, String provider) {

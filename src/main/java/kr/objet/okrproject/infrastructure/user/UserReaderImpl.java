@@ -19,8 +19,8 @@ public class UserReaderImpl implements UserReader {
 	private final UserRepository userRepository;
 
 	@Override
-	public User getUserByUsername(String username) {
-		return userRepository.findUserByUsername(username)
+	public User getUserByEmail(String email) {
+		return userRepository.findUserByEmail(email)
 			.orElseThrow(() -> new OkrApplicationException(ErrorCode.INVALID_USER_INFO));
 	}
 

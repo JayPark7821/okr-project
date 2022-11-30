@@ -8,5 +8,5 @@ public interface UserService {
 
 	boolean isJoining(UserInfo.Main userInfo, String providerType);
 
-	User loadUserByUsername(String username);
+	User loadUserByEmail(String email);
 }
