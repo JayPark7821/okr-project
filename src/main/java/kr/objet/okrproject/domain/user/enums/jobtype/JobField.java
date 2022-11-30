@@ -3,8 +3,8 @@ package kr.objet.okrproject.domain.user.enums.jobtype;
 import java.util.Arrays;
 import java.util.List;
 
-import kr.service.okr.common.exception.ErrorCode;
-import kr.service.okr.common.exception.OkrApplicationException;
+import kr.objet.okrproject.common.exception.ErrorCode;
+import kr.objet.okrproject.common.exception.OkrApplicationException;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor

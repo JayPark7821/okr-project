@@ -1,10 +1,13 @@
 package kr.objet.okrproject.domain.guest;
 
+import kr.objet.okrproject.common.utils.TokenGenerator;
+import kr.objet.okrproject.domain.user.UserInfo;
 import kr.objet.okrproject.domain.user.enums.ProviderType;
 import lombok.Builder;
 import lombok.Getter;
 
 public class GuestCommand {
+	private static final String GUEST_PREFIX = "guest_";
 
 	@Getter
 	public static class RegisterGuest {
@@ -16,14 +19,13 @@ public class GuestCommand {
 		private final ProviderType providerType;
 
 		@Builder
-		public RegisterGuest(String uuid, String id, String name, String email, String imageUrl,
-			ProviderType providerType) {
-			this.uuid = uuid;
-			this.id = id;
-			this.name = name;
-			this.email = email;
-			this.imageUrl = imageUrl;
-			this.providerType = providerType;
+		public RegisterGuest(UserInfo.Main userInfo) {
+			this.uuid = TokenGenerator.randomCharacterWithPrefix(GUEST_PREFIX);
+			this.id = userInfo.getId();
+			this.name = userInfo.getName();
+			this.email = userInfo.getEmail();
+			this.imageUrl = userInfo.getProfileImage();
+			this.providerType = userInfo.getProviderType();
 		}
 
 		public Guest toEntity() {

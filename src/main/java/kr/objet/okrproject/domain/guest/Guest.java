@@ -64,8 +64,9 @@ public class Guest {
 		this.guestUuid = uuid;
 		this.guestId = guestId;
 		this.guestName = guestName;
-		this.email = email != null ? email : "NO_EMAIL";
+		this.email = email;
 		this.profileImageUrl = profileImageUrl != null ? profileImageUrl : "";
 		this.providerType = providerType;
 	}
+
 }

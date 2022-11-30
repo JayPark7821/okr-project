@@ -20,15 +20,9 @@ public class GuestServiceImpl implements GuestService {
 	private final GuestStore guestStore;
 
 	@Override
-	public GuestInfo.Main retrieveGuestInfo(String guestId) {
-		Guest guest = guestReader.getGuestBy(guestId);
+	public GuestInfo.Main registerGuest(GuestCommand.RegisterGuest command) {
+		Guest guest = guestStore.store(command.toEntity());
 		return new GuestInfo.Main(guest);
-	}
-
-	@Override
-	public Guest registerGuest(GuestCommand.RegisterGuest command) {
-		Guest guest = command.toEntity();
-		return guestStore.store(guest);
 	}
 
 }

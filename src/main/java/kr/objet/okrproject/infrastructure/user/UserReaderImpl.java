@@ -1,5 +1,7 @@
 package kr.objet.okrproject.infrastructure.user;
 
+import java.util.Optional;
+
 import org.springframework.stereotype.Component;
 
 import kr.objet.okrproject.common.exception.ErrorCode;
@@ -23,9 +25,8 @@ public class UserReaderImpl implements UserReader {
 	}
 
 	@Override
-	public User getUserByUserId(String userId) {
-		return userRepository.findUserByUserId(userId)
-			.orElseThrow(() -> new OkrApplicationException(ErrorCode.INVALID_USER_INFO));
+	public Optional<User> findUserByUserId(String userId) {
+		return userRepository.findUserByUserId(userId);
 	}
 
 }

@@ -1,12 +1,12 @@
 package kr.objet.okrproject.domain.user.service;
 
-import javax.servlet.http.HttpServletRequest;
-
 import kr.objet.okrproject.domain.user.User;
 import kr.objet.okrproject.domain.user.UserInfo;
 
 public interface UserService {
-	UserInfo.Main loginWithSocialIdToken(HttpServletRequest request, String providerType, String idToken);
+	UserInfo.Main getUserInfoFromIdToken(String providerType, String idToken);
+
+	boolean isJoining(UserInfo.Main userInfo, String providerType);
 
 	User loadUserByUsername(String username);
 }

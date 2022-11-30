@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 import kr.objet.okrproject.common.exception.ErrorCode;
 import kr.objet.okrproject.common.exception.OkrApplicationException;
-import kr.service.okr.common.utils.EnumLookUpUtil;
+import kr.objet.okrproject.common.utils.EnumLookUpUtil;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
