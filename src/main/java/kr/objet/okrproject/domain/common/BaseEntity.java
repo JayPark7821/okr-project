@@ -1,4 +1,4 @@
-package kr.objet.okrproject.common.entity;
+package kr.objet.okrproject.domain.common;
 
 import javax.persistence.Column;
 import javax.persistence.EntityListeners;
