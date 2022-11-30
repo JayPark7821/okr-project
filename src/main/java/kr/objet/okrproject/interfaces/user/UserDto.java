@@ -1,11 +1,10 @@
 package kr.objet.okrproject.interfaces.user;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import kr.objet.okrproject.domain.user.User;
+import kr.objet.okrproject.domain.user.UserInfo;
 import kr.objet.okrproject.domain.user.enums.ProviderType;
 import kr.objet.okrproject.domain.user.enums.RoleType;
 import kr.objet.okrproject.domain.user.enums.jobtype.JobFieldDetail;
-import lombok.Builder;
 import lombok.Getter;
 
 public class UserDto {
@@ -39,16 +38,16 @@ public class UserDto {
 		@Schema(description = "RefreshToken", example = "RefreshToken")
 		private String refreshToken;
 
-		@Builder
-		public LoginResponse(User user, String accessToken, String refreshToken) {
-			this.email = user.getEmail();
-			this.name = user.getUsername();
-			this.jobFieldDetail = user.getJobField();
-			this.profileImage = user.getProfileImageUrl();
-			this.providerType = user.getProviderType();
-			this.roleType = user.getRoleType();
-			this.accessToken = accessToken;
-			this.refreshToken = refreshToken;
+		public LoginResponse(UserInfo.Response response) {
+			this.email = response.getEmail();
+			this.name = response.getName();
+			this.jobFieldDetail = response.getJobFieldDetail();
+			this.profileImage = response.getProfileImage();
+			this.providerType = response.getProviderType();
+			this.roleType = response.getRoleType();
+			this.accessToken = response.getAccessToken();
+			this.refreshToken = response.getRefreshToken();
 		}
+
 	}
 }

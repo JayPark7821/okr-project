@@ -104,7 +104,7 @@ public class User extends BaseTimeEntity implements UserDetails {
 		this.userId = userId;
 		this.username = username;
 		this.password = password;
-		this.email = email != null ? email : "NO_EMAIL";
+		this.email = email;
 		this.emailVerifiedYn = emailVerifiedYn;
 		this.profileImageUrl = profileImageUrl != null ? profileImageUrl : "";
 		this.providerType = providerType;

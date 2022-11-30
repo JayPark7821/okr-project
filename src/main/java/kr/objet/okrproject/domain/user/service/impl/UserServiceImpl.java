@@ -1,6 +1,6 @@
 package kr.objet.okrproject.domain.user.service.impl;
 
-import javax.servlet.http.HttpServletRequest;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -23,23 +23,19 @@ public class UserServiceImpl implements UserService {
 	private final TokenVerifyProcessor tokenVerifyProcessor;
 
 	@Override
-	public UserInfo.Main loginWithSocialIdToken(HttpServletRequest request, String provider, String idToken) {
+	public UserInfo.Main getUserInfoFromIdToken(String provider, String idToken) {
 		ProviderType providerType = ProviderType.of(provider);
 		OAuth2UserInfo oAuth2UserInfo = tokenVerifyProcessor.verifyIdToken(providerType, idToken);
-		User savedUser = userReader.getUserByUserId(oAuth2UserInfo.getId());
-
-		if (isUserJoinning(savedUser, providerType)) {
-			return new UserInfo.Main(savedUser);
-		} else {
-			return null;
-		}
+		Optional<User> savedUser = userReader.findUserByUserId(oAuth2UserInfo.getId());
+		return savedUser.map(UserInfo.Main::new).orElse(null);
 	}
 
-	public User loadUserByUsername(String username) {
-		return userReader.getUserByUsername(username);
+	public User loadUserByEmail(String email) {
+		return userReader.getUserByEmail(email);
 	}
 
-	private boolean isUserJoinning(User userInfo, ProviderType providerType) {
+	public boolean isJoining(UserInfo.Main userInfo, String provider) {
+		ProviderType providerType = ProviderType.of(provider);
 		if (userInfo != null) {
 			if (providerType != userInfo.getProviderType()) {
 				throw new OkrApplicationException(ErrorCode.MISS_MATCH_PROVIDER,

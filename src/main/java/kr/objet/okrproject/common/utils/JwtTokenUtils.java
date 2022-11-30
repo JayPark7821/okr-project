@@ -11,8 +11,8 @@ import io.jsonwebtoken.security.Keys;
 
 public class JwtTokenUtils {
 
-	public static String getUsername(String token, String key) {
-		return extractClaims(token, key).get("username", String.class);
+	public static String getEmail(String token, String key) {
+		return extractClaims(token, key).get("email", String.class);
 	}
 
 	public static boolean isExpired(String token, String key) {
@@ -25,9 +25,9 @@ public class JwtTokenUtils {
 			.build().parseClaimsJws(token).getBody();
 	}
 
-	private static String generateToken(String username, String key, Long expiredTimMs) {
+	public static String generateToken(String email, String key, Long expiredTimMs) {
 		Claims claims = Jwts.claims();
-		claims.put("username", username);
+		claims.put("email", email);
 
 		return Jwts.builder()
 			.setClaims(claims)
