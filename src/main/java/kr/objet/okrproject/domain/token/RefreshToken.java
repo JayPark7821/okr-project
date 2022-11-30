@@ -29,10 +29,10 @@ public class RefreshToken {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long refreshTokenSeq;
 
-	@Column(name = "USER_ID", length = 64, unique = true)
+	@Column(name = "USER_EMAIL", length = 64, unique = true)
 	@NotNull
 	@Size(max = 64)
-	private String userId;
+	private String userEmail;
 
 	@Column(name = "REFRESH_TOKEN", length = 256)
 	@NotNull
@@ -40,10 +40,10 @@ public class RefreshToken {
 	private String refreshToken;
 
 	public RefreshToken(
-		@NotNull @Size(max = 64) String userId,
+		@NotNull @Size(max = 64) String userEmail,
 		@NotNull @Size(max = 256) String refreshToken
 	) {
-		this.userId = userId;
+		this.userEmail = userEmail;
 		this.refreshToken = refreshToken;
 	}
 
