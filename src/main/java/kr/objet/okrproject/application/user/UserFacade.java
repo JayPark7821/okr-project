@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import kr.objet.okrproject.common.exception.ErrorCode;
 import kr.objet.okrproject.common.exception.OkrApplicationException;
 import kr.objet.okrproject.common.utils.JwtTokenUtils;
+import kr.objet.okrproject.domain.guest.Guest;
 import kr.objet.okrproject.domain.guest.GuestCommand;
 import kr.objet.okrproject.domain.guest.GuestInfo;
 import kr.objet.okrproject.domain.guest.service.GuestService;
@@ -39,15 +40,15 @@ public class UserFacade {
 		if (Objects.isNull(userService.findUserInfoBy(command.getEmail()))) {
 			throw new OkrApplicationException(ErrorCode.ALREADY_JOINED_USER);
 		}
-		GuestInfo.Main guestInfo = guestService.retrieveGuest(command);
+		Guest guest = guestService.retrieveGuest(command);
 
-		if (Objects.isNull(guestInfo)) {
+		if (Objects.isNull(guest)) {
 			throw new OkrApplicationException(ErrorCode.INVALID_JOIN_INFO);
 		}
-		String accessToken = JwtTokenUtils.generateToken(guestInfo.getEmail(), secretKey, expiredTimeMs);
-		String refreshToken = refreshTokenService.generateRefreshToken(guestInfo.getEmail());
+		String accessToken = JwtTokenUtils.generateToken(guest.getEmail(), secretKey, expiredTimeMs);
+		String refreshToken = refreshTokenService.generateRefreshToken(guest.getEmail());
 
-		return UserInfo.Response.login(userService.store(command.toUserEntity(guestInfo, generateTempPw())),accessToken,refreshToken);
+		return UserInfo.Response.login(userService.store(command.toUserEntity(guest, generateTempPw())),accessToken,refreshToken);
 	}
 
 	public UserInfo.Response loginWithSocialIdToken(String provider, String idToken) {
@@ -56,8 +57,8 @@ public class UserFacade {
 		boolean isJoining = userService.isJoining(user, provider);
 
 		if (isJoining) {
-			GuestInfo.Main guestInfo = guestService.registerGuest(new GuestCommand.RegisterGuest(user));
-			return UserInfo.Response.join(guestInfo);
+			Guest guest = guestService.registerGuest(new GuestCommand.RegisterGuest(user));
+			return UserInfo.Response.join(guest);
 
 
 		} else {
