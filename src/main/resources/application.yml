@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 8081
   servlet:
     context-path: /
     encoding:
@@ -27,5 +27,9 @@ spring:
 
 jwt:
   secret-key : okr-project-application-2022-11-29.secret-key
-  #  30day
-  token.expired-time-ms : 259200000
+  token:
+    refresh-expired-time-ms : 259200000
+    access-expired-time-ms : 259200000
+
+google:
+    clientId: 30536199705-2sg1uhnfad1png6biv8clh22gtd5i006.apps.googleusercontent.com

@@ -1,6 +1,8 @@
 package kr.objet.okrproject.domain.guest;
 
+import kr.objet.okrproject.domain.user.User;
 import kr.objet.okrproject.domain.user.enums.ProviderType;
+import kr.objet.okrproject.domain.user.enums.RoleType;
 import lombok.Getter;
 
 public class GuestInfo {
@@ -22,5 +24,6 @@ public class GuestInfo {
 			this.providerType = guest.getProviderType();
 			this.profileImageUrl = guest.getProfileImageUrl();
 		}
+
 	}
 }

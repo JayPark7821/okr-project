@@ -13,6 +13,7 @@ import kr.objet.okrproject.domain.user.auth.TokenVerifyProcessor;
 import kr.objet.okrproject.domain.user.enums.ProviderType;
 import kr.objet.okrproject.domain.user.service.UserReader;
 import kr.objet.okrproject.domain.user.service.UserService;
+import kr.objet.okrproject.domain.user.service.UserStore;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -20,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 public class UserServiceImpl implements UserService {
 
 	private final UserReader userReader;
+	private final UserStore userStore;
 	private final TokenVerifyProcessor tokenVerifyProcessor;
 
 	@Override
@@ -30,8 +32,18 @@ public class UserServiceImpl implements UserService {
 		return savedUser.map(UserInfo.Main::new).orElse(null);
 	}
 
-	public User loadUserByEmail(String email) {
-		return userReader.getUserByEmail(email);
+
+	@Override
+	public UserInfo.Main findUserInfoBy(String email) {
+		Optional<User> user = userReader.findUserByEmail(email);
+		return user.map(UserInfo.Main::new).orElse(null);
+	}
+
+	@Override
+	public UserInfo.UserEntity loadUserByEmail(String email) {
+		User user = userReader.findUserByEmail(email)
+			.orElseThrow(() -> new OkrApplicationException(ErrorCode.INVALID_USER_INFO));
+		return new UserInfo.UserEntity(user);
 	}
 
 	public boolean isJoining(UserInfo.Main userInfo, String provider) {
@@ -46,4 +58,11 @@ public class UserServiceImpl implements UserService {
 			return true;
 		}
 	}
+
+	@Override
+	public UserInfo.Main store(User user) {
+		User savedUser = userStore.store(user);
+		return new UserInfo.Main(savedUser);
+	}
+
 }

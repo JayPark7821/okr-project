@@ -22,7 +22,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
 	private final RefreshTokenStore refreshTokenStore;
 	@Value("${jwt.secret-key}")
 	private String secretKey;
-	@Value("${jwt.refresh-token.expired-time-ms}")
+	@Value("${jwt.token.refresh-expired-time-ms}")
 	private Long expiredTimeMs;
 
 	@Override

@@ -1,11 +1,16 @@
 package kr.objet.okrproject.interfaces.user;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -35,4 +40,21 @@ public class UserApiController {
 		
 		return Response.success(HttpStatus.OK, new UserDto.LoginResponse(response));
 	}
+
+	@Operation(summary = "회원 가입 처리", description = "회원가입 처리")
+	@PostMapping("/join")
+	public ResponseEntity<Response<UserDto.LoginResponse>> join(@RequestBody @Valid UserDto.RegisterRequest request, BindingResult bindingResult) {
+
+		if (bindingResult.hasErrors()) {
+			log.error("---------------------- JOIN USER BINDING ERROR --------------------------");
+			for (ObjectError allError : bindingResult.getAllErrors()) {
+				throw new IllegalArgumentException(allError.getDefaultMessage());
+			}
+		}
+
+		UserInfo.Response response = userFacade.join(request.toCommand());
+
+		return  Response.success(HttpStatus.OK, new UserDto.LoginResponse(response));
+	}
+
 }
