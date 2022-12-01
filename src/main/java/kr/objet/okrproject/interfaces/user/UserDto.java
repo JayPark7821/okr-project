@@ -81,6 +81,7 @@ public class UserDto {
 		private String refreshToken;
 
 		public LoginResponse(UserInfo.Response response) {
+			this.guestUserId = response.getGuestUuid();
 			this.email = response.getEmail();
 			this.name = response.getName();
 			this.jobFieldDetail = response.getJobFieldDetail();

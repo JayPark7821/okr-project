@@ -22,15 +22,13 @@ public class UserServiceImpl implements UserService {
 	private final TokenVerifyProcessor tokenVerifyProcessor;
 
 	@Override
-	public User getUserInfoFromIdToken(String provider, String idToken) {
-		ProviderType providerType = ProviderType.of(provider);
-		OAuth2UserInfo oAuth2UserInfo = tokenVerifyProcessor.verifyIdToken(providerType, idToken);
-		return userReader.findUserByUserId(oAuth2UserInfo.getId()).orElse(null);
+	public OAuth2UserInfo getUserInfoFromIdToken(ProviderType providerType, String idToken) {
+		return tokenVerifyProcessor.verifyIdToken(providerType, idToken);
 	}
 
 
 	@Override
-	public User findUserInfoBy(String email) {
+	public User findUserBy(String email) {
 		return userReader.findUserByEmail(email).orElse(null);
 	}
 
@@ -41,8 +39,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public boolean isJoining(User user, String provider) {
-		ProviderType providerType = ProviderType.of(provider);
+	public boolean isJoining(User user, ProviderType providerType) {
 		if (user != null) {
 			if (providerType != user.getProviderType()) {
 				throw new OkrApplicationException(ErrorCode.MISS_MATCH_PROVIDER,

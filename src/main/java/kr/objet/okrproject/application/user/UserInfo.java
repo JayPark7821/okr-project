@@ -15,7 +15,6 @@ public class UserInfo {
 	@Getter
 	public static class Response {
 
-		private static final String GUEST_PREFIX = "guest_";
 		private final String id;
 		private final String email;
 		private final String name;
@@ -66,7 +65,7 @@ public class UserInfo {
 				null,
 				null,
 				guest.getProfileImageUrl(),
-				TokenGenerator.randomCharacterWithPrefix(GUEST_PREFIX),
+				guest.getGuestUuid(),
 				null,
 				null
 			);

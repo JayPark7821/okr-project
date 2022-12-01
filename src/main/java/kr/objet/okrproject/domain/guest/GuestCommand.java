@@ -3,6 +3,7 @@ package kr.objet.okrproject.domain.guest;
 import kr.objet.okrproject.common.utils.TokenGenerator;
 import kr.objet.okrproject.domain.user.User;
 import kr.objet.okrproject.application.user.UserInfo;
+import kr.objet.okrproject.domain.user.auth.OAuth2UserInfo;
 import kr.objet.okrproject.domain.user.enums.ProviderType;
 import kr.objet.okrproject.domain.user.enums.RoleType;
 import kr.objet.okrproject.domain.user.enums.jobtype.JobFieldDetail;
@@ -57,13 +58,13 @@ public class GuestCommand {
 		private final ProviderType providerType;
 
 		@Builder
-		public RegisterGuest(User user) {
+		public RegisterGuest(OAuth2UserInfo user, ProviderType providerType) {
 			this.uuid = TokenGenerator.randomCharacterWithPrefix(GUEST_PREFIX);
-			this.id = user.getUserId();
-			this.name = user.getUsername();
+			this.id = user.getId();
+			this.name = user.getName();
 			this.email = user.getEmail();
-			this.imageUrl = user.getProfileImageUrl();
-			this.providerType = user.getProviderType();
+			this.imageUrl = user.getImageUrl();
+			this.providerType = providerType;
 		}
 
 		public Guest toEntity() {
