@@ -26,7 +26,7 @@ public class AuthenticationConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	public void configure(WebSecurity web) throws Exception {
 		web.ignoring().regexMatchers("^(?!/api/).*")
-			.antMatchers(HttpMethod.POST, "/api/*/users/join", "/api/*/users/login");
+			.antMatchers(HttpMethod.POST, "/api/*/user/join", "/api/*/user/login/**");
 
 	}
 

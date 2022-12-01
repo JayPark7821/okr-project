@@ -20,8 +20,7 @@ public class TokenVerifyProcessorImpl implements TokenVerifyProcessor {
 	@Override
 	public OAuth2UserInfo verifyIdToken(ProviderType provider, String token) {
 		TokenVerifier tokenVerifier = routingApiCaller(provider);
-		tokenVerifier.varifyIdToken(token);
-		return null;
+		return tokenVerifier.varifyIdToken(token);
 	}
 
 	private TokenVerifier routingApiCaller(ProviderType provider) {
