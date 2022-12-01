@@ -1,12 +1,9 @@
 package kr.objet.okrproject.domain.guest.service.impl;
 
-import java.util.Optional;
-
 import org.springframework.stereotype.Service;
 
 import kr.objet.okrproject.domain.guest.Guest;
 import kr.objet.okrproject.domain.guest.GuestCommand;
-import kr.objet.okrproject.domain.guest.GuestInfo;
 import kr.objet.okrproject.domain.guest.service.GuestReader;
 import kr.objet.okrproject.domain.guest.service.GuestService;
 import kr.objet.okrproject.domain.guest.service.GuestStore;
@@ -22,16 +19,14 @@ public class GuestServiceImpl implements GuestService {
 	private final GuestStore guestStore;
 
 	@Override
-	public GuestInfo.Main registerGuest(GuestCommand.RegisterGuest command) {
-		Guest guest = guestStore.store(command.toEntity());
-		return new GuestInfo.Main(guest);
+	public Guest registerGuest(GuestCommand.RegisterGuest command) {
+		return guestStore.store(command.toEntity());
 	}
 
 	@Override
-	public GuestInfo.Main retrieveGuest(GuestCommand.Join command) {
-		Optional<Guest> guest = guestReader.findGuestByUuidAndEmail(command.getGuestUuId(),
-			command.getEmail());
-		return guest.map(GuestInfo.Main::new).orElse(null);
+	public Guest retrieveGuest(GuestCommand.Join command) {
+		return guestReader.findGuestByUuidAndEmail(command.getGuestUuId(),
+			command.getEmail()).orElse(null);
 	}
 
 }

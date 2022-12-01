@@ -16,7 +16,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import kr.objet.okrproject.common.utils.HeaderUtil;
 import kr.objet.okrproject.common.utils.JwtTokenUtils;
 import kr.objet.okrproject.domain.user.User;
-import kr.objet.okrproject.domain.user.UserInfo;
 import kr.objet.okrproject.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,8 +38,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 			}
 
 			String email = JwtTokenUtils.getEmail(token, key);
-			UserInfo.UserEntity userEntity = userService.loadUserByEmail(email);
-			User user = userEntity.toEntity();
+			User user = userService.loadUserByEmail(email);
 
 			UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
 				user, null, user.getAuthorities());

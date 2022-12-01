@@ -7,7 +7,7 @@ import javax.validation.constraints.Size;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import kr.objet.okrproject.domain.guest.GuestCommand;
-import kr.objet.okrproject.domain.user.UserInfo;
+import kr.objet.okrproject.application.user.UserInfo;
 import kr.objet.okrproject.domain.user.enums.ProviderType;
 import kr.objet.okrproject.domain.user.enums.RoleType;
 import kr.objet.okrproject.domain.user.enums.jobtype.JobFieldDetail;
@@ -81,6 +81,7 @@ public class UserDto {
 		private String refreshToken;
 
 		public LoginResponse(UserInfo.Response response) {
+			this.guestUserId = response.getGuestUuid();
 			this.email = response.getEmail();
 			this.name = response.getName();
 			this.jobFieldDetail = response.getJobFieldDetail();

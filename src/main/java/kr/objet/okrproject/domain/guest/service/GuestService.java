@@ -1,12 +1,13 @@
 package kr.objet.okrproject.domain.guest.service;
 
+import kr.objet.okrproject.domain.guest.Guest;
 import kr.objet.okrproject.domain.guest.GuestCommand;
 import kr.objet.okrproject.domain.guest.GuestInfo;
 
 public interface GuestService {
 
-	GuestInfo.Main registerGuest(GuestCommand.RegisterGuest command);
+	Guest registerGuest(GuestCommand.RegisterGuest command);
 
-	GuestInfo.Main retrieveGuest(GuestCommand.Join command);
+	Guest retrieveGuest(GuestCommand.Join command);
 
 }

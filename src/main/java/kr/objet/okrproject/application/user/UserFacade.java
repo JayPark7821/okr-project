@@ -5,17 +5,18 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import kr.objet.okrproject.common.exception.ErrorCode;
 import kr.objet.okrproject.common.exception.OkrApplicationException;
 import kr.objet.okrproject.common.utils.JwtTokenUtils;
+import kr.objet.okrproject.domain.guest.Guest;
 import kr.objet.okrproject.domain.guest.GuestCommand;
-import kr.objet.okrproject.domain.guest.GuestInfo;
 import kr.objet.okrproject.domain.guest.service.GuestService;
 import kr.objet.okrproject.domain.token.service.RefreshTokenService;
-import kr.objet.okrproject.domain.user.UserInfo;
+import kr.objet.okrproject.domain.user.User;
+import kr.objet.okrproject.domain.user.auth.OAuth2UserInfo;
+import kr.objet.okrproject.domain.user.enums.ProviderType;
 import kr.objet.okrproject.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,34 +38,35 @@ public class UserFacade {
 	private Long expiredTimeMs;
 
 	public UserInfo.Response join(GuestCommand.Join command) {
-		if (Objects.isNull(userService.findUserInfoBy(command.getEmail()))) {
+		if (!Objects.isNull(userService.findUserBy(command.getEmail()))) {
 			throw new OkrApplicationException(ErrorCode.ALREADY_JOINED_USER);
 		}
-		GuestInfo.Main guestInfo = guestService.retrieveGuest(command);
+		Guest guest = guestService.retrieveGuest(command);
 
-		if (Objects.isNull(guestInfo)) {
+		if (Objects.isNull(guest)) {
 			throw new OkrApplicationException(ErrorCode.INVALID_JOIN_INFO);
 		}
-		String accessToken = JwtTokenUtils.generateToken(guestInfo.getEmail(), secretKey, expiredTimeMs);
-		String refreshToken = refreshTokenService.generateRefreshToken(guestInfo.getEmail());
+		String accessToken = JwtTokenUtils.generateToken(guest.getEmail(), secretKey, expiredTimeMs);
+		String refreshToken = refreshTokenService.generateRefreshToken(guest.getEmail());
 
-		return UserInfo.Response.login(userService.store(command.toUserEntity(guestInfo, generateTempPw())),accessToken,refreshToken);
+		return UserInfo.Response.login(userService.store(command.toUserEntity(guest, generateTempPw())),accessToken,refreshToken);
 	}
 
 	public UserInfo.Response loginWithSocialIdToken(String provider, String idToken) {
-		UserInfo.Main userInfo = userService.getUserInfoFromIdToken(provider, idToken);
 
-		boolean isJoining = userService.isJoining(userInfo, provider);
+		ProviderType providerType = ProviderType.of(provider);
+		OAuth2UserInfo userInfo = userService.getUserInfoFromIdToken(providerType, idToken);
+		User user = userService.findUserBy(userInfo.getEmail());
+
+		boolean isJoining = userService.isJoining(user, providerType);
 
 		if (isJoining) {
-			GuestInfo.Main guestInfo = guestService.registerGuest(new GuestCommand.RegisterGuest(userInfo));
-			return UserInfo.Response.join(guestInfo);
-
+			Guest guest = guestService.registerGuest(new GuestCommand.RegisterGuest(userInfo, providerType));
+			return UserInfo.Response.join(guest);
 		} else {
-			String accessToken = JwtTokenUtils.generateToken(userInfo.getEmail(), secretKey, expiredTimeMs);
-			String refreshToken = refreshTokenService.generateRefreshToken(userInfo.getEmail());
-
-			return UserInfo.Response.login(userInfo,accessToken,refreshToken);
+			String accessToken = JwtTokenUtils.generateToken(user.getEmail(), secretKey, expiredTimeMs);
+			String refreshToken = refreshTokenService.generateRefreshToken(user.getEmail());
+			return UserInfo.Response.login(user,accessToken,refreshToken);
 		}
 	}
 
