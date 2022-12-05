@@ -15,14 +15,14 @@ public class Response<T> {
 	private final String message;
 	private T result;
 
-	public static ResponseEntity<Response<Void>> error(ErrorCode errorCode) {
-		return ResponseEntity.status(errorCode.getStatus())
-			.body(new Response<>(errorCode.getStatus().value(), null,null));
+	public static ResponseEntity<Response<Void>> error(HttpStatus status, String message) {
+		return ResponseEntity.status(status)
+			.body(new Response<>(status.value(), message,null));
 	}
 
-	public static ResponseEntity<Response<Void>> success(ErrorCode errorCode ) {
+	public static ResponseEntity<Response<Void>> error(ErrorCode errorCode ) {
 		return ResponseEntity.status(errorCode.getStatus())
-			.body(new Response<Void>(errorCode.getStatus().value(),"SUCCESS", null));
+			.body(new Response<>(errorCode.getStatus().value(), errorCode.getMessage(),null));
 	}
 
 	public static <T> ResponseEntity<Response<T>> success(HttpStatus status, T result) {
