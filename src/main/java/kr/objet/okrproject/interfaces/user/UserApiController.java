@@ -18,6 +18,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import kr.objet.okrproject.application.user.UserFacade;
 import kr.objet.okrproject.common.Response;
 import kr.objet.okrproject.application.user.UserInfo;
+import kr.objet.okrproject.common.exception.ErrorCode;
+import kr.objet.okrproject.common.exception.OkrApplicationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -34,7 +36,8 @@ public class UserApiController {
 	public ResponseEntity<Response<UserDto.LoginResponse>> loginWithSocialIdToken(
 		@PathVariable("provider") String providerType,
 		@PathVariable("idToken") String idToken,
-		HttpServletRequest request) {
+		HttpServletRequest request
+	) {
 
 		UserInfo.Response response = userFacade.loginWithSocialIdToken(providerType, idToken);
 		
@@ -43,12 +46,15 @@ public class UserApiController {
 
 	@Operation(summary = "회원 가입 처리", description = "회원가입 처리")
 	@PostMapping("/join")
-	public ResponseEntity<Response<UserDto.LoginResponse>> join(@RequestBody @Valid UserDto.RegisterRequest request, BindingResult bindingResult) {
+	public ResponseEntity<Response<UserDto.LoginResponse>> join(
+		@RequestBody @Valid UserDto.RegisterRequest request,
+		BindingResult bindingResult
+	) {
 
 		if (bindingResult.hasErrors()) {
 			log.error("---------------------- JOIN USER BINDING ERROR --------------------------");
 			for (ObjectError allError : bindingResult.getAllErrors()) {
-				throw new IllegalArgumentException(allError.getDefaultMessage());
+				throw new OkrApplicationException(ErrorCode.INVALID_JOIN_INFO, allError.getDefaultMessage());
 			}
 		}
 
