@@ -2,6 +2,7 @@ package kr.objet.okrproject.domain.initiative;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.ConstraintMode;
@@ -19,6 +20,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import kr.objet.okrproject.common.entity.BaseEntity;
+import kr.objet.okrproject.domain.feedback.Feedback;
 import kr.objet.okrproject.domain.keyresult.ProjectKeyResult;
 import kr.objet.okrproject.domain.team.ProjectTeamMember;
 import lombok.AccessLevel;
