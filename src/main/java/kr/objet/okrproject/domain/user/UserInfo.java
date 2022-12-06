@@ -1,4 +1,4 @@
-package kr.objet.okrproject.application.user;
+package kr.objet.okrproject.domain.user;
 
 
 import kr.objet.okrproject.common.utils.TokenGenerator;
