@@ -32,10 +32,10 @@ public class UserFacade {
 	private final BCryptPasswordEncoder passwordEncoder;
 
 	@Value("${jwt.secret-key}")
-	private final String secretKey;
+	private String secretKey;
 
 	@Value("${jwt.token.access-expired-time-ms}")
-	private final Long expiredTimeMs;
+	private Long expiredTimeMs;
 
 
 	public UserInfo.Response join(GuestCommand.Join command) {
