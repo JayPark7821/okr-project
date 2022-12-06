@@ -1,9 +1,12 @@
 package kr.objet.okrproject.application.user;
 
+import kr.objet.okrproject.application.user.fixture.GuestCommandFixture;
 import kr.objet.okrproject.application.user.fixture.GuestFixture;
 import kr.objet.okrproject.application.user.fixture.OAuth2UserInfoFixture;
 import kr.objet.okrproject.application.user.fixture.UserFixture;
+import kr.objet.okrproject.common.exception.OkrApplicationException;
 import kr.objet.okrproject.domain.guest.Guest;
+import kr.objet.okrproject.domain.guest.GuestCommand;
 import kr.objet.okrproject.domain.guest.service.GuestService;
 import kr.objet.okrproject.domain.token.service.RefreshTokenService;
 import kr.objet.okrproject.domain.user.User;
@@ -58,8 +61,6 @@ class UserFacadeTest {
 
         ReflectionTestUtils.setField(sut, "secretKey", "secretKey-abcdefg-abc-abc-abc11122");
         ReflectionTestUtils.setField(sut, "expiredTimeMs", 1000L);
-
-
     }
 
     @Test
@@ -97,5 +98,56 @@ class UserFacadeTest {
         assertNull(response.getRefreshToken());
         assertNotNull(response.getGuestUuid());
     }
+
+    @Test
+    void 게스트_회원가입_성공 () throws Exception {
+        //given
+        GuestCommand.Join command = GuestCommandFixture.create();
+        Guest guestFixture = GuestFixture.create();
+        User userFixture = UserFixture.create();
+
+        given(userService.findUserBy(eq(command.getEmail()))).willReturn(null);
+        given(guestService.retrieveGuest(command)).willReturn(guestFixture);
+        given(refreshTokenService.generateRefreshToken(guestFixture.getEmail())).willReturn("refresh-token");
+        given(userService.store(any())).willReturn(userFixture);
+
+        //when
+        UserInfo.Response response = assertDoesNotThrow(() -> sut.join(command));
+
+        //then
+        assertNotNull(response.getAccessToken());
+        assertNotNull(response.getRefreshToken());
+        assertNull(response.getGuestUuid());
+    }
+
+    @Test
+    void 회원가입_실패_이미가입됨 () throws Exception {
+        //given
+        GuestCommand.Join command = GuestCommandFixture.create();
+        User userFixture = UserFixture.create();
+
+        given(userService.findUserBy(command.getEmail())).willReturn(userFixture);
+        //when
+        OkrApplicationException exception = assertThrows(OkrApplicationException.class,
+            () -> sut.join(command));
+        //then
+        assertEquals("이미 가입된 회원입니다.", exception.getMessage());
+    }
+
+    @Test
+    void 회원가입_실패_등록된_게스트_없음 () throws Exception {
+        //given
+        GuestCommand.Join command = GuestCommandFixture.create();
+        User userFixture = UserFixture.create();
+
+        given(userService.findUserBy(command.getEmail())).willReturn(null);
+        given(guestService.retrieveGuest(command)).willReturn(null);
+        //when
+        OkrApplicationException exception = assertThrows(OkrApplicationException.class,
+            () -> sut.join(command));
+        //then
+        assertEquals("잘못된 가입 정보 입니다.", exception.getMessage());
+    }
+
 
 }

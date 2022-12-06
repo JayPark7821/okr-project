@@ -75,7 +75,6 @@ public class UserFacade {
 		String uuid = UUID.randomUUID().toString();
 		System.out.println("uuid = " + uuid);
 		String initialPw = passwordEncoder.encode(uuid);
-		System.out.println("initialPw = " + initialPw);
 		return initialPw;
 
 	}
