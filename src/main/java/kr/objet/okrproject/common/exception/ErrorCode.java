@@ -18,7 +18,9 @@ public enum ErrorCode {
 	ALREADY_JOINED_USER(HttpStatus.BAD_REQUEST,"이미 가입된 회원입니다." ),
 	INVALID_JOIN_INFO(HttpStatus.BAD_REQUEST, "잘못된 가입 정보 입니다." ),
 	INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error"),
-	INVALID_FEEDBACK_TYPE(HttpStatus.BAD_REQUEST,"잘못된 피드백 타입 입니다." ),;
+	INVALID_FEEDBACK_TYPE(HttpStatus.BAD_REQUEST,"잘못된 피드백 타입 입니다." ),
+	INVALID_PROJECT_SDT_EDT(HttpStatus.BAD_REQUEST, "프로젝트 시작 일자는 프로젝트 종료 일자 이전일 수 없습니다."),
+	INVALID_PROJECT_END_DATE(HttpStatus.BAD_REQUEST, "종료 일짜가 지난 프로젝트입니다."),;
 
 	private HttpStatus status;
 	private String message;
