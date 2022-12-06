@@ -32,10 +32,11 @@ public class UserFacade {
 	private final BCryptPasswordEncoder passwordEncoder;
 
 	@Value("${jwt.secret-key}")
-	private String secretKey;
+	private final String secretKey;
 
 	@Value("${jwt.token.access-expired-time-ms}")
-	private Long expiredTimeMs;
+	private final Long expiredTimeMs;
+
 
 	public UserInfo.Response join(GuestCommand.Join command) {
 		if (!Objects.isNull(userService.findUserBy(command.getEmail()))) {
