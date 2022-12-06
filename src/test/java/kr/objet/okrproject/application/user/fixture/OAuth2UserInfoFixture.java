@@ -7,7 +7,7 @@ import java.util.Map;
 
 public class OAuth2UserInfoFixture {
 
-    public static OAuth2UserInfo get(String id, String name, String email, String url) {
+    public static OAuth2UserInfo create(String id, String name, String email, String url) {
 
         Map<String, Object> attributes = new HashMap<String, Object>();
         attributes.put("id", id);
