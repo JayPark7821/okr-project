@@ -20,6 +20,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -53,9 +54,12 @@ class UserFacadeTest {
             userService,
             guestService,
             refreshTokenService,
-            passwordEncoder,
-            "secretKey-abcdefg-abc-abc-abc11122",
-            1000L);
+            passwordEncoder);
+
+        ReflectionTestUtils.setField(sut, "secretKey", "secretKey-abcdefg-abc-abc-abc11122");
+        ReflectionTestUtils.setField(sut, "expiredTimeMs", 1000L);
+
+
     }
 
     @Test
