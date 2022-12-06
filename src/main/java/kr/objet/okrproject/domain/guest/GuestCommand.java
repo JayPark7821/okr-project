@@ -2,7 +2,6 @@ package kr.objet.okrproject.domain.guest;
 
 import kr.objet.okrproject.common.utils.TokenGenerator;
 import kr.objet.okrproject.domain.user.User;
-import kr.objet.okrproject.application.user.UserInfo;
 import kr.objet.okrproject.domain.user.auth.OAuth2UserInfo;
 import kr.objet.okrproject.domain.user.enums.ProviderType;
 import kr.objet.okrproject.domain.user.enums.RoleType;
