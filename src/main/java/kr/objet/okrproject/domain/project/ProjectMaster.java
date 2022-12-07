@@ -16,6 +16,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import kr.objet.okrproject.common.entity.BaseEntity;
+import kr.objet.okrproject.common.utils.TokenGenerator;
 import kr.objet.okrproject.domain.keyresult.ProjectKeyResult;
 import kr.objet.okrproject.domain.project.enums.ProjectType;
 import kr.objet.okrproject.domain.team.ProjectTeamMember;
@@ -29,10 +30,13 @@ import lombok.NoArgsConstructor;
 @Entity
 public class ProjectMaster extends BaseEntity {
 
+	private static final String PROJECT_MASTER_PREFIX = "mst_";
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "project_id")
-	private Long projectId;
+	private Long id;
+
+	private String projectMasterToken;
 
 	@OneToMany(mappedBy = "projectMaster")
 	private List<ProjectTeamMember> projectTeamMember = new ArrayList<>();
@@ -72,6 +76,7 @@ public class ProjectMaster extends BaseEntity {
 
 	@Builder
 	public ProjectMaster(String name, LocalDate startDate, LocalDate endDate, ProjectType type, String object, double progress) {
+		this.projectMasterToken = TokenGenerator.randomCharacterWithPrefix(PROJECT_MASTER_PREFIX);
 		this.name = name;
 		this.startDate = startDate;
 		this.endDate = endDate;

@@ -12,6 +12,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import kr.objet.okrproject.common.entity.BaseEntity;
+import kr.objet.okrproject.common.utils.TokenGenerator;
 import kr.objet.okrproject.domain.project.ProjectMaster;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -23,10 +24,13 @@ import lombok.NoArgsConstructor;
 @Entity
 public class ProjectKeyResult extends BaseEntity {
 
+    private static final String PROJECT_KEYRESULT_PREFIX = "key_";
     @Id
     @Column(name = "project_key_result_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long keyResultId;
+    private Long id;
+
+    private String projectKeyResultToken;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id" , updatable = false)
@@ -39,6 +43,7 @@ public class ProjectKeyResult extends BaseEntity {
 
     @Builder
     public ProjectKeyResult(ProjectMaster projectMaster, String name) {
+        this.projectKeyResultToken =  TokenGenerator.randomCharacterWithPrefix(PROJECT_KEYRESULT_PREFIX);
         this.projectMaster = projectMaster;
         this.name = name;
     }
