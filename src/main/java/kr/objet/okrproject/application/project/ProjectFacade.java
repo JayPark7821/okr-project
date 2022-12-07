@@ -1,5 +1,7 @@
 package kr.objet.okrproject.application.project;
 
+import kr.objet.okrproject.domain.keyresult.service.ProjectKeyResultCommand;
+import kr.objet.okrproject.domain.keyresult.service.ProjectKeyResultService;
 import org.springframework.stereotype.Service;
 
 import kr.objet.okrproject.domain.project.ProjectMaster;
@@ -20,19 +22,25 @@ public class ProjectFacade {
 
 	private final ProjectMasterService projectMasterService;
 	private final ProjectTeamMemberService projectTeamMemberService;
+	private final ProjectKeyResultService projectKeyResultService;
 
 	public Long registerProject(ProjectMasterCommand.RegisterProjectMaster command, User user) {
+
 		ProjectMaster projectMaster = projectMasterService.registerProjectMaster(command);
 
-		ProjectTeamMemberCommand.RegisterProjectTeamMember projectTeamMember =
-			ProjectTeamMemberCommand.RegisterProjectTeamMember.builder()
-				.projectMaster(projectMaster)
-				.user(user)
-				.isNew(true)
-				.roleType(ProjectRoleType.LEADER)
-				.build();
+		 projectTeamMemberService.registerProjectTeamMember(
+				 new ProjectTeamMemberCommand.RegisterProjectTeamMember(projectMaster,
+						 ProjectRoleType.LEADER,
+						 true,
+						 user
+		 ));
 
-		projectTeamMemberService.registerProjectTeamMember(projectTeamMember);
+		command.getKeyResults().forEach(keyResult ->{
+			projectKeyResultService.registerProjectKeyResult(
+					new ProjectKeyResultCommand.RegisterProjectKeyResult(keyResult, projectMaster)
+			);
+		});
+
 		return projectMaster.getProjectId();
 	}
 }
