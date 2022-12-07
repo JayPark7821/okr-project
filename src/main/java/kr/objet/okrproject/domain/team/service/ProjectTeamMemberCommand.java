@@ -14,10 +14,10 @@ public class ProjectTeamMemberCommand {
 	@Getter
 	public static class RegisterProjectTeamMember {
 
-		private ProjectMaster projectMaster;
-		private ProjectRoleType roleType;
-		private boolean isNew;
-		private User user;
+		private final ProjectMaster projectMaster;
+		private final ProjectRoleType roleType;
+		private final boolean isNew;
+		private final User user;
 
 		@Builder
 		public RegisterProjectTeamMember(

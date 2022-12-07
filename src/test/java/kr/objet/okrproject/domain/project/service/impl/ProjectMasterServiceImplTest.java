@@ -16,7 +16,7 @@ import kr.objet.okrproject.domain.project.ProjectMaster;
 import kr.objet.okrproject.domain.project.service.ProjectMasterCommand;
 import kr.objet.okrproject.domain.project.service.ProjectMasterReader;
 import kr.objet.okrproject.domain.project.service.ProjectMasterStore;
-import kr.objet.okrproject.domain.project.service.impl.fixture.ProjectMasterFixture;
+import kr.objet.okrproject.domain.project.service.impl.fixture.ProjectMasterCommandFixture;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
@@ -39,7 +39,7 @@ class ProjectMasterServiceImplTest {
 	@Test
 	void 프로젝트_등록_성공() throws Exception {
 	    //given
-		ProjectMasterCommand.RegisterProjectMaster command = ProjectMasterFixture.create();
+		ProjectMasterCommand.RegisterProjectMaster command = ProjectMasterCommandFixture.create();
 		ProjectMaster projectMaster = command.toEntity();
 
 		given(projectMasterStore.store(any())).willReturn(projectMaster);

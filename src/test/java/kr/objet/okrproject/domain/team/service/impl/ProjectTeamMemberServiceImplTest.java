@@ -16,7 +16,7 @@ import kr.objet.okrproject.domain.team.ProjectTeamMember;
 import kr.objet.okrproject.domain.team.service.ProjectTeamMemberCommand;
 import kr.objet.okrproject.domain.team.service.ProjectTeamMemberReader;
 import kr.objet.okrproject.domain.team.service.ProjectTeamMemberStore;
-import kr.objet.okrproject.domain.team.service.fixture.ProjectTeamMemberFixture;
+import kr.objet.okrproject.domain.team.service.fixture.ProjectTeamMemberCommandFixture;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
@@ -39,7 +39,7 @@ class ProjectTeamMemberServiceImplTest {
 	@Test
 	void 팀원_등록_성공 () throws Exception {
 	    //given
-		ProjectTeamMemberCommand.RegisterProjectTeamMember command = ProjectTeamMemberFixture.create();
+		ProjectTeamMemberCommand.RegisterProjectTeamMember command = ProjectTeamMemberCommandFixture.create();
 		ProjectTeamMember projectTeamMember = command.toEntity();
 
 		given(projectTeamMemberStore.store(any())).willReturn(projectTeamMember);

@@ -7,7 +7,7 @@ import org.jeasy.random.EasyRandomParameters;
 
 import kr.objet.okrproject.domain.project.service.ProjectMasterCommand;
 
-public class ProjectMasterFixture {
+public class ProjectMasterCommandFixture {
 	public static ProjectMasterCommand.RegisterProjectMaster create() {
 		EasyRandomParameters param = new EasyRandomParameters()
 			.dateRange(LocalDate.of(2022, 1, 1),
