@@ -37,7 +37,6 @@ public class UserApiController {
 		@PathVariable("idToken") String idToken,
 		HttpServletRequest request
 	) {
-
 		UserInfo.Response response = userFacade.loginWithSocialIdToken(providerType, idToken);
 		
 		return Response.success(HttpStatus.OK, new UserDto.LoginResponse(response));
