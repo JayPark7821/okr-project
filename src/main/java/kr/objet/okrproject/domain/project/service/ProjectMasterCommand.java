@@ -16,13 +16,13 @@ public class ProjectMasterCommand {
 	public static class RegisterProjectMaster{
 
 		private final String name;
-		private final String sdt;
-		private final String edt;
+		private final LocalDate sdt;
+		private final LocalDate edt;
 		private final String objective;
 		private final List<String> keyResults;
 
 
-		public RegisterProjectMaster(String name, String sdt, String edt, String objective, List<String> keyResults) {
+		public RegisterProjectMaster(String name, LocalDate sdt, LocalDate edt, String objective, List<String> keyResults) {
 			this.name = name;
 			this.sdt = sdt;
 			this.edt = edt;
@@ -31,19 +31,19 @@ public class ProjectMasterCommand {
 		}
 
 		public ProjectMaster toEntity() {
-			LocalDate startDt = LocalDate.parse(this.sdt, DateTimeFormatter.ISO_DATE);
-			LocalDate endDt = LocalDate.parse(this.edt, DateTimeFormatter.ISO_DATE);
-			if (!startDt.isBefore(endDt) ) {
-				throw new OkrApplicationException(ErrorCode.INVALID_PROJECT_SDT_EDT);
-			}
-			if (LocalDate.now().isAfter(endDt)) {
-				throw new OkrApplicationException(ErrorCode.INVALID_PROJECT_END_DATE);
-			}
+			// LocalDate startDt = LocalDate.parse(this.sdt, DateTimeFormatter.ISO_DATE);
+			// LocalDate endDt = LocalDate.parse(this.edt, DateTimeFormatter.ISO_DATE);
+			// if (!startDt.isBefore(endDt) ) {
+			// 	throw new OkrApplicationException(ErrorCode.INVALID_PROJECT_SDT_EDT);
+			// }
+			// if (LocalDate.now().isAfter(endDt)) {
+			// 	throw new OkrApplicationException(ErrorCode.INVALID_PROJECT_END_DATE);
+			// }
 
 			return ProjectMaster.builder()
 				.name(this.name)
-				.startDate(startDt)
-				.endDate(endDt)
+				.startDate(this.sdt)
+				.endDate(this.edt)
 				.type(ProjectType.SINGLE)
 				.object(this.objective)
 				.progress(0)
