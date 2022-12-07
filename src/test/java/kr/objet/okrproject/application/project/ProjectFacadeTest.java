@@ -11,14 +11,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.util.ReflectionTestUtils;
 
-import kr.objet.okrproject.application.user.UserFacade;
 import kr.objet.okrproject.application.user.fixture.UserFixture;
 import kr.objet.okrproject.domain.project.ProjectMaster;
 import kr.objet.okrproject.domain.project.service.ProjectMasterCommand;
 import kr.objet.okrproject.domain.project.service.ProjectMasterService;
-import kr.objet.okrproject.domain.project.service.impl.fixture.ProjectMasterCommandFixture;
+import kr.objet.okrproject.domain.project.service.fixture.ProjectMasterCommandFixture;
 import kr.objet.okrproject.domain.team.service.ProjectTeamMemberService;
 import kr.objet.okrproject.domain.user.User;
 
