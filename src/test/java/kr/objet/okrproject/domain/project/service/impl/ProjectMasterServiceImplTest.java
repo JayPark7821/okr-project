@@ -10,6 +10,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import kr.objet.okrproject.domain.project.ProjectMaster;
 import kr.objet.okrproject.domain.project.service.ProjectMasterCommand;
 import kr.objet.okrproject.domain.project.service.impl.fixture.ProjectMasterFixture;
 
@@ -31,7 +32,10 @@ class ProjectMasterServiceImplTest {
 		ProjectMasterCommand.RegisterProjectMaster command = ProjectMasterFixture.create();
 
 		//when
-		assertDoesNotThrow(() -> sut.registerProjectMaster(command));
-	    //then
+		ProjectMaster projectMaster = assertDoesNotThrow(() -> sut.registerProjectMaster(command));
+
+		//then
+		assertEquals(command.getName(), projectMaster.getName());
+		assertNotNull(projectMaster.getProjectId());
 	}
 }
