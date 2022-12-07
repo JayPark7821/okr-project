@@ -20,6 +20,7 @@ public class ProjectTeamMemberServiceImpl implements ProjectTeamMemberService {
 
 	@Override
 	public ProjectTeamMember registerProjectTeamMember(ProjectTeamMemberCommand.RegisterProjectTeamMember command) {
-		return null;
+		ProjectTeamMember projectTeamMember = command.toEntity();
+		return projectTeamMemberStore.store(projectTeamMember);
 	}
 }

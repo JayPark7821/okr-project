@@ -42,6 +42,8 @@ class ProjectTeamMemberServiceImplTest {
 		ProjectTeamMemberCommand.RegisterProjectTeamMember command = ProjectTeamMemberFixture.create();
 		ProjectTeamMember projectTeamMember = command.toEntity();
 
+		given(projectTeamMemberStore.store(any())).willReturn(projectTeamMember);
+
 		//when
 		ProjectTeamMember savedProjectTeamMember = assertDoesNotThrow(() -> sut.registerProjectTeamMember(command));
 		//then
