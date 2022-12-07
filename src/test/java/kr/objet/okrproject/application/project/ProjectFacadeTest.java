@@ -1,6 +1,7 @@
 package kr.objet.okrproject.application.project;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.BDDMockito.*;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -14,6 +15,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import kr.objet.okrproject.application.user.UserFacade;
 import kr.objet.okrproject.application.user.fixture.UserFixture;
+import kr.objet.okrproject.domain.project.ProjectMaster;
 import kr.objet.okrproject.domain.project.service.ProjectMasterCommand;
 import kr.objet.okrproject.domain.project.service.ProjectMasterService;
 import kr.objet.okrproject.domain.project.service.impl.fixture.ProjectMasterCommandFixture;
@@ -43,14 +45,19 @@ class ProjectFacadeTest {
 
 	@Test
 	void 신규_프로젝트_등록_성공 () throws Exception {
+
 	    //given
 		ProjectMasterCommand.RegisterProjectMaster projectMasterCommand = ProjectMasterCommandFixture.create();
+		ProjectMaster projectMaster = projectMasterCommand.toEntity();
 		User user = UserFixture.create();
 
+		given(projectMasterService.registerProjectMaster(projectMasterCommand)).willReturn(projectMaster);
 		//when
 		Long projectId = assertDoesNotThrow(() -> sut.registerProject(projectMasterCommand, user));
 
+		//TODO : 이런경우에 어떻게 검증하는지 궁금합니다.
+		// ID setter 만들어서 검증??
 		//then
-		assertNotNull(projectId);
+		// assertEquals(projectMaster.getName());
 	}
 }
