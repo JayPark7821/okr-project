@@ -1,4 +1,4 @@
-package kr.objet.okrproject.domain.project.service.impl.fixture;
+package kr.objet.okrproject.domain.project.service.fixture;
 
 import java.time.LocalDate;
 

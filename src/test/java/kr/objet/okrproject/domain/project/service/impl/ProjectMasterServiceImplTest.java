@@ -16,7 +16,7 @@ import kr.objet.okrproject.domain.project.ProjectMaster;
 import kr.objet.okrproject.domain.project.service.ProjectMasterCommand;
 import kr.objet.okrproject.domain.project.service.ProjectMasterReader;
 import kr.objet.okrproject.domain.project.service.ProjectMasterStore;
-import kr.objet.okrproject.domain.project.service.impl.fixture.ProjectMasterCommandFixture;
+import kr.objet.okrproject.domain.project.service.fixture.ProjectMasterCommandFixture;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
