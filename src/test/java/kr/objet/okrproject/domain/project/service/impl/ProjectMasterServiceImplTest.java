@@ -33,12 +33,12 @@ class ProjectMasterServiceImplTest {
 	@BeforeEach
 	void init() {
 		MockitoAnnotations.openMocks(this);
-		sut = new ProjectMasterServiceImpl(projectMasterStore, projectMasterReader);
+		sut = new ProjectMasterServiceImpl(projectMasterStore);
 	}
 
 	@Test
 	void 프로젝트_등록_성공() throws Exception {
-	    //given
+		//given
 		ProjectMasterCommand.RegisterProjectMaster command = ProjectMasterCommandFixture.create();
 		ProjectMaster projectMaster = command.toEntity();
 

@@ -31,15 +31,6 @@ public class ProjectMasterCommand {
 		}
 
 		public ProjectMaster toEntity() {
-			// LocalDate startDt = LocalDate.parse(this.sdt, DateTimeFormatter.ISO_DATE);
-			// LocalDate endDt = LocalDate.parse(this.edt, DateTimeFormatter.ISO_DATE);
-			// if (!startDt.isBefore(endDt) ) {
-			// 	throw new OkrApplicationException(ErrorCode.INVALID_PROJECT_SDT_EDT);
-			// }
-			// if (LocalDate.now().isAfter(endDt)) {
-			// 	throw new OkrApplicationException(ErrorCode.INVALID_PROJECT_END_DATE);
-			// }
-
 			return ProjectMaster.builder()
 				.name(this.name)
 				.startDate(this.sdt)

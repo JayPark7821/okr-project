@@ -41,6 +41,6 @@ public class ProjectFacade {
 			);
 		});
 
-		return projectMaster.getProjectId();
+		return projectMaster.getId();
 	}
 }

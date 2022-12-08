@@ -20,7 +20,9 @@ public enum ErrorCode {
 	INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error"),
 	INVALID_FEEDBACK_TYPE(HttpStatus.BAD_REQUEST,"잘못된 피드백 타입 입니다." ),
 	INVALID_PROJECT_SDT_EDT(HttpStatus.BAD_REQUEST, "프로젝트 시작 일자는 프로젝트 종료 일자 이전일 수 없습니다."),
-	INVALID_PROJECT_END_DATE(HttpStatus.BAD_REQUEST, "종료 일짜가 지난 프로젝트입니다."),;
+	INVALID_PROJECT_END_DATE(HttpStatus.BAD_REQUEST, "종료 일짜가 지난 프로젝트입니다."),
+	REQUIRED_DATE_VALUE(HttpStatus.BAD_REQUEST,"날짜는 필수 값 입니다." ),
+	CASTING_USER_FAILED(HttpStatus.INTERNAL_SERVER_ERROR,"Casting to User failed" );
 
 	private HttpStatus status;
 	private String message;
