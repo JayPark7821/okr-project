@@ -27,4 +27,13 @@ public class UserFixture {
 			.randomize(userSeqPredicate, () -> id);
 		return new EasyRandom(param).nextObject(User.class);
 	}
+
+	public static EasyRandom get() {
+		Predicate<Field> seqPredicate = named("userSeq").and(ofType(Long.class))
+			.and(inClass(User.class));
+
+		EasyRandomParameters param = new EasyRandomParameters()
+			.excludeField(seqPredicate);
+		return new EasyRandom(param);
+	}
 }

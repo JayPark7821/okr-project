@@ -28,7 +28,7 @@ public class ProjectMasterApiController {
 	private final ProjectFacade projectFacade;
 
 	@PostMapping
-	public ResponseEntity<Response<Long>> registerProject(
+	public ResponseEntity<Response<String>> registerProject(
 		@RequestBody @Valid ProjectSaveDto requestDto,
 		Authentication authentication) {
 
@@ -37,7 +37,7 @@ public class ProjectMasterApiController {
 
 		return Response
 			.success(
-				HttpStatus.OK,
+				HttpStatus.CREATED,
 				projectFacade.registerProject(requestDto.toCommand(), user)
 			);
 	}

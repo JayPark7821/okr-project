@@ -1,20 +1,22 @@
 package kr.objet.okrproject.interfaces.project;
 
+import static kr.objet.okrproject.interfaces.project.ProjectSaveDtoFixture.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.Set;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 
+import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 
 import kr.objet.okrproject.common.exception.ErrorCode;
 import kr.objet.okrproject.common.exception.OkrApplicationException;
 
+@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 class ProjectSaveDtoTest {
 
 	@Test
@@ -73,17 +75,4 @@ class ProjectSaveDtoTest {
 		assertThat(exception.getMessage()).isEqualTo(ErrorCode.INVALID_PROJECT_END_DATE.getMessage());
 	}
 
-	private static ProjectSaveDto getProjectSaveDto(
-		int sdtDays,
-		int edtDays,
-		int min,
-		int max,
-		String pattern
-	) {
-		String sdt = LocalDate.now().minusDays(sdtDays).format(DateTimeFormatter.ofPattern(pattern));
-		String edt = LocalDate.now().minusDays(edtDays).format(DateTimeFormatter.ofPattern(pattern));
-
-		ProjectSaveDto projectSaveDto = ProjectSaveDtoFixture.create(sdt, edt, min, max);
-		return projectSaveDto;
-	}
 }

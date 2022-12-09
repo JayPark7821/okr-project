@@ -1,0 +1,34 @@
+spring:
+  sql:
+    init:
+      mode: always
+  h2:
+    console:
+      enabled: true
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:testdb
+    username: sa
+    password:
+
+
+
+  jpa:
+    defer-datasource-initialization: true
+
+    hibernate:
+      ddl-auto: create #none
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+
+
+jwt:
+  secret-key: okr-project-application-2022-11-29.secret-key
+  token:
+    refresh-expired-time-ms: 259200000
+    access-expired-time-ms: 259200000
+
+google:
+  clientId: 30536199705-2sg1uhnfad1png6biv8clh22gtd5i006.apps.googleusercontent.com

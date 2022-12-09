@@ -1,6 +1,5 @@
 package kr.objet.okrproject.domain.user;
 
-import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
@@ -29,12 +28,14 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @Entity
 @Table(name = "user_table")
+@ToString
 public class User extends BaseTimeEntity implements UserDetails {
 
 	@JsonIgnore
