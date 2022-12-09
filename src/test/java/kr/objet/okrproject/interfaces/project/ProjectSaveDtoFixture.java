@@ -10,13 +10,14 @@ import org.jeasy.random.EasyRandom;
 import org.jeasy.random.EasyRandomParameters;
 
 public class ProjectSaveDtoFixture {
-	public static ProjectSaveDto create(String sdt, String edt) {
+	public static ProjectSaveDto create(String sdt, String edt, int min, int max) {
 		Predicate<Field> sdtPredicate = named("sdt").and(ofType(String.class))
 			.and(inClass(ProjectSaveDto.class));
 		Predicate<Field> edtPredicate = named("edt").and(ofType(String.class))
 			.and(inClass(ProjectSaveDto.class));
 
 		EasyRandomParameters param = new EasyRandomParameters()
+			.collectionSizeRange(min, max)
 			.dateRange(LocalDate.of(2022, 1, 1),
 				LocalDate.of(2022, 12, 1))
 			.randomize(sdtPredicate, () -> sdt)
