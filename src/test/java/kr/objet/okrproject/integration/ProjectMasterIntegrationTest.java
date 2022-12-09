@@ -10,10 +10,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayNameGeneration;
-import org.junit.jupiter.api.DisplayNameGenerator;
-import org.junit.jupiter.api.Test;
+import kr.objet.okrproject.interfaces.team.ProjectTeamMemberDto;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -65,17 +63,21 @@ class ProjectMasterIntegrationTest {
 
 	private User user;
 	private String token;
-	private final String url = "/api/v1/project";
+	private final String ProjectUrl = "/api/v1/project";
+	private final String ProjectTeamUrl = "/api/v1/team";
+	private final String projectLeaderEmail = "user1673@naver.com";
+	private String projectToken;
 
 	@BeforeEach
 	void init() {
 		if (Objects.isNull(user)) {
 			//TODO : 통합테스트시 인증 처리 방법
-			user = userRepository.findUserByEmail("user1673@naver.com").get();
+			user = userRepository.findUserByEmail(projectLeaderEmail).get();
 			token = JwtTokenUtils.generateToken(user.getEmail(), secretKey, expiredTimeMs);
 		}
 	}
 
+	@Order(1)
 	@Test
 	void 프로젝트_등록_성공() throws Exception {
 		//given
@@ -83,7 +85,7 @@ class ProjectMasterIntegrationTest {
 		ProjectSaveDto dto = ProjectSaveDtoFixture.getProjectSaveDto(5, 0, keyResultSize, keyResultSize, "yyyy-MM-dd");
 
 		//when
-		MvcResult mvcResult = mvc.perform(post(url)
+		MvcResult mvcResult = mvc.perform(post(ProjectUrl)
 				.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
 				.contentType(MediaType.APPLICATION_JSON)
 				.characterEncoding(StandardCharsets.UTF_8)
@@ -100,8 +102,10 @@ class ProjectMasterIntegrationTest {
 			Response.class
 		);
 
+		projectToken = response.getResult();
+
 		Optional<ProjectMaster> projectMaster = projectMasterRepository
-			.findByProjectMasterToken(response.getResult());
+			.findByProjectMasterToken(projectToken);
 		assertThat(projectMaster.isEmpty()).isFalse();
 		assertThat(projectMaster.get().getName()).isEqualTo(dto.getName());
 
@@ -127,7 +131,7 @@ class ProjectMasterIntegrationTest {
 		ProjectSaveDto dto = ProjectSaveDtoFixture.getProjectSaveDto(5, 0, keyResultSize, keyResultSize, "yyyy-MM-dd");
 
 		//when
-		MvcResult mvcResult = mvc.perform(post(url)
+		MvcResult mvcResult = mvc.perform(post(ProjectUrl)
 				.contentType(MediaType.APPLICATION_JSON)
 				.characterEncoding(StandardCharsets.UTF_8)
 				.content(objectMapper.writeValueAsBytes(dto))
@@ -151,7 +155,7 @@ class ProjectMasterIntegrationTest {
 		ProjectSaveDto dto = ProjectSaveDtoFixture.getProjectSaveDto(5, 0, keyResultSize, keyResultSize, "yyyy-MM-dd");
 
 		//when
-		MvcResult mvcResult = mvc.perform(post(url)
+		MvcResult mvcResult = mvc.perform(post(ProjectUrl)
 				.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
 				.contentType(MediaType.APPLICATION_JSON)
 				.characterEncoding(StandardCharsets.UTF_8)
@@ -177,7 +181,7 @@ class ProjectMasterIntegrationTest {
 		ProjectSaveDto dto = ProjectSaveDtoFixture.getProjectSaveDto(5, 0, keyResultSize, keyResultSize, "yyyyMMdd");
 
 		//when
-		MvcResult mvcResult = mvc.perform(post(url)
+		MvcResult mvcResult = mvc.perform(post(ProjectUrl)
 				.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
 				.contentType(MediaType.APPLICATION_JSON)
 				.characterEncoding(StandardCharsets.UTF_8)
@@ -203,7 +207,7 @@ class ProjectMasterIntegrationTest {
 		ProjectSaveDto dto = ProjectSaveDtoFixture.getProjectSaveDto(5, 3, keyResultSize, keyResultSize, "yyyy-MM-dd");
 
 		//when
-		MvcResult mvcResult = mvc.perform(post(url)
+		MvcResult mvcResult = mvc.perform(post(ProjectUrl)
 				.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
 				.contentType(MediaType.APPLICATION_JSON)
 				.characterEncoding(StandardCharsets.UTF_8)
@@ -229,7 +233,7 @@ class ProjectMasterIntegrationTest {
 		ProjectSaveDto dto = ProjectSaveDtoFixture.getProjectSaveDto(1, 3, keyResultSize, keyResultSize, "yyyy-MM-dd");
 
 		//when
-		MvcResult mvcResult = mvc.perform(post(url)
+		MvcResult mvcResult = mvc.perform(post(ProjectUrl)
 				.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
 				.contentType(MediaType.APPLICATION_JSON)
 				.characterEncoding(StandardCharsets.UTF_8)
@@ -246,5 +250,25 @@ class ProjectMasterIntegrationTest {
 			Response.class
 		);
 		assertThat(response.getMessage()).contains(ErrorCode.INVALID_PROJECT_SDT_EDT.getMessage());
+	}
+
+	@Order(2)
+	@Test
+	void 팀원_초대_성공() throws Exception {
+		//given
+		ProjectTeamMemberDto.saveRequest dto =
+				new ProjectTeamMemberDto.saveRequest(projectToken, List.of("user1671@naver.com", "user1342@naver.com"));
+		//when
+		MvcResult mvcResult = mvc.perform(post(ProjectTeamUrl)
+						.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+						.contentType(MediaType.APPLICATION_JSON)
+						.characterEncoding(StandardCharsets.UTF_8)
+						.content(objectMapper.writeValueAsBytes(dto))
+				)
+				.andDo(print())
+				.andExpect(status().isCreated())
+				.andReturn();
+
+		//then
 	}
 }

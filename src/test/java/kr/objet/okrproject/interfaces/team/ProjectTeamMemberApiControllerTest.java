@@ -27,7 +27,7 @@ import kr.objet.okrproject.domain.user.User;
 import kr.objet.okrproject.interfaces.project.ProjectMasterApiController;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
-@WebMvcTest(controllers = ProjectMasterApiController.class)
+@WebMvcTest(controllers = ProjectTeamMemberApiController.class)
 class ProjectTeamMemberApiControllerTest {
 
 	@Autowired
@@ -37,6 +37,7 @@ class ProjectTeamMemberApiControllerTest {
 	@MockBean
 	private ProjectTeamMemberFacade projectTeamMemberFacade;
 	private final String url = "/api/v1/team";
+
 
 	@Test
 	@WithMockCustomUser(seq = 1L, email = "test@test.com")
@@ -57,7 +58,7 @@ class ProjectTeamMemberApiControllerTest {
 		//then
 		then(projectTeamMemberFacade)
 			.should(times(1))
-			.inviteTeamMembers(any(ProjectTeamMemberCommand.RegisterProjectTeamMember.class), any(User.class));
+			.inviteTeamMembers(any(ProjectTeamMemberCommand.InviteProjectTeamMember.class), any(User.class));
 	}
 
 }

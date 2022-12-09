@@ -7,8 +7,8 @@ import org.jeasy.random.EasyRandomParameters;
 import kr.objet.okrproject.domain.team.service.ProjectTeamMemberCommand;
 
 public class ProjectTeamMemberCommandFixture {
-	public static ProjectTeamMemberCommand.RegisterProjectTeamMember create() {
+	public static ProjectTeamMemberCommand.RegisterProjectLeader create() {
 		EasyRandomParameters param = new EasyRandomParameters();
-		return new EasyRandom(param).nextObject(ProjectTeamMemberCommand.RegisterProjectTeamMember.class);
+		return new EasyRandom(param).nextObject(ProjectTeamMemberCommand.RegisterProjectLeader.class);
 	}
 }

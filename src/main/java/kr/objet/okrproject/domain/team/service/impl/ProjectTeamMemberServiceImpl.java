@@ -18,7 +18,7 @@ public class ProjectTeamMemberServiceImpl implements ProjectTeamMemberService {
 	// private final ProjectTeamMemberReader projectTeamMemberReader;
 
 	@Override
-	public ProjectTeamMember registerProjectTeamMember(ProjectTeamMemberCommand.RegisterProjectTeamMember command) {
+	public ProjectTeamMember registerProjectTeamMember(ProjectTeamMemberCommand.RegisterProjectLeader command) {
 		ProjectTeamMember projectTeamMember = command.toEntity();
 		return projectTeamMemberStore.store(projectTeamMember);
 	}

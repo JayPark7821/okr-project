@@ -4,5 +4,5 @@ import kr.objet.okrproject.domain.team.ProjectTeamMember;
 
 public interface ProjectTeamMemberService {
 
-	ProjectTeamMember registerProjectTeamMember(ProjectTeamMemberCommand.RegisterProjectTeamMember command);
+	ProjectTeamMember registerProjectTeamMember(ProjectTeamMemberCommand.RegisterProjectLeader command);
 }

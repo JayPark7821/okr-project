@@ -38,7 +38,11 @@ public class ProjectTeamMemberApiController {
 		User user = ClassUtils.getSafeCastInstance(authentication.getPrincipal(), User.class)
 			.orElseThrow(() -> new OkrApplicationException(ErrorCode.CASTING_USER_FAILED));
 
-		return ResponseEntity.status(HttpStatus.CREATED)
-			.body(projectTeamMemberFacade.inviteTeamMembers(requestDto, user));
+		return Response
+			.success(
+				HttpStatus.CREATED,
+				projectTeamMemberFacade.inviteTeamMembers(requestDto.toCommand(), user)
+			);
 	}
+
 }
