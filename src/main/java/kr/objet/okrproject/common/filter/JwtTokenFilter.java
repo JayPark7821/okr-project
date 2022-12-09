@@ -12,7 +12,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-
 import kr.objet.okrproject.common.utils.HeaderUtil;
 import kr.objet.okrproject.common.utils.JwtTokenUtils;
 import kr.objet.okrproject.domain.user.User;
@@ -28,9 +27,11 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 	private final UserService userService;
 
 	@Override
-	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
+		FilterChain filterChain) throws ServletException, IOException {
 		try {
-			String token = HeaderUtil.getToken("Authorization",request);
+
+			String token = HeaderUtil.getToken("Authorization", request);
 			if (JwtTokenUtils.isExpired(token, key)) {
 				log.error("Key is Expired");
 				filterChain.doFilter(request, response);
