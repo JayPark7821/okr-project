@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import kr.objet.okrproject.interfaces.team.ProjectTeamMemberDto;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,8 @@ import kr.objet.okrproject.interfaces.project.ProjectSaveDto;
 import kr.objet.okrproject.interfaces.project.ProjectSaveDtoFixture;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest
 @AutoConfigureMockMvc
 class ProjectMasterIntegrationTest {
@@ -65,7 +68,7 @@ class ProjectMasterIntegrationTest {
 	private String token;
 	private final String ProjectUrl = "/api/v1/project";
 	private final String ProjectTeamUrl = "/api/v1/team";
-	private final String projectLeaderEmail = "user1673@naver.com";
+	private final String projectLeaderEmail = "user1671@naver.com";
 	private String projectToken;
 
 	@BeforeEach
@@ -97,12 +100,8 @@ class ProjectMasterIntegrationTest {
 
 		//then
 		//TODO : 어떤식으로 검증???? Response객체
-		Response response = objectMapper.readValue(
-			mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8),
-			Response.class
-		);
-
-		projectToken = response.getResult();
+		JsonNode jsonNode = objectMapper.readTree(mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8));
+		projectToken = jsonNode.get("result").asText();
 
 		Optional<ProjectMaster> projectMaster = projectMasterRepository
 			.findByProjectMasterToken(projectToken);
@@ -141,11 +140,8 @@ class ProjectMasterIntegrationTest {
 			.andReturn();
 
 		//then
-		Response response = objectMapper.readValue(
-			mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8),
-			Response.class
-		);
-		assertThat(response.getMessage()).isEqualTo(ErrorCode.INVALID_TOKEN.getMessage());
+		JsonNode jsonNode = objectMapper.readTree(mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8));
+		assertThat(jsonNode.get("message").asText()).isEqualTo(ErrorCode.INVALID_TOKEN.getMessage());
 	}
 
 	@Test
@@ -166,12 +162,8 @@ class ProjectMasterIntegrationTest {
 			.andReturn();
 
 		//then
-		System.out.println(mvcResult.getResponse().getContentAsString());
-		Response response = objectMapper.readValue(
-			mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8),
-			Response.class
-		);
-		assertThat(response.getMessage()).contains("Key Result는 3개 까지만 등록이 가능합니다.");
+		JsonNode jsonNode = objectMapper.readTree(mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8));
+		assertThat(jsonNode.get("message").asText()).contains("Key Result는 3개 까지만 등록이 가능합니다.");
 	}
 
 	@Test
@@ -192,12 +184,8 @@ class ProjectMasterIntegrationTest {
 			.andReturn();
 
 		//then
-		System.out.println(mvcResult.getResponse().getContentAsString());
-		Response response = objectMapper.readValue(
-			mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8),
-			Response.class
-		);
-		assertThat(response.getMessage()).contains("8자리의 yyyy-MM-dd 형식이어야 합니다.");
+		JsonNode jsonNode = objectMapper.readTree(mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8));
+		assertThat(jsonNode.get("message").asText()).contains("8자리의 yyyy-MM-dd 형식이어야 합니다.");
 	}
 
 	@Test
@@ -218,12 +206,8 @@ class ProjectMasterIntegrationTest {
 			.andReturn();
 
 		//then
-		System.out.println(mvcResult.getResponse().getContentAsString());
-		Response response = objectMapper.readValue(
-			mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8),
-			Response.class
-		);
-		assertThat(response.getMessage()).contains(ErrorCode.INVALID_PROJECT_END_DATE.getMessage());
+		JsonNode jsonNode = objectMapper.readTree(mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8));
+		assertThat(jsonNode.get("message").asText()).contains(ErrorCode.INVALID_PROJECT_END_DATE.getMessage());
 	}
 
 	@Test
@@ -244,12 +228,9 @@ class ProjectMasterIntegrationTest {
 			.andReturn();
 
 		//then
-		System.out.println(mvcResult.getResponse().getContentAsString());
-		Response response = objectMapper.readValue(
-			mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8),
-			Response.class
-		);
-		assertThat(response.getMessage()).contains(ErrorCode.INVALID_PROJECT_SDT_EDT.getMessage());
+
+		JsonNode jsonNode = objectMapper.readTree(mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8));
+		assertThat(jsonNode.get("message").asText()).contains(ErrorCode.INVALID_PROJECT_SDT_EDT.getMessage());
 	}
 
 	@Order(2)
@@ -259,7 +240,7 @@ class ProjectMasterIntegrationTest {
 		ProjectTeamMemberDto.saveRequest dto =
 				new ProjectTeamMemberDto.saveRequest(projectToken, List.of("user1671@naver.com", "user1342@naver.com"));
 		//when
-		MvcResult mvcResult = mvc.perform(post(ProjectTeamUrl)
+		MvcResult mvcResult = mvc.perform(post(ProjectTeamUrl+"/invite")
 						.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
 						.contentType(MediaType.APPLICATION_JSON)
 						.characterEncoding(StandardCharsets.UTF_8)
@@ -270,5 +251,8 @@ class ProjectMasterIntegrationTest {
 				.andReturn();
 
 		//then
+		JsonNode jsonNode = objectMapper.readTree(mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8));
+		System.out.println("jsonNode = " + jsonNode);
+
 	}
 }

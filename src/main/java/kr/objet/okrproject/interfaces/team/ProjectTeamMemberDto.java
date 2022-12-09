@@ -19,8 +19,8 @@ public class ProjectTeamMemberDto {
 	@NoArgsConstructor
 	public static class saveRequest {
 		@Valid
-		@NotNull(message = "프로젝트 id는 필수 값입니다.")
-		@Schema(example = "프로젝트 id")
+		@NotNull(message = "프로젝트 token은 필수 값입니다.")
+		@Schema(example = "프로젝트 token")
 		private String projectToken;
 
 		@Valid
