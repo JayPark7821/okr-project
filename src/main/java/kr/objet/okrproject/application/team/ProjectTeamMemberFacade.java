@@ -1,5 +1,8 @@
 package kr.objet.okrproject.application.team;
 
+import kr.objet.okrproject.domain.project.service.ProjectMasterService;
+import kr.objet.okrproject.domain.team.service.ProjectTeamMemberService;
+import kr.objet.okrproject.domain.user.service.UserService;
 import kr.objet.okrproject.interfaces.team.ProjectTeamMemberDto;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +16,12 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class ProjectTeamMemberFacade {
 
+	private final ProjectMasterService projectMasterService;
+	private final ProjectTeamMemberService projectTeamMemberService;
+	private final UserService userService;
+
 	public ProjectTeamMemberDto.saveResponse inviteTeamMembers(ProjectTeamMemberCommand.InviteProjectTeamMember command, User user) {
+
 		return new ProjectTeamMemberDto.saveResponse();
 	}
 }

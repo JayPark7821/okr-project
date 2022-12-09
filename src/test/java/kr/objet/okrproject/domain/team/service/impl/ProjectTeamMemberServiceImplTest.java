@@ -39,7 +39,7 @@ class ProjectTeamMemberServiceImplTest {
 	@Test
 	void 팀원_등록_성공() throws Exception {
 		//given
-		ProjectTeamMemberCommand.RegisterProjectLeader command = ProjectTeamMemberCommandFixture.create();
+		ProjectTeamMemberCommand.RegisterProjectLeader command = ProjectTeamMemberCommandFixture.createLeader();
 		ProjectTeamMember projectTeamMember = command.toEntity();
 
 		given(projectTeamMemberStore.store(any())).willReturn(projectTeamMember);
