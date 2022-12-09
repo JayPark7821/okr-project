@@ -112,7 +112,7 @@ class ProjectMasterApiTest {
 			.andExpect(status().isBadRequest())
 			.andReturn();
 		//then
-		assertThat(mvcResult.getResponse().getContentAsString()).contains("종료 일짜가 지난 프로젝트입니다.");
+		assertThat(mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8)).contains("종료 일짜가 지난 프로젝트입니다.");
 	}
 
 }
