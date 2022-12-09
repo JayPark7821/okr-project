@@ -33,12 +33,12 @@ class ProjectTeamMemberServiceImplTest {
 	@BeforeEach
 	void init() {
 		MockitoAnnotations.openMocks(this);
-		sut = new ProjectTeamMemberServiceImpl(projectTeamMemberStore, projectTeamMemberReader);
+		sut = new ProjectTeamMemberServiceImpl(projectTeamMemberStore);
 	}
 
 	@Test
-	void 팀원_등록_성공 () throws Exception {
-	    //given
+	void 팀원_등록_성공() throws Exception {
+		//given
 		ProjectTeamMemberCommand.RegisterProjectTeamMember command = ProjectTeamMemberCommandFixture.create();
 		ProjectTeamMember projectTeamMember = command.toEntity();
 
