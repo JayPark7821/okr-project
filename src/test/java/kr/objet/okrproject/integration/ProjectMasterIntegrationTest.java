@@ -68,7 +68,7 @@ class ProjectMasterIntegrationTest {
 	private String token;
 	private final String ProjectUrl = "/api/v1/project";
 	private final String ProjectTeamUrl = "/api/v1/team";
-	private final String projectLeaderEmail = "user1671@naver.com";
+	private final String projectLeaderEmail = "main@naver.com";
 	private String projectToken;
 
 	@BeforeEach
@@ -238,7 +238,7 @@ class ProjectMasterIntegrationTest {
 	void 팀원_초대_성공() throws Exception {
 		//given
 		ProjectTeamMemberDto.saveRequest dto =
-				new ProjectTeamMemberDto.saveRequest(projectToken, List.of("user1671@naver.com", "user1342@naver.com"));
+				new ProjectTeamMemberDto.saveRequest(projectToken, List.of("user1342@naver.com", "user1343@naver.com"));
 		//when
 		MvcResult mvcResult = mvc.perform(post(ProjectTeamUrl+"/invite")
 						.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
@@ -252,7 +252,58 @@ class ProjectMasterIntegrationTest {
 
 		//then
 		JsonNode jsonNode = objectMapper.readTree(mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8));
-		System.out.println("jsonNode = " + jsonNode);
+		String addedEmails = jsonNode.get("result").get("addedEmailList").toString();
+		assertThat(addedEmails).contains("user1342@naver.com", "user1343@naver.com");
+	}
+
+
+	@Order(3)
+	@Test
+	void 팀원_초대_실패_리더가아님() throws Exception {
+		//given
+		ProjectTeamMemberDto.saveRequest dto =
+				new ProjectTeamMemberDto.saveRequest(projectToken, List.of("user1344@naver.com", "user1345@naver.com"));
+
+		String token = JwtTokenUtils.generateToken("user1342@naver.com", secretKey, expiredTimeMs);
+		//when
+		MvcResult mvcResult = mvc.perform(post(ProjectTeamUrl+"/invite")
+						.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+						.contentType(MediaType.APPLICATION_JSON)
+						.characterEncoding(StandardCharsets.UTF_8)
+						.content(objectMapper.writeValueAsBytes(dto))
+				)
+				.andDo(print())
+				.andExpect(status().isBadRequest())
+				.andReturn();
+
+		//then
+		JsonNode jsonNode = objectMapper.readTree(mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8));
+		assertThat(jsonNode.get("message").asText()).isEqualTo(ErrorCode.USER_IS_NOT_LEADER.getMessage());
+
+	}
+
+	@Order(3)
+	@Test
+	void 팀원_초대_실패_추가된팀원이없음() throws Exception {
+		//given
+		ProjectTeamMemberDto.saveRequest dto =
+				new ProjectTeamMemberDto.saveRequest(projectToken, List.of("user1342@naver.com", "user1343@naver.com"));
+
+
+		//when
+		MvcResult mvcResult = mvc.perform(post(ProjectTeamUrl+"/invite")
+						.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+						.contentType(MediaType.APPLICATION_JSON)
+						.characterEncoding(StandardCharsets.UTF_8)
+						.content(objectMapper.writeValueAsBytes(dto))
+				)
+				.andDo(print())
+				.andExpect(status().isBadRequest())
+				.andReturn();
+
+		//then
+		JsonNode jsonNode = objectMapper.readTree(mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8));
+		assertThat(jsonNode.get("message").asText()).isEqualTo(ErrorCode.NO_USERS_ADDED.getMessage());
 
 	}
 }

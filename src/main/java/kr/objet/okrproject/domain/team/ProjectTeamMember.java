@@ -24,7 +24,6 @@ import lombok.NoArgsConstructor;
 @IdClass(ProjectTeamMemberId.class)
 @Getter
 @Entity
-@EqualsAndHashCode
 public class ProjectTeamMember extends BaseEntity {
 	@Id
 	@ManyToOne(fetch = FetchType.LAZY)

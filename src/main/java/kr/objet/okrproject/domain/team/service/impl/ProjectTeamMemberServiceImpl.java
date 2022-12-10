@@ -37,7 +37,7 @@ public class ProjectTeamMemberServiceImpl implements ProjectTeamMemberService {
 	@Override
 	public void checkIsUserProjectLeader(List<ProjectTeamMember> teamMemberList, User user) {
 		teamMemberList.stream()
-				.filter(t -> t.getUser().equals(user)
+				.filter(t -> t.getUser().getEmail().equals(user.getEmail())
 						&& t.isTeamLeader())
 				.findAny()
 				.orElseThrow(() -> new OkrApplicationException(ErrorCode.USER_IS_NOT_LEADER));
