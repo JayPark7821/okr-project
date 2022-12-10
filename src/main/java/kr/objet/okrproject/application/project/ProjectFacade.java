@@ -28,9 +28,7 @@ public class ProjectFacade {
 		ProjectMaster projectMaster = projectMasterService.registerProjectMaster(command);
 
 		projectTeamMemberService.registerProjectTeamMember(
-			new ProjectTeamMemberCommand.RegisterProjectTeamMember(projectMaster,
-				ProjectRoleType.LEADER,
-				true,
+			new ProjectTeamMemberCommand.RegisterProjectLeader(projectMaster,
 				user
 			));
 

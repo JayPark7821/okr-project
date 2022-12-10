@@ -1,7 +1,5 @@
 package kr.objet.okrproject.domain.team.service;
 
-import java.util.List;
-
 import kr.objet.okrproject.domain.project.ProjectMaster;
 import kr.objet.okrproject.domain.team.ProjectRoleType;
 import kr.objet.okrproject.domain.team.ProjectTeamMember;
@@ -9,26 +7,22 @@ import kr.objet.okrproject.domain.user.User;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.util.List;
+
 public class ProjectTeamMemberCommand {
 
 	@Getter
-	public static class RegisterProjectTeamMember {
+	public static class RegisterProjectLeader {
 
 		private final ProjectMaster projectMaster;
-		private final ProjectRoleType roleType;
-		private final boolean isNew;
 		private final User user;
 
 		@Builder
-		public RegisterProjectTeamMember(
+		public RegisterProjectLeader(
 			ProjectMaster projectMaster,
-			ProjectRoleType roleType,
-			boolean isNew,
 			User user
 		) {
 			this.projectMaster = projectMaster;
-			this.roleType = roleType;
-			this.isNew = isNew;
 			this.user = user;
 		}
 
@@ -36,12 +30,35 @@ public class ProjectTeamMemberCommand {
 			return ProjectTeamMember.builder()
 				.projectMaster(this.projectMaster)
 				.user(this.user)
-				.projectRoleType(this.roleType)
-				.isNew(this.isNew)
+				.projectRoleType(ProjectRoleType.LEADER)
+				.isNew(true)
 				.build();
 		}
 	}
 
+	@Getter
+	public static class InviteProjectTeamMember{
+		private final String projectToken;
+		private final List<String> userEmails;
+
+		@Builder
+		public InviteProjectTeamMember(
+				String projectToken,
+				List<String> userEmails
+		) {
+			this.projectToken = projectToken;
+			this.userEmails = userEmails;
+		}
+
+		public ProjectTeamMember toEntity(ProjectMaster projectMaster,User user ) {
+			return ProjectTeamMember.builder()
+					.projectMaster(projectMaster)
+					.user(user)
+					.projectRoleType(ProjectRoleType.MEMBER)
+					.isNew(true)
+					.build();
+		}
+	}
 
 
 }

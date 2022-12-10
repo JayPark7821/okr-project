@@ -2,14 +2,11 @@ package kr.objet.okrproject.common.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import kr.objet.okrproject.common.Response;
-import kr.objet.okrproject.common.exception.ErrorCode;
-import kr.objet.okrproject.common.exception.OkrApplicationException;
-import kr.objet.okrproject.interfaces.user.UserDto;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -19,9 +16,15 @@ public class GlobalControllerAdvice {
 	@ExceptionHandler(OkrApplicationException.class)
 	public ResponseEntity<?> applicationHandler(OkrApplicationException e) {
 		log.error("Error occurs {}", e.toString());
-		return Response.error(e.getErrorCode().getStatus(), e.getMessage() );
-
+		return Response.error(e.getErrorCode().getStatus(), e.getMessage());
 	}
+
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	public ResponseEntity<?> applicationHandler(MethodArgumentNotValidException e) {
+		log.error("Error occurs {}", e.toString());
+		return Response.error(HttpStatus.BAD_REQUEST, e.getMessage());
+	}
+
 	@ExceptionHandler(RuntimeException.class)
 	public ResponseEntity<?> applicationHandler(RuntimeException e) {
 		log.error("Error occurs {}", e.toString());

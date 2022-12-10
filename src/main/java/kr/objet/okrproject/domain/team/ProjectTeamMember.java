@@ -56,4 +56,8 @@ public class ProjectTeamMember extends BaseEntity {
 		this.projectRoleType = projectRoleType;
 		this.isNew = isNew;
 	}
+
+	public boolean isTeamLeader() {
+		return this.projectRoleType.equals(ProjectRoleType.LEADER);
+	}
 }
