@@ -1,5 +1,6 @@
 package kr.objet.okrproject.infrastructure.user;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Component;
@@ -26,6 +27,11 @@ public class UserReaderImpl implements UserReader {
 	@Override
 	public Optional<User> findUserByUserId(String userId) {
 		return userRepository.findUserByUserId(userId);
+	}
+
+	@Override
+	public List<User> findUsersByEmails(List<String> emails) {
+		return userRepository.findUsersByEmails(emails);
 	}
 
 }

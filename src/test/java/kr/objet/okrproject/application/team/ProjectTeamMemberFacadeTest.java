@@ -3,6 +3,7 @@ package kr.objet.okrproject.application.team;
 import kr.objet.okrproject.application.user.fixture.UserFixture;
 import kr.objet.okrproject.domain.project.ProjectMaster;
 import kr.objet.okrproject.domain.project.service.ProjectMasterService;
+import kr.objet.okrproject.domain.project.service.fixture.ProjectMasterFixture;
 import kr.objet.okrproject.domain.team.service.ProjectTeamMemberCommand;
 import kr.objet.okrproject.domain.team.service.ProjectTeamMemberService;
 import kr.objet.okrproject.domain.team.service.fixture.ProjectTeamMemberCommandFixture;
@@ -18,11 +19,14 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
@@ -52,15 +56,19 @@ class ProjectTeamMemberFacadeTest {
     @Test
     void 신규_팀원_등록_성공() throws Exception {
         //given
-        ProjectTeamMemberCommand.InviteProjectTeamMember member
+        ProjectTeamMemberCommand.InviteProjectTeamMember command
                 = ProjectTeamMemberCommandFixture.createMember(1, 5);
         User user = UserFixture.create();
+        ProjectMaster projectMaster = ProjectMasterFixture.create();
 
-        given(projectMasterService.validateProjectMasterWithUser(member.getProjectToken(), user))
-                .willReturn();
+        given(projectMasterService.validateProjectMasterWithUser(command.getProjectToken(), user))
+                .willReturn(projectMaster);
+        doNothing().when(projectTeamMemberService).checkIsUserProjectLeader(projectMaster.getProjectTeamMember(), user);
+        given(userService.findUsersByEmails(command.getUserEmails()))
+                .willReturn(List.of(mock(User.class)));
 
         //when
-        assertDoesNotThrow(() -> sut.inviteTeamMembers(member,user));
+        assertDoesNotThrow(() -> sut.inviteTeamMembers(command,user));
 
         //then
         then(projectMasterService).should(times(1))

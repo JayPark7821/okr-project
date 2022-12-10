@@ -3,6 +3,11 @@ package kr.objet.okrproject.domain.project.service.impl;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
+import kr.objet.okrproject.application.user.fixture.UserFixture;
+import kr.objet.okrproject.common.exception.ErrorCode;
+import kr.objet.okrproject.common.exception.OkrApplicationException;
+import kr.objet.okrproject.common.utils.TokenGenerator;
+import kr.objet.okrproject.domain.user.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -17,6 +22,8 @@ import kr.objet.okrproject.domain.project.service.ProjectMasterCommand;
 import kr.objet.okrproject.domain.project.service.ProjectMasterReader;
 import kr.objet.okrproject.domain.project.service.ProjectMasterStore;
 import kr.objet.okrproject.domain.project.service.fixture.ProjectMasterCommandFixture;
+
+import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
@@ -33,7 +40,7 @@ class ProjectMasterServiceImplTest {
 	@BeforeEach
 	void init() {
 		MockitoAnnotations.openMocks(this);
-		sut = new ProjectMasterServiceImpl(projectMasterStore);
+		sut = new ProjectMasterServiceImpl(projectMasterStore,projectMasterReader);
 	}
 
 	@Test
@@ -51,4 +58,35 @@ class ProjectMasterServiceImplTest {
 		assertEquals(command.getName(), savedProjectMaster.getName());
 
 	}
+
+	@Test
+	void 유저가_속해있는_프로젝트_조회_성공() throws Exception {
+		//given
+		String token = TokenGenerator.randomCharacterWithPrefix("mst_");
+		User user = UserFixture.create();
+
+		given(projectMasterReader.findByProjectTokenAndEmail(eq(token),eq(user))).willReturn(Optional.of(mock(ProjectMaster.class)));
+
+		//when
+		ProjectMaster savedProjectMaster = assertDoesNotThrow(() -> sut.validateProjectMasterWithUser(token,user));
+	}
+
+	@Test
+	void 유저가_속해있는_프로젝트_조회_실패() throws Exception {
+		//given
+		String token = TokenGenerator.randomCharacterWithPrefix("mst_");
+		User user = UserFixture.create();
+
+		given(projectMasterReader.findByProjectTokenAndEmail(eq(token),eq(user))).willReturn(Optional.empty());
+
+		//when
+		OkrApplicationException exception = assertThrows(OkrApplicationException.class, () -> sut.validateProjectMasterWithUser(token, user));
+
+		//then
+		assertEquals(exception.getMessage(), ErrorCode.INVALID_PROJECT_TOKEN.getMessage());
+
+	}
+
+
+
 }

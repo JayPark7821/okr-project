@@ -22,7 +22,9 @@ public enum ErrorCode {
 	INVALID_PROJECT_SDT_EDT(HttpStatus.BAD_REQUEST, "프로젝트 시작 일자는 프로젝트 종료 일자 이전일 수 없습니다."),
 	INVALID_PROJECT_END_DATE(HttpStatus.BAD_REQUEST, "종료 일짜가 지난 프로젝트입니다."),
 	REQUIRED_DATE_VALUE(HttpStatus.BAD_REQUEST,"날짜는 필수 값 입니다." ),
-	CASTING_USER_FAILED(HttpStatus.INTERNAL_SERVER_ERROR,"Casting to User failed" );
+	CASTING_USER_FAILED(HttpStatus.INTERNAL_SERVER_ERROR,"Casting to User failed" ),
+	INVALID_PROJECT_TOKEN(HttpStatus.BAD_REQUEST, "잘못된 프로젝트 토큰 입니다."),
+	USER_IS_NOT_LEADER(HttpStatus.BAD_REQUEST, "해당 프로젝트의 리더만 팀원을 초대할 수 있습니다.");
 
 	private HttpStatus status;
 	private String message;
