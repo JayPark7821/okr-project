@@ -65,7 +65,7 @@ class ProjectFacadeTest {
 		then(projectMasterService).should(times(1))
 			.registerProjectMaster(any(ProjectMasterCommand.RegisterProjectMaster.class));
 		then(projectTeamMemberService).should(times(1))
-			.registerProjectTeamMember(any(ProjectTeamMemberCommand.RegisterProjectTeamMember.class));
+			.registerProjectTeamMember(any(ProjectTeamMemberCommand.RegisterProjectLeader.class));
 		then(projectKeyResultService).should(times(projectMasterCommand.getKeyResults().size()))
 			.registerProjectKeyResult(any(ProjectKeyResultCommand.RegisterProjectKeyResult.class));
 
