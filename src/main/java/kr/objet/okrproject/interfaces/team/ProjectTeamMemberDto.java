@@ -45,19 +45,11 @@ public class ProjectTeamMemberDto {
 	@Getter
 	public static class saveResponse {
 		private final String message;
-		private List<String> failedEmailList = new ArrayList<>();
-		private List<String> addedEmailList = new ArrayList<>();
+		private final List<String> addedEmailList;
 
-		public saveResponse() {
-			this.message = Notifications.PROJECT_TYPE_CHANGE.getMsg();
-		}
-
-		public void addEmailForAddedMember(String email) {
-			addedEmailList.add(email);
-		}
-
-		public void addEmailForFailedMember(String email) {
-			failedEmailList.add(email);
+		public saveResponse(String message, List<String> addedEmailList) {
+			this.message = message;
+			this.addedEmailList = addedEmailList;
 		}
 	}
 

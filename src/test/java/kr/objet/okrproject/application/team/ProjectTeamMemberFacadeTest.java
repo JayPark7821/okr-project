@@ -4,12 +4,15 @@ import kr.objet.okrproject.application.user.fixture.UserFixture;
 import kr.objet.okrproject.domain.project.ProjectMaster;
 import kr.objet.okrproject.domain.project.service.ProjectMasterService;
 import kr.objet.okrproject.domain.project.service.fixture.ProjectMasterFixture;
+import kr.objet.okrproject.domain.team.ProjectRoleType;
+import kr.objet.okrproject.domain.team.ProjectTeamMember;
+import kr.objet.okrproject.domain.team.ProjectTeamMemberSavedInfo;
 import kr.objet.okrproject.domain.team.service.ProjectTeamMemberCommand;
 import kr.objet.okrproject.domain.team.service.ProjectTeamMemberService;
 import kr.objet.okrproject.domain.team.service.fixture.ProjectTeamMemberCommandFixture;
+import kr.objet.okrproject.domain.team.service.fixture.ProjectTeamMemberFixture;
 import kr.objet.okrproject.domain.user.User;
 import kr.objet.okrproject.domain.user.service.UserService;
-import kr.objet.okrproject.interfaces.team.ProjectTeamMemberSaveDtoFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -60,19 +63,32 @@ class ProjectTeamMemberFacadeTest {
                 = ProjectTeamMemberCommandFixture.createMember(1, 5);
         User user = UserFixture.create();
         ProjectMaster projectMaster = ProjectMasterFixture.create();
+        ProjectTeamMember projectTeamMember = ProjectTeamMemberFixture.createMember(user, ProjectRoleType.LEADER, projectMaster);
 
         given(projectMasterService.validateProjectMasterWithUser(command.getProjectToken(), user))
                 .willReturn(projectMaster);
-        doNothing().when(projectTeamMemberService).checkIsUserProjectLeader(projectMaster.getProjectTeamMember(), user);
         given(userService.findUsersByEmails(command.getUserEmails()))
-                .willReturn(List.of(mock(User.class)));
+                .willReturn(List.of(user));
+        given(projectTeamMemberService.findTeamMembersByProjectMasterAndUsers(projectMaster, List.of(user)))
+                .willReturn(List.of(projectTeamMember));
+        given(projectTeamMemberService.checkUsersAndRegisterTeamMember(List.of(user), List.of(projectTeamMember), projectMaster))
+                .willReturn(mock(ProjectTeamMemberSavedInfo.class));
+        doNothing().when(projectTeamMemberService).checkIsUserProjectLeader(projectMaster.getProjectTeamMember(), user);
 
         //when
         assertDoesNotThrow(() -> sut.inviteTeamMembers(command,user));
 
         //then
         then(projectMasterService).should(times(1))
-                .validateProjectMasterWithUser(any(String.class), any(User.class));
+                .validateProjectMasterWithUser(command.getProjectToken(), user);
+        then(userService).should(times(1))
+                .findUsersByEmails(command.getUserEmails());
+        then(projectTeamMemberService).should(times(1))
+                .findTeamMembersByProjectMasterAndUsers(projectMaster, List.of(user));
+        then(projectTeamMemberService).should(times(1))
+                .checkUsersAndRegisterTeamMember(List.of(user), List.of(projectTeamMember), projectMaster);
+        then(projectTeamMemberService).should(times(1))
+                .checkIsUserProjectLeader(projectMaster.getProjectTeamMember(), user);
 
     }
 
