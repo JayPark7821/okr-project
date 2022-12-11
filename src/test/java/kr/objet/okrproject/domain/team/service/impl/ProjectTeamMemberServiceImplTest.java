@@ -47,8 +47,6 @@ class ProjectTeamMemberServiceImplTest {
 	@Mock
 	private ProjectTeamMemberReader projectTeamMemberReader;
 
-	@Captor
-	ArgumentCaptor<String> captor;
 
 	@BeforeEach
 	void init() {

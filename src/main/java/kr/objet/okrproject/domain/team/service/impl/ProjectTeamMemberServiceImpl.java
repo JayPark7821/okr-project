@@ -78,4 +78,13 @@ public class ProjectTeamMemberServiceImpl implements ProjectTeamMemberService {
 				new ProjectTeamMemberSavedInfo(addedEmailList, true):
 				new ProjectTeamMemberSavedInfo(addedEmailList, false);
 	}
+
+	@Override
+	public void validateEmailWithProject(String email, ProjectMaster projectMaster) {
+		if (projectMaster.getProjectTeamMember()
+				.stream()
+				.anyMatch(t -> t.getUser().getEmail().equals(email))) {
+			throw new OkrApplicationException(ErrorCode.USER_ALREADY_PROJECT_MEMBER);
+		}
+	}
 }

@@ -16,4 +16,6 @@ public interface ProjectTeamMemberService {
     List<ProjectTeamMember> findTeamMembersByProjectMasterAndUsers(ProjectMaster projectMaster, List<User> users);
 
 	ProjectTeamMemberSavedInfo checkUsersAndRegisterTeamMember(List<User> users, List<ProjectTeamMember> teamMembers, ProjectMaster projectMaster);
+
+	void validateEmailWithProject(String email, ProjectMaster projectMaster);
 }

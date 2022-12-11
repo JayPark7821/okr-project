@@ -14,4 +14,5 @@ public interface UserService {
 	User loadUserByEmail(String email);
 	List<User> findUsersByEmails(List<String> emails);
 
+	void validateUserWithEmail(String email);
 }

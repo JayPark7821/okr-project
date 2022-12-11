@@ -1,5 +1,7 @@
 package kr.objet.okrproject.application.team;
 
+import kr.objet.okrproject.common.exception.ErrorCode;
+import kr.objet.okrproject.common.exception.OkrApplicationException;
 import kr.objet.okrproject.domain.project.ProjectMaster;
 import kr.objet.okrproject.domain.project.service.ProjectMasterService;
 import kr.objet.okrproject.domain.team.ProjectTeamMember;
@@ -14,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -32,5 +35,12 @@ public class ProjectTeamMemberFacade {
 	 	List<ProjectTeamMember> teamMembers = projectTeamMemberService.findTeamMembersByProjectMasterAndUsers(projectMaster, users);
 
 		return projectTeamMemberService.checkUsersAndRegisterTeamMember(users, teamMembers, projectMaster).toDto();
+	}
+
+	public String validateEmail(String projectToken, String email, User user) {
+		ProjectMaster projectMaster = projectMasterService.validateProjectMasterWithUser(projectToken, user);
+		projectTeamMemberService.validateEmailWithProject(email, projectMaster);
+		userService.validateUserWithEmail(email);
+		return email;
 	}
 }
