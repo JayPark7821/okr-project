@@ -17,9 +17,9 @@ import javax.validation.constraints.Size;
 
 import kr.objet.okrproject.common.entity.BaseEntity;
 import kr.objet.okrproject.common.utils.TokenGenerator;
-import kr.objet.okrproject.domain.keyresult.ProjectKeyResult;
+import kr.objet.okrproject.domain.keyresult.KeyResult;
 import kr.objet.okrproject.domain.project.enums.ProjectType;
-import kr.objet.okrproject.domain.team.ProjectTeamMember;
+import kr.objet.okrproject.domain.team.TeamMember;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -39,10 +39,10 @@ public class ProjectMaster extends BaseEntity {
 	private String projectMasterToken;
 
 	@OneToMany(mappedBy = "projectMaster")
-	private List<ProjectTeamMember> projectTeamMember = new ArrayList<>();
+	private List<TeamMember> teamMember = new ArrayList<>();
 
 	@OneToMany(mappedBy = "projectMaster")
-	private List<ProjectKeyResult> projectKeyResults = new ArrayList<>();
+	private List<KeyResult> keyResults = new ArrayList<>();
 
 	@Column(name = "project_name")
 	@NotNull

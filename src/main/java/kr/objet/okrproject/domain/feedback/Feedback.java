@@ -17,7 +17,7 @@ import javax.validation.constraints.NotNull;
 
 import kr.objet.okrproject.common.entity.BaseEntity;
 import kr.objet.okrproject.domain.initiative.ProjectInitiative;
-import kr.objet.okrproject.domain.team.ProjectTeamMember;
+import kr.objet.okrproject.domain.team.TeamMember;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -42,7 +42,7 @@ public class Feedback extends BaseEntity {
             @JoinColumn(name = "user_seq", referencedColumnName = "user_seq", updatable = false),
             @JoinColumn(name = "project_id", referencedColumnName = "project_id", updatable = false)
     }, foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
-    private ProjectTeamMember projectTeamMember;
+    private TeamMember teamMember;
 
     @NotNull
     @Enumerated(EnumType.STRING)
@@ -62,9 +62,9 @@ public class Feedback extends BaseEntity {
     }
 
     @Builder
-    public Feedback(ProjectInitiative projectInitiative, ProjectTeamMember projectTeamMember, FeedbackType grade, String opinion) {
+    public Feedback(ProjectInitiative projectInitiative, TeamMember teamMember, FeedbackType grade, String opinion) {
         this.projectInitiative = projectInitiative;
-        this.projectTeamMember = projectTeamMember;
+        this.teamMember = teamMember;
         this.grade = grade;
         this.opinion = opinion;
         this.isChecked = false;
