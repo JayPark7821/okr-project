@@ -75,8 +75,7 @@ public class UserFacade {
 	private String generateTempPw() {
 		String uuid = UUID.randomUUID().toString();
 		System.out.println("uuid = " + uuid);
-		String initialPw = passwordEncoder.encode(uuid);
-		return initialPw;
+		return passwordEncoder.encode(uuid);
 
 	}
 

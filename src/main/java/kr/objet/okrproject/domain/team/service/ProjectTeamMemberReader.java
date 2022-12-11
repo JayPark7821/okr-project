@@ -8,4 +8,6 @@ import java.util.List;
 
 public interface ProjectTeamMemberReader {
     List<ProjectTeamMember> findTeamMembersByProjectMasterAndUsers(ProjectMaster projectMaster, List<User> users);
+
+    List<ProjectTeamMember> findTeamMembersByProjectId(Long projectId);
 }
