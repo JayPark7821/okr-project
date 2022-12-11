@@ -5,10 +5,7 @@ import javax.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kr.objet.okrproject.application.team.ProjectTeamMemberFacade;
@@ -31,18 +28,37 @@ public class ProjectTeamMemberApiController {
 
 	@PostMapping("/invite")
 	public ResponseEntity<Response<ProjectTeamMemberDto.saveResponse>> inviteTeamMembers(
-		@RequestBody @Valid ProjectTeamMemberDto.saveRequest requestDto,
-		Authentication authentication
+			@RequestBody @Valid ProjectTeamMemberDto.saveRequest requestDto,
+			Authentication authentication
 	) {
 
 		User user = ClassUtils.getSafeCastInstance(authentication.getPrincipal(), User.class)
-			.orElseThrow(() -> new OkrApplicationException(ErrorCode.CASTING_USER_FAILED));
+				.orElseThrow(() -> new OkrApplicationException(ErrorCode.CASTING_USER_FAILED));
 
 		return Response
-			.success(
-				HttpStatus.CREATED,
-				projectTeamMemberFacade.inviteTeamMembers(requestDto.toCommand(), user)
-			);
+				.success(
+						HttpStatus.CREATED,
+						projectTeamMemberFacade.inviteTeamMembers(requestDto.toCommand(), user)
+				);
+	}
+
+
+	@GetMapping("/invite/{projectToken}/{email}")
+	public ResponseEntity<Response<String>> inviteTeamMembers(
+			@PathVariable("projectToken") String projectToken,
+			@PathVariable("email") String email,
+			Authentication authentication
+	) {
+
+		User user = ClassUtils.getSafeCastInstance(authentication.getPrincipal(), User.class)
+				.orElseThrow(() -> new OkrApplicationException(ErrorCode.CASTING_USER_FAILED));
+
+		return Response
+				.success(
+						HttpStatus.OK,
+						projectTeamMemberFacade.validateEmail(projectToken, email, user)
+				);
+
 	}
 
 }

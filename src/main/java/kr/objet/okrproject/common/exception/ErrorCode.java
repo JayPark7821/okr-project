@@ -24,7 +24,11 @@ public enum ErrorCode {
 	REQUIRED_DATE_VALUE(HttpStatus.BAD_REQUEST,"날짜는 필수 값 입니다." ),
 	CASTING_USER_FAILED(HttpStatus.INTERNAL_SERVER_ERROR,"Casting to User failed" ),
 	INVALID_PROJECT_TOKEN(HttpStatus.BAD_REQUEST, "잘못된 프로젝트 토큰 입니다."),
-	USER_IS_NOT_LEADER(HttpStatus.BAD_REQUEST, "해당 프로젝트의 리더만 팀원을 초대할 수 있습니다.");
+	USER_IS_NOT_LEADER(HttpStatus.BAD_REQUEST, "해당 프로젝트의 리더만 팀원을 초대할 수 있습니다."),
+	NO_USERS_ADDED(HttpStatus.BAD_REQUEST,"신규로 추가된 사용자가 없습니다." ),
+	NOT_AVAIL_INVITE_MYSELF(HttpStatus.BAD_REQUEST, "자기 자신은 초대할 수 없습니다." ),
+	INVALID_USER_EMAIL(HttpStatus.BAD_REQUEST,"등록된 email이 없습니다." ),
+	USER_ALREADY_PROJECT_MEMBER(HttpStatus.BAD_REQUEST,"이미 해당 프로젝트 팀원 입니다." ),;
 
 	private HttpStatus status;
 	private String message;

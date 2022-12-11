@@ -1,5 +1,5 @@
 insert into user_table (user_seq, user_id,username, password, email, email_verified_yn, provider_type, role_type, job  )values
-    (  '1','testId1', 'testUser1','password','user1671@naver.com','Y','GOOGLE','USER','PRODUCER_CP' ),
+    (  '1','testId1', 'testUser1','password','main@naver.com','Y','GOOGLE','USER','PRODUCER_CP' ),
     (  '2','testId2', 'testUser2','password','user1342@naver.com','Y','GOOGLE','USER','PRODUCER_CP' ),
     (  '3','testId3', 'testUser3','password','user1343@naver.com','Y','GOOGLE','USER','PRODUCER_CP' ),
     (  '4','testId4', 'testUser4','password','user1344@naver.com','Y','GOOGLE','USER','PRODUCER_CP' ),

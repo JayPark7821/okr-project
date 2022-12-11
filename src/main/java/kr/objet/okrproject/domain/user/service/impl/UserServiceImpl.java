@@ -14,6 +14,7 @@ import kr.objet.okrproject.domain.user.service.UserStore;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -43,6 +44,12 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public List<User> findUsersByEmails(List<String> emails) {
 		return userReader.findUsersByEmails(emails);
+	}
+
+	@Override
+	public void validateUserWithEmail(String email) {
+		userReader.findUserByEmail(email)
+				.orElseThrow(() -> new OkrApplicationException(ErrorCode.INVALID_USER_EMAIL));
 	}
 
 	@Override
