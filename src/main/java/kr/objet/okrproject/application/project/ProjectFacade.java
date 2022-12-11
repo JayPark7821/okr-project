@@ -7,7 +7,6 @@ import kr.objet.okrproject.domain.keyresult.service.ProjectKeyResultService;
 import kr.objet.okrproject.domain.project.ProjectMaster;
 import kr.objet.okrproject.domain.project.service.ProjectMasterCommand;
 import kr.objet.okrproject.domain.project.service.ProjectMasterService;
-import kr.objet.okrproject.domain.team.ProjectRoleType;
 import kr.objet.okrproject.domain.team.service.ProjectTeamMemberCommand;
 import kr.objet.okrproject.domain.team.service.ProjectTeamMemberService;
 import kr.objet.okrproject.domain.user.User;
@@ -34,7 +33,7 @@ public class ProjectFacade {
 
 		command.getKeyResults().forEach(keyResult -> {
 			projectKeyResultService.registerProjectKeyResult(
-				new ProjectKeyResultCommand.RegisterProjectKeyResult(keyResult, projectMaster)
+				new ProjectKeyResultCommand.RegisterProjectKeyResultWithProject(keyResult, projectMaster)
 			);
 		});
 

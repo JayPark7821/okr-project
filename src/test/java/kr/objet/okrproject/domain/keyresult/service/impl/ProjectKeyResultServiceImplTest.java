@@ -4,7 +4,6 @@ import kr.objet.okrproject.domain.keyresult.ProjectKeyResult;
 import kr.objet.okrproject.domain.keyresult.service.ProjectKeyResultCommand;
 import kr.objet.okrproject.domain.keyresult.service.ProjectKeyResultStore;
 import kr.objet.okrproject.domain.keyresult.service.fixture.ProjectKeyResultCommandFixture;
-import kr.objet.okrproject.domain.project.service.impl.ProjectMasterServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -37,7 +36,7 @@ class ProjectKeyResultServiceImplTest {
     @Test
     void 키리절트_등록_성공() throws Exception {
         //given
-        ProjectKeyResultCommand.RegisterProjectKeyResult command = ProjectKeyResultCommandFixture.create();
+        ProjectKeyResultCommand.RegisterProjectKeyResultWithProject command = ProjectKeyResultCommandFixture.create();
         ProjectKeyResult projectKeyResult = command.toEntity();
         given(projectKeyResultStore.store(any())).willReturn(projectKeyResult);
 

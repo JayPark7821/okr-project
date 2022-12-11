@@ -7,12 +7,12 @@ import org.jeasy.random.EasyRandomParameters;
 import java.time.LocalDate;
 
 public class ProjectKeyResultCommandFixture {
-    public static ProjectKeyResultCommand.RegisterProjectKeyResult create() {
+    public static ProjectKeyResultCommand.RegisterProjectKeyResultWithProject create() {
         EasyRandomParameters param = new EasyRandomParameters()
                 .dateRange(LocalDate.of(2022, 1, 1),
                         LocalDate.of(2022, 12, 1))
                 .collectionSizeRange(0,5);
 
-        return new EasyRandom(param).nextObject(ProjectKeyResultCommand.RegisterProjectKeyResult.class);
+        return new EasyRandom(param).nextObject(ProjectKeyResultCommand.RegisterProjectKeyResultWithProject.class);
     }
 }

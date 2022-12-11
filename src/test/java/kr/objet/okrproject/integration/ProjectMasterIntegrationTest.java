@@ -9,8 +9,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import kr.objet.okrproject.interfaces.keyresult.ProjectKeyResultSaveDto;
 import kr.objet.okrproject.interfaces.team.ProjectTeamMemberDto;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,8 +70,9 @@ class ProjectMasterIntegrationTest {
 	private String token;
 	private final String ProjectUrl = "/api/v1/project";
 	private final String ProjectTeamUrl = "/api/v1/team";
+	private final String ProjectKeyResultUrl = "/api/v1/keyresult";
 	private final String projectLeaderEmail = "main@naver.com";
-	private String projectToken;
+	private ProjectMaster projectMaster;
 
 	@BeforeEach
 	void init() {
@@ -101,13 +104,13 @@ class ProjectMasterIntegrationTest {
 		//then
 		//TODO : 어떤식으로 검증???? Response객체
 		JsonNode jsonNode = objectMapper.readTree(mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8));
-		projectToken = jsonNode.get("result").asText();
+		String projectToken = jsonNode.get("result").asText();
 
 		Optional<ProjectMaster> projectMaster = projectMasterRepository
 				.findByProjectMasterToken(projectToken);
 		assertThat(projectMaster.isEmpty()).isFalse();
 		assertThat(projectMaster.get().getName()).isEqualTo(dto.getName());
-
+		this.projectMaster = projectMaster.get();
 		List<ProjectTeamMember> teamMember = projectTeamMemberRepository
 				.findProjectTeamMembersByUser(user);
 		assertThat(teamMember.size() > 0).isTrue();
@@ -238,7 +241,7 @@ class ProjectMasterIntegrationTest {
 	void 팀원_초대_성공() throws Exception {
 		//given
 		ProjectTeamMemberDto.saveRequest dto =
-				new ProjectTeamMemberDto.saveRequest(projectToken, List.of("user1342@naver.com", "user1343@naver.com"));
+				new ProjectTeamMemberDto.saveRequest(projectMaster.getProjectMasterToken(), List.of("user1342@naver.com", "user1343@naver.com"));
 		//when
 		MvcResult mvcResult = mvc.perform(post(ProjectTeamUrl + "/invite")
 						.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
@@ -253,6 +256,11 @@ class ProjectMasterIntegrationTest {
 		//then
 		JsonNode jsonNode = objectMapper.readTree(mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8));
 		String addedEmails = jsonNode.get("result").get("addedEmailList").toString();
+		List<ProjectTeamMember> teamMemberList = projectTeamMemberRepository.findTeamMembersByProjectId(this.projectMaster.getId());
+		List<String> memberEmailList = teamMemberList.stream()
+				.map(t -> t.getUser().getEmail())
+				.collect(Collectors.toList());
+		assertThat(memberEmailList).contains("user1342@naver.com", "user1343@naver.com");
 		assertThat(addedEmails).contains("user1342@naver.com", "user1343@naver.com");
 	}
 
@@ -262,7 +270,7 @@ class ProjectMasterIntegrationTest {
 	void 팀원_초대_실패_리더가아님() throws Exception {
 		//given
 		ProjectTeamMemberDto.saveRequest dto =
-				new ProjectTeamMemberDto.saveRequest(projectToken, List.of("user1342@naver.com", "user1343@naver.com"));
+				new ProjectTeamMemberDto.saveRequest(projectMaster.getProjectMasterToken(), List.of("user1342@naver.com", "user1343@naver.com"));
 
 		String token = JwtTokenUtils.generateToken("user1342@naver.com", secretKey, expiredTimeMs);
 		//when
@@ -287,7 +295,7 @@ class ProjectMasterIntegrationTest {
 	void 팀원_초대_실패_추가된팀원이없음() throws Exception {
 		//given
 		ProjectTeamMemberDto.saveRequest dto =
-				new ProjectTeamMemberDto.saveRequest(projectToken, List.of("user1342@naver.com", "user1343@naver.com"));
+				new ProjectTeamMemberDto.saveRequest(projectMaster.getProjectMasterToken(), List.of("user1342@naver.com", "user1343@naver.com"));
 
 
 		//when
@@ -314,7 +322,7 @@ class ProjectMasterIntegrationTest {
 		String email = "user1344@naver.com";
 
 		//when
-		MvcResult mvcResult = mvc.perform(get(ProjectTeamUrl + "/invite/" +projectToken+"/"+ email)
+		MvcResult mvcResult = mvc.perform(get(ProjectTeamUrl + "/invite/" + projectMaster.getProjectMasterToken()  +"/"+ email)
 						.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
 						.contentType(MediaType.APPLICATION_JSON)
 						.characterEncoding(StandardCharsets.UTF_8)
@@ -337,7 +345,7 @@ class ProjectMasterIntegrationTest {
 		String email = "user1342@naver.com";
 
 		//when
-		MvcResult mvcResult = mvc.perform(get(ProjectTeamUrl + "/invite/" +projectToken+"/"+ email)
+		MvcResult mvcResult = mvc.perform(get(ProjectTeamUrl + "/invite/" + projectMaster.getProjectMasterToken()  +"/"+ email)
 						.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
 						.contentType(MediaType.APPLICATION_JSON)
 						.characterEncoding(StandardCharsets.UTF_8)
@@ -358,7 +366,7 @@ class ProjectMasterIntegrationTest {
 		//given
 
 		//when
-		MvcResult mvcResult = mvc.perform(get(ProjectTeamUrl + "/invite/" +projectToken+"/"+ projectLeaderEmail)
+		MvcResult mvcResult = mvc.perform(get(ProjectTeamUrl + "/invite/" + projectMaster.getProjectMasterToken() +"/"+ projectLeaderEmail)
 						.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
 						.contentType(MediaType.APPLICATION_JSON)
 						.characterEncoding(StandardCharsets.UTF_8)
@@ -380,7 +388,7 @@ class ProjectMasterIntegrationTest {
 		String email = "noUser@naver.com";
 
 		//when
-		MvcResult mvcResult = mvc.perform(get(ProjectTeamUrl + "/invite/" +projectToken+"/"+ email)
+		MvcResult mvcResult = mvc.perform(get(ProjectTeamUrl + "/invite/" + projectMaster.getProjectMasterToken()  +"/"+ email)
 						.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
 						.contentType(MediaType.APPLICATION_JSON)
 						.characterEncoding(StandardCharsets.UTF_8)
@@ -394,4 +402,59 @@ class ProjectMasterIntegrationTest {
 		String message = jsonNode.get("message").toString();
 		assertThat(message).contains(ErrorCode.INVALID_USER_EMAIL.getMessage());
 	}
+
+	@Order(6)
+	@Test
+	void keyResult_등록_성공() throws Exception {
+		//given
+		ProjectKeyResultSaveDto dto = ProjectKeyResultSaveDto.builder()
+				.name("testKeyResult")
+				.projectToken(projectMaster.getProjectMasterToken())
+				.build();
+		//when
+		MvcResult mvcResult = mvc.perform(post(ProjectKeyResultUrl)
+						.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+						.contentType(MediaType.APPLICATION_JSON)
+						.characterEncoding(StandardCharsets.UTF_8)
+						.content(objectMapper.writeValueAsBytes(dto))
+				)
+				.andDo(print())
+				.andExpect(status().isCreated())
+				.andReturn();
+
+		//then
+		JsonNode jsonNode = objectMapper.readTree(mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8));
+		String keyResultToken = jsonNode.get("result").asText();
+		ProjectKeyResult savedKeyResult = projectKeyResultRepository.findByProjectKeyResultToken(keyResultToken).orElseThrow();
+		assertThat(savedKeyResult.getName()).isEqualTo(dto.getName());
+	}
+
+	@Order(7)
+	@Test
+	void keyResult_등록_실패_요청_유저가_해당_프로젝트에_맴버X() throws Exception {
+		//given
+		ProjectKeyResultSaveDto dto = ProjectKeyResultSaveDto.builder()
+				.name("testKeyResult")
+				.projectToken(projectMaster.getProjectMasterToken())
+				.build();
+
+		String token = JwtTokenUtils.generateToken("user1344@naver.com", secretKey, expiredTimeMs);
+
+		//when
+		MvcResult mvcResult = mvc.perform(post(ProjectKeyResultUrl)
+						.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+						.contentType(MediaType.APPLICATION_JSON)
+						.characterEncoding(StandardCharsets.UTF_8)
+						.content(objectMapper.writeValueAsBytes(dto))
+				)
+				.andDo(print())
+				.andExpect(status().isBadRequest())
+				.andReturn();
+
+		//then
+		JsonNode jsonNode = objectMapper.readTree(mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8));
+		String message = jsonNode.get("message").toString();
+		assertThat(message).contains(ErrorCode.INVALID_PROJECT_TOKEN.getMessage());
+	}
+
 }

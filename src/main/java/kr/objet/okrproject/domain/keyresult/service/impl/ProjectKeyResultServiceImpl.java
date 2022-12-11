@@ -2,7 +2,6 @@ package kr.objet.okrproject.domain.keyresult.service.impl;
 
 import kr.objet.okrproject.domain.keyresult.ProjectKeyResult;
 import kr.objet.okrproject.domain.keyresult.service.ProjectKeyResultCommand;
-import kr.objet.okrproject.domain.keyresult.service.ProjectKeyResultReader;
 import kr.objet.okrproject.domain.keyresult.service.ProjectKeyResultService;
 import kr.objet.okrproject.domain.keyresult.service.ProjectKeyResultStore;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +16,7 @@ public class ProjectKeyResultServiceImpl implements ProjectKeyResultService {
     private final ProjectKeyResultStore projectKeyResultStore;
 
     @Override
-    public ProjectKeyResult registerProjectKeyResult(ProjectKeyResultCommand.RegisterProjectKeyResult command) {
+    public ProjectKeyResult registerProjectKeyResult(ProjectKeyResultCommand.RegisterProjectKeyResultWithProject command) {
         ProjectKeyResult projectKeyResult = command.toEntity();
         return projectKeyResultStore.store(projectKeyResult);
     }
