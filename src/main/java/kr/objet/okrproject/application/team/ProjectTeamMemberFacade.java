@@ -14,6 +14,7 @@ import kr.objet.okrproject.domain.team.service.ProjectTeamMemberCommand;
 import kr.objet.okrproject.domain.user.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
@@ -39,7 +40,12 @@ public class ProjectTeamMemberFacade {
 
 	public String validateEmail(String projectToken, String email, User user) {
 		ProjectMaster projectMaster = projectMasterService.validateProjectMasterWithUser(projectToken, user);
-		projectTeamMemberService.validateEmailWithProject(email, projectMaster);
+
+		if (user.getEmail().equals(email)) {
+			throw new OkrApplicationException(ErrorCode.NOT_AVAIL_INVITE_MYSELF);
+		}
+
+		projectTeamMemberService.validateEmailWithProject(email,projectMaster.getId());
 		userService.validateUserWithEmail(email);
 		return email;
 	}

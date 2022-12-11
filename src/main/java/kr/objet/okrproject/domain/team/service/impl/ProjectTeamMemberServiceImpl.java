@@ -80,9 +80,9 @@ public class ProjectTeamMemberServiceImpl implements ProjectTeamMemberService {
 	}
 
 	@Override
-	public void validateEmailWithProject(String email, ProjectMaster projectMaster) {
-		if (projectMaster.getProjectTeamMember()
-				.stream()
+	public void validateEmailWithProject(String email, Long projectId) {
+		List<ProjectTeamMember> teamMemberList = projectTeamMemberReader.findTeamMembersByProjectId(projectId);
+		if (teamMemberList.stream()
 				.anyMatch(t -> t.getUser().getEmail().equals(email))) {
 			throw new OkrApplicationException(ErrorCode.USER_ALREADY_PROJECT_MEMBER);
 		}

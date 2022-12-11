@@ -262,7 +262,7 @@ class ProjectMasterIntegrationTest {
 	void 팀원_초대_실패_리더가아님() throws Exception {
 		//given
 		ProjectTeamMemberDto.saveRequest dto =
-				new ProjectTeamMemberDto.saveRequest(projectToken, List.of("user1344@naver.com", "user1345@naver.com"));
+				new ProjectTeamMemberDto.saveRequest(projectToken, List.of("user1342@naver.com", "user1343@naver.com"));
 
 		String token = JwtTokenUtils.generateToken("user1342@naver.com", secretKey, expiredTimeMs);
 		//when
@@ -326,7 +326,7 @@ class ProjectMasterIntegrationTest {
 		//then
 		JsonNode jsonNode = objectMapper.readTree(mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8));
 		String addedEmails = jsonNode.get("result").toString();
-		assertThat(addedEmails).isEqualTo(email);
+		assertThat(addedEmails).contains(email);
 	}
 
 
@@ -334,7 +334,7 @@ class ProjectMasterIntegrationTest {
 	@Test
 	void 팀원_초대_이메일_유효성검사_가입불가_이미_프로젝트에_초대된_유저() throws Exception {
 		//given
-		String email = "user1344@naver.com";
+		String email = "user1342@naver.com";
 
 		//when
 		MvcResult mvcResult = mvc.perform(get(ProjectTeamUrl + "/invite/" +projectToken+"/"+ email)
@@ -343,42 +343,41 @@ class ProjectMasterIntegrationTest {
 						.characterEncoding(StandardCharsets.UTF_8)
 				)
 				.andDo(print())
-				.andExpect(status().isOk())
+				.andExpect(status().isBadRequest())
 				.andReturn();
 
 		//then
 		JsonNode jsonNode = objectMapper.readTree(mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8));
 		String message = jsonNode.get("message").toString();
-		assertThat(message).isEqualTo(ErrorCode.USER_ALREADY_PROJECT_MEMBER.getMessage());
+		assertThat(message).contains(ErrorCode.USER_ALREADY_PROJECT_MEMBER.getMessage());
 	}
 
 	@Order(5)
 	@Test
 	void 팀원_초대_이메일_유효성검사_가입불가_자기자신() throws Exception {
 		//given
-		String email = "user1344@naver.com";
 
 		//when
-		MvcResult mvcResult = mvc.perform(get(ProjectTeamUrl + "/invite/" +projectToken+"/"+ email)
+		MvcResult mvcResult = mvc.perform(get(ProjectTeamUrl + "/invite/" +projectToken+"/"+ projectLeaderEmail)
 						.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
 						.contentType(MediaType.APPLICATION_JSON)
 						.characterEncoding(StandardCharsets.UTF_8)
 				)
 				.andDo(print())
-				.andExpect(status().isOk())
+				.andExpect(status().isBadRequest())
 				.andReturn();
 
 		//then
 		JsonNode jsonNode = objectMapper.readTree(mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8));
 		String message = jsonNode.get("message").toString();
-		assertThat(message).isEqualTo(ErrorCode.NOT_AVAIL_INVITE_MYSELF.getMessage());
+		assertThat(message).contains(ErrorCode.NOT_AVAIL_INVITE_MYSELF.getMessage());
 	}
 
 	@Order(5)
 	@Test
 	void 팀원_초대_이메일_유효성검사_가입불가_가입된_유저X() throws Exception {
 		//given
-		String email = "user1344@naver.com";
+		String email = "noUser@naver.com";
 
 		//when
 		MvcResult mvcResult = mvc.perform(get(ProjectTeamUrl + "/invite/" +projectToken+"/"+ email)
@@ -387,12 +386,12 @@ class ProjectMasterIntegrationTest {
 						.characterEncoding(StandardCharsets.UTF_8)
 				)
 				.andDo(print())
-				.andExpect(status().isOk())
+				.andExpect(status().isBadRequest())
 				.andReturn();
 
 		//then
 		JsonNode jsonNode = objectMapper.readTree(mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8));
 		String message = jsonNode.get("message").toString();
-		assertThat(message).isEqualTo(ErrorCode.INVALID_USER_EMAIL.getMessage());
+		assertThat(message).contains(ErrorCode.INVALID_USER_EMAIL.getMessage());
 	}
 }

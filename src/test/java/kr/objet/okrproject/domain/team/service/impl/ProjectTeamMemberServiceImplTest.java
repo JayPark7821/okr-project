@@ -158,6 +158,50 @@ class ProjectTeamMemberServiceImplTest {
 		assertThat(exception.getMessage()).isEqualTo(ErrorCode.NO_USERS_ADDED.getMessage());
 	}
 
+	@Test
+	void 프로젝트에_이미_가입되어있는_이메일()throws Exception {
+		//given
+		String email = "test@test.com";
+		ProjectMaster projectMaster = ProjectMasterFixture.create();
+		User alreadyTeamMember = UserFixture.create(1L,email);
+		ProjectTeamMember member = ProjectTeamMemberFixture.createMember(alreadyTeamMember, ProjectRoleType.MEMBER,projectMaster);
+
+		given(projectTeamMemberReader.findTeamMembersByProjectId(projectMaster.getId()))
+				.willReturn(List.of(member));
+
+		//when
+		OkrApplicationException exception = assertThrows(OkrApplicationException.class,
+			() -> sut.validateEmailWithProject(
+					email,
+					projectMaster.getId()
+			)
+		);
+
+		//then
+		assertThat(exception.getMessage()).isEqualTo(ErrorCode.USER_ALREADY_PROJECT_MEMBER.getMessage());
+	}
+
+
+	@Test
+	void 이메일_검증_성공()throws Exception {
+		//given
+		String email = "test@test.com";
+		ProjectMaster projectMaster = ProjectMasterFixture.create();
+		User alreadyTeamMember = UserFixture.create();
+		ProjectTeamMember member = ProjectTeamMemberFixture.createMember(alreadyTeamMember, ProjectRoleType.MEMBER,projectMaster);
+
+		given(projectTeamMemberReader.findTeamMembersByProjectId(projectMaster.getId()))
+				.willReturn(List.of(member));
+
+		//when
+		assertDoesNotThrow(
+			() -> sut.validateEmailWithProject(
+				email,
+				projectMaster.getId()
+			)
+		);
+	}
+
 
 
 }

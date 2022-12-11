@@ -21,4 +21,9 @@ public class ProjectTeamMemberReaderImpl implements ProjectTeamMemberReader {
     public List<ProjectTeamMember> findTeamMembersByProjectMasterAndUsers(ProjectMaster projectMaster, List<User> users) {
         return projectTeamMemberRepository.findTeamMembersByProjectMasterAndUsers(projectMaster, users);
     }
+
+    @Override
+    public List<ProjectTeamMember> findTeamMembersByProjectId(Long projectId) {
+        return projectTeamMemberRepository.findTeamMembersByProjectId(projectId);
+    }
 }

@@ -26,4 +26,11 @@ public interface ProjectTeamMemberRepository extends JpaRepository<ProjectTeamMe
 			@Param("projectMaster") ProjectMaster projectMaster,
 			@Param("users") List<User> users
 	);
+
+	@Query("select t " +
+			"from ProjectTeamMember t " +
+			"join t.projectMaster m " +
+			"join fetch t.user u " +
+			"where m.id = :projectId ")
+	List<ProjectTeamMember> findTeamMembersByProjectId(@Param("projectId") Long projectId);
 }
