@@ -13,14 +13,14 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import kr.objet.okrproject.application.user.fixture.UserFixture;
-import kr.objet.okrproject.domain.keyresult.service.ProjectKeyResultCommand;
-import kr.objet.okrproject.domain.keyresult.service.ProjectKeyResultService;
+import kr.objet.okrproject.domain.keyresult.service.KeyResultCommand;
+import kr.objet.okrproject.domain.keyresult.service.KeyResultService;
 import kr.objet.okrproject.domain.project.ProjectMaster;
 import kr.objet.okrproject.domain.project.service.ProjectMasterCommand;
 import kr.objet.okrproject.domain.project.service.ProjectMasterService;
 import kr.objet.okrproject.domain.project.service.fixture.ProjectMasterCommandFixture;
-import kr.objet.okrproject.domain.team.service.ProjectTeamMemberCommand;
-import kr.objet.okrproject.domain.team.service.ProjectTeamMemberService;
+import kr.objet.okrproject.domain.team.service.TeamMemberCommand;
+import kr.objet.okrproject.domain.team.service.TeamMemberService;
 import kr.objet.okrproject.domain.user.User;
 
 @ExtendWith(MockitoExtension.class)
@@ -33,18 +33,18 @@ class ProjectFacadeTest {
 	private ProjectMasterService projectMasterService;
 
 	@Mock
-	private ProjectTeamMemberService projectTeamMemberService;
+	private TeamMemberService teamMemberService;
 
 	@Mock
-	private ProjectKeyResultService projectKeyResultService;
+	private KeyResultService keyResultService;
 
 	@BeforeEach
 	void init() {
 		MockitoAnnotations.openMocks(this);
 		sut = new ProjectFacade(
 			projectMasterService,
-			projectTeamMemberService,
-			projectKeyResultService
+				teamMemberService,
+				keyResultService
 		);
 	}
 
@@ -64,10 +64,10 @@ class ProjectFacadeTest {
 		//then
 		then(projectMasterService).should(times(1))
 			.registerProjectMaster(any(ProjectMasterCommand.RegisterProjectMaster.class));
-		then(projectTeamMemberService).should(times(1))
-			.registerProjectTeamMember(any(ProjectTeamMemberCommand.RegisterProjectLeader.class));
-		then(projectKeyResultService).should(times(projectMasterCommand.getKeyResults().size()))
-			.registerProjectKeyResult(any(ProjectKeyResultCommand.RegisterProjectKeyResultWithProject.class));
+		then(teamMemberService).should(times(1))
+			.registerProjectTeamMember(any(TeamMemberCommand.RegisterProjectLeader.class));
+		then(keyResultService).should(times(projectMasterCommand.getKeyResults().size()))
+			.registerKeyResult(any(KeyResultCommand.RegisterKeyResultWithProject.class));
 
 	}
 }

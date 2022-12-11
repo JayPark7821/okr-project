@@ -16,7 +16,7 @@ public interface ProjectMasterRepository extends JpaRepository<ProjectMaster, Lo
 
 	@Query("select p " +
 			"from ProjectMaster p " +
-			"join fetch p.projectTeamMember t " +
+			"join fetch p.teamMember t " +
 			"join fetch t.user u " +
 			"where p.projectMasterToken =:token " +
 			"and t.user =:user " )
