@@ -21,8 +21,8 @@ import javax.validation.constraints.Size;
 
 import kr.objet.okrproject.common.entity.BaseEntity;
 import kr.objet.okrproject.domain.feedback.Feedback;
-import kr.objet.okrproject.domain.keyresult.ProjectKeyResult;
-import kr.objet.okrproject.domain.team.ProjectTeamMember;
+import kr.objet.okrproject.domain.keyresult.KeyResult;
+import kr.objet.okrproject.domain.team.TeamMember;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -40,14 +40,14 @@ public class ProjectInitiative extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "project_key_result_id" , updatable = false)
-    private ProjectKeyResult projectKeyResult;
+    private KeyResult keyResult;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = true)
     @JoinColumns(value = {
             @JoinColumn(name = "user_seq", referencedColumnName = "user_seq", updatable = false),
             @JoinColumn(name = "project_id", referencedColumnName = "project_id", updatable = false)
     }, foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
-    private ProjectTeamMember projectTeamMember;
+    private TeamMember teamMember;
 
     @OneToMany(mappedBy = "projectInitiative" )
     private List<Feedback> feedback = new ArrayList<>();
@@ -75,9 +75,9 @@ public class ProjectInitiative extends BaseEntity {
     private boolean done;
 
     @Builder
-    public ProjectInitiative( ProjectKeyResult projectKeyResult, ProjectTeamMember projectTeamMember, String name, LocalDate edt, LocalDate sdt,String detail, boolean done) {
-        this.projectKeyResult = projectKeyResult;
-        this.projectTeamMember = projectTeamMember;
+    public ProjectInitiative(KeyResult keyResult, TeamMember teamMember, String name, LocalDate edt, LocalDate sdt, String detail, boolean done) {
+        this.keyResult = keyResult;
+        this.teamMember = teamMember;
         this.name = name;
         this.edt = edt;
         this.sdt = sdt;
