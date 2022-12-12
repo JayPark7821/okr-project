@@ -1,32 +1,45 @@
 package kr.objet.okrproject.domain.project.service.fixture;
 
-import kr.objet.okrproject.domain.project.ProjectMaster;
-import kr.objet.okrproject.domain.team.TeamMember;
-import org.jeasy.random.EasyRandom;
-import org.jeasy.random.EasyRandomParameters;
+import static org.jeasy.random.FieldPredicates.*;
 
 import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.util.function.Predicate;
 
-import static org.jeasy.random.FieldPredicates.*;
+import org.jeasy.random.EasyRandom;
+import org.jeasy.random.EasyRandomParameters;
+
+import kr.objet.okrproject.domain.project.ProjectMaster;
+import kr.objet.okrproject.domain.team.TeamMember;
 
 public class ProjectMasterFixture {
 	public static ProjectMaster create() {
 		EasyRandomParameters param = new EasyRandomParameters()
-			.dateRange(LocalDate.of(2022, 1, 1),
-				LocalDate.of(2022, 12, 1));
+			.dateRange(LocalDate.now().minusDays(200),
+				LocalDate.now());
 		return new EasyRandom(param).nextObject(ProjectMaster.class);
 	}
 
 	public static ProjectMaster create(TeamMember teamMember) {
-		Predicate<Field> teamMemberPredicate = named("projectTeamMember").and(ofType(TeamMember.class))
-				.and(inClass(ProjectMaster.class));
+		Predicate<Field> teamMemberPredicate = named("teamMember").and(ofType(TeamMember.class))
+			.and(inClass(ProjectMaster.class));
 
 		EasyRandomParameters param = new EasyRandomParameters()
-				.dateRange(LocalDate.of(2022, 1, 1),
-						   LocalDate.of(2022, 12, 1))
-				.randomize(teamMemberPredicate, () -> teamMember);
+			.dateRange(LocalDate.now().minusDays(200),
+				LocalDate.now())
+			.randomize(teamMemberPredicate, () -> teamMember);
+		return new EasyRandom(param).nextObject(ProjectMaster.class);
+	}
+
+	public static ProjectMaster create(LocalDate sdt, LocalDate edt) {
+		Predicate<Field> endDatePredicate = named("endDate").and(ofType(LocalDate.class))
+			.and(inClass(ProjectMaster.class));
+		Predicate<Field> startDatePredicate = named("startDate").and(ofType(LocalDate.class))
+			.and(inClass(ProjectMaster.class));
+
+		EasyRandomParameters param = new EasyRandomParameters()
+			.randomize(endDatePredicate, () -> edt)
+			.randomize(startDatePredicate, () -> sdt);
 		return new EasyRandom(param).nextObject(ProjectMaster.class);
 	}
 }

@@ -1,19 +1,19 @@
 package kr.objet.okrproject.domain.project.service.impl;
 
-import kr.objet.okrproject.common.exception.ErrorCode;
-import kr.objet.okrproject.common.exception.OkrApplicationException;
-import kr.objet.okrproject.domain.project.service.ProjectMasterReader;
-import kr.objet.okrproject.domain.user.User;
+import java.time.LocalDate;
+
 import org.springframework.stereotype.Service;
 
+import kr.objet.okrproject.common.exception.ErrorCode;
+import kr.objet.okrproject.common.exception.OkrApplicationException;
 import kr.objet.okrproject.domain.project.ProjectMaster;
 import kr.objet.okrproject.domain.project.service.ProjectMasterCommand;
+import kr.objet.okrproject.domain.project.service.ProjectMasterReader;
 import kr.objet.okrproject.domain.project.service.ProjectMasterService;
 import kr.objet.okrproject.domain.project.service.ProjectMasterStore;
+import kr.objet.okrproject.domain.user.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -31,7 +31,14 @@ public class ProjectMasterServiceImpl implements ProjectMasterService {
 
 	@Override
 	public ProjectMaster validateProjectMasterWithUser(String projectToken, User user) {
-		return projectMasterReader.findByProjectTokenAndEmail(projectToken, user)
-				.orElseThrow(() -> new OkrApplicationException(ErrorCode.INVALID_PROJECT_TOKEN));
+		return projectMasterReader.findByProjectTokenAndUser(projectToken, user)
+			.orElseThrow(() -> new OkrApplicationException(ErrorCode.INVALID_PROJECT_TOKEN));
+	}
+
+	@Override
+	public void validateProjectDueDate(ProjectMaster projectMaster) {
+		if (LocalDate.now().isAfter(projectMaster.getEndDate())) {
+			throw new OkrApplicationException(ErrorCode.INVALID_PROJECT_END_DATE);
+		}
 	}
 }
