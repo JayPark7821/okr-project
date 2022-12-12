@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.objet.okrproject.common.exception.ErrorCode;
 import kr.objet.okrproject.common.utils.JwtTokenUtils;
-import kr.objet.okrproject.domain.initiative.Initiative;
 import kr.objet.okrproject.domain.keyresult.KeyResult;
 import kr.objet.okrproject.domain.project.ProjectMaster;
 import kr.objet.okrproject.domain.team.ProjectRoleType;
@@ -15,7 +14,6 @@ import kr.objet.okrproject.infrastructure.keyresult.KeyResultRepository;
 import kr.objet.okrproject.infrastructure.project.ProjectMasterRepository;
 import kr.objet.okrproject.infrastructure.team.TeamMemberRepository;
 import kr.objet.okrproject.infrastructure.user.UserRepository;
-import kr.objet.okrproject.interfaces.initiative.InitiativeSaveDto;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -258,166 +256,5 @@ class ProjectMasterIntegrationTest {
 		assertThat(jsonNode.get("message").asText()).contains(ErrorCode.INVALID_PROJECT_SDT_EDT.getMessage());
 	}
 
-
-
-	@Order(8)
-	@Test
-	void initiative_등록_성공() throws Exception {
-		// given
-		String initiativeName = "ini name";
-		String initiativeDetail = "initiative detail";
-		InitiativeSaveDto dto = InitiativeSaveDto.builder()
-			.keyResultToken(keyResults.get(0).getKeyResultToken())
-			.edt(projectEdt)
-			.sdt(projectSdt)
-			.detail(initiativeDetail)
-			.name(initiativeName)
-			.build();
-
-		//when
-		MvcResult mvcResult = mvc.perform(post(initiativeUrl)
-				.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
-				.contentType(MediaType.APPLICATION_JSON)
-				.characterEncoding(StandardCharsets.UTF_8)
-				.content(objectMapper.writeValueAsBytes(dto))
-			)
-			.andDo(print())
-			.andExpect(status().isCreated())
-			.andReturn();
-		//then
-		JsonNode jsonNode = objectMapper.readTree(mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8));
-		String initiativeToken = jsonNode.get("result").asText();
-
-		Initiative initiative = initiativeRepository.findByInitiativeToken(initiativeToken).orElseThrow();
-		assertThat(initiative.getName()).isEqualTo(initiativeName);
-		assertThat(initiative.getDetail()).isEqualTo(initiativeDetail);
-	}
-
-	@Order(8)
-	@Test
-	void initiative_등록_실패_프로젝트참여자X() throws Exception {
-		// given
-		String initiativeName = "ini name";
-		String initiativeDetail = "initiative detail";
-		InitiativeSaveDto dto = InitiativeSaveDto.builder()
-			.keyResultToken(keyResults.get(0).getKeyResultToken())
-			.edt(projectEdt)
-			.sdt(projectSdt)
-			.detail(initiativeDetail)
-			.name(initiativeName)
-			.build();
-
-		String token = JwtTokenUtils.generateToken("user3@naver.com", secretKey, expiredTimeMs);
-
-		//when
-		MvcResult mvcResult = mvc.perform(post(initiativeUrl)
-				.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
-				.contentType(MediaType.APPLICATION_JSON)
-				.characterEncoding(StandardCharsets.UTF_8)
-				.content(objectMapper.writeValueAsBytes(dto))
-			)
-			.andDo(print())
-			.andExpect(status().isBadRequest())
-			.andReturn();
-		//then
-		JsonNode jsonNode = objectMapper.readTree(mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8));
-		String message = jsonNode.get("message").asText();
-		assertThat(message).isEqualTo(ErrorCode.INVALID_KEYRESULT_TOKEN.getMessage());
-
-	}
-
-	@Order(8)
-	@Test
-	void initiative_등록_실패_마감일이_오늘_이전() throws Exception {
-
-		// given
-		String initiativeName = "ini name";
-		String initiativeDetail = "initiative detail";
-		InitiativeSaveDto dto = InitiativeSaveDto.builder()
-			.keyResultToken(keyResults.get(0).getKeyResultToken())
-			.edt(ProjectSaveDtoFixture.getDateString(-1, "yyyy-MM-dd"))
-			.sdt(projectSdt)
-			.detail(initiativeDetail)
-			.name(initiativeName)
-			.build();
-
-		//when
-		MvcResult mvcResult = mvc.perform(post(initiativeUrl)
-				.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
-				.contentType(MediaType.APPLICATION_JSON)
-				.characterEncoding(StandardCharsets.UTF_8)
-				.content(objectMapper.writeValueAsBytes(dto))
-			)
-			.andDo(print())
-			.andExpect(status().isBadRequest())
-			.andReturn();
-		//then
-		JsonNode jsonNode = objectMapper.readTree(mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8));
-		String message = jsonNode.get("message").asText();
-		assertThat(message).isEqualTo(ErrorCode.INVALID_END_DATE_FOR_INITIATIVE.getMessage());
-
-	}
-
-	@Order(8)
-	@Test
-	void initiative_등록_실패_마감일이_시작일_이전() throws Exception {
-		// given
-		String initiativeName = "ini name";
-		String initiativeDetail = "initiative detail";
-		InitiativeSaveDto dto = InitiativeSaveDto.builder()
-			.keyResultToken(keyResults.get(0).getKeyResultToken())
-			.edt(ProjectSaveDtoFixture.getDateString(0, "yyyy-MM-dd"))
-			.sdt(ProjectSaveDtoFixture.getDateString(1, "yyyy-MM-dd"))
-			.detail(initiativeDetail)
-			.name(initiativeName)
-			.build();
-
-		//when
-		MvcResult mvcResult = mvc.perform(post(initiativeUrl)
-				.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
-				.contentType(MediaType.APPLICATION_JSON)
-				.characterEncoding(StandardCharsets.UTF_8)
-				.content(objectMapper.writeValueAsBytes(dto))
-			)
-			.andDo(print())
-			.andExpect(status().isBadRequest())
-			.andReturn();
-		//then
-		JsonNode jsonNode = objectMapper.readTree(mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8));
-		String message = jsonNode.get("message").asText();
-		assertThat(message).isEqualTo(ErrorCode.INVALID_END_DATE_FOR_INITIATIVE_SDT.getMessage());
-
-	}
-
-	@Order(8)
-	@Test
-	void initiative_등록_실패_마감일이_프로젝트_기간_사이X() throws Exception {
-		// given
-		String initiativeName = "ini name";
-		String initiativeDetail = "initiative detail";
-		InitiativeSaveDto dto = InitiativeSaveDto.builder()
-			.keyResultToken(keyResults.get(0).getKeyResultToken())
-			.edt(ProjectSaveDtoFixture.getDateString(-6, "yyyy-MM-dd"))
-			.sdt(ProjectSaveDtoFixture.getDateString(-10, "yyyy-MM-dd"))
-			.detail(initiativeDetail)
-			.name(initiativeName)
-			.build();
-
-		//when
-		MvcResult mvcResult = mvc.perform(post(initiativeUrl)
-				.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
-				.contentType(MediaType.APPLICATION_JSON)
-				.characterEncoding(StandardCharsets.UTF_8)
-				.content(objectMapper.writeValueAsBytes(dto))
-			)
-			.andDo(print())
-			.andExpect(status().isBadRequest())
-			.andReturn();
-		//then
-		JsonNode jsonNode = objectMapper.readTree(mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8));
-		String message = jsonNode.get("message").asText();
-		assertThat(message).isEqualTo(ErrorCode.INVALID_INITIATIVE_END_DATE.getMessage());
-
-	}
 
 }
