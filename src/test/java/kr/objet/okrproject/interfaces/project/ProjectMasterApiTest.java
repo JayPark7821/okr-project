@@ -1,6 +1,5 @@
 package kr.objet.okrproject.interfaces.project;
 
-import static kr.objet.okrproject.interfaces.project.ProjectSaveDtoFixture.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -31,20 +30,24 @@ import kr.objet.okrproject.domain.user.User;
 @WebMvcTest(controllers = ProjectMasterApiController.class)
 class ProjectMasterApiTest {
 
+	private final String url = "/api/v1/project";
 	@Autowired
 	ObjectMapper objectMapper;
 	@Autowired
 	MockMvc mvc;
 	@MockBean
 	private ProjectFacade projectFacade;
-	private final String url = "/api/v1/project";
 
 	@Test
 	@WithMockCustomUser(seq = 1L, email = "test@test.com")
 	void 프로젝트_등록_성공() throws Exception {
 		//given
-		ProjectSaveDto projectSaveDto = getProjectSaveDto(5, 0, 3, 3, "yyyy-MM-dd");
-
+		ProjectSaveDto projectSaveDto = ProjectSaveDtoFixture.create(
+			ProjectSaveDtoFixture.getDateString(-5, "yyyy-MM-dd"),
+			ProjectSaveDtoFixture.getDateString(0, "yyyy-MM-dd"),
+			3,
+			3
+		);
 		//when
 		mvc.perform(post(url)
 				.contentType(MediaType.APPLICATION_JSON)
@@ -64,8 +67,12 @@ class ProjectMasterApiTest {
 	@Test
 	void 프로젝트_등록_실패_권한없음() throws Exception {
 		//given
-		ProjectSaveDto projectSaveDto = getProjectSaveDto(5, 0, 3, 3, "yyyy-MM-dd");
-
+		ProjectSaveDto projectSaveDto = ProjectSaveDtoFixture.create(
+			ProjectSaveDtoFixture.getDateString(-5, "yyyy-MM-dd"),
+			ProjectSaveDtoFixture.getDateString(0, "yyyy-MM-dd"),
+			3,
+			3
+		);
 		//when
 
 		mvc.perform(post(url)
@@ -82,8 +89,12 @@ class ProjectMasterApiTest {
 	@WithMockCustomUser(seq = 1L, email = "test@test.com")
 	void 프로젝트_등록_실패_keyResult_3개_초과() throws Exception {
 		//given
-		ProjectSaveDto projectSaveDto = getProjectSaveDto(5, 0, 5, 5, "yyyy-MM-dd");
-
+		ProjectSaveDto projectSaveDto = ProjectSaveDtoFixture.create(
+			ProjectSaveDtoFixture.getDateString(-5, "yyyy-MM-dd"),
+			ProjectSaveDtoFixture.getDateString(0, "yyyy-MM-dd"),
+			5,
+			5
+		);
 		//when
 		mvc.perform(post(url)
 				.contentType(MediaType.APPLICATION_JSON)
@@ -99,8 +110,12 @@ class ProjectMasterApiTest {
 	@WithMockCustomUser(seq = 1L, email = "test@test.com")
 	void 프로젝트_등록_실패_프로젝트_종료일이_오늘이전() throws Exception {
 		//given
-		ProjectSaveDto projectSaveDto = getProjectSaveDto(5, 1, 0, 3, "yyyy-MM-dd");
-
+		ProjectSaveDto projectSaveDto = ProjectSaveDtoFixture.create(
+			ProjectSaveDtoFixture.getDateString(-5, "yyyy-MM-dd"),
+			ProjectSaveDtoFixture.getDateString(-1, "yyyy-MM-dd"),
+			0,
+			3
+		);
 		//when
 		MvcResult mvcResult = mvc.perform(post(url)
 				.contentType(MediaType.APPLICATION_JSON)

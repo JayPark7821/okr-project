@@ -59,10 +59,10 @@ public class ProjectMaster extends BaseEntity {
 	@Enumerated(EnumType.STRING)
 	private ProjectType type;
 
-	@Column(name = "project_object")
+	@Column(name = "project_objective")
 	@NotNull
 	@Size(max = 50)
-	private String object;
+	private String objective;
 
 	private double progress;
 
@@ -74,14 +74,20 @@ public class ProjectMaster extends BaseEntity {
 		this.type = ProjectType.TEAM;
 	}
 
+	public String addTeamMember(TeamMember teamMember) {
+		this.teamMember.add(teamMember);
+		return teamMember.getUser().getEmail();
+	}
+
 	@Builder
-	public ProjectMaster(String name, LocalDate startDate, LocalDate endDate, ProjectType type, String object, double progress) {
+	public ProjectMaster(String name, LocalDate startDate, LocalDate endDate, ProjectType type, String objective,
+		double progress) {
 		this.projectMasterToken = TokenGenerator.randomCharacterWithPrefix(PROJECT_MASTER_PREFIX);
 		this.name = name;
 		this.startDate = startDate;
 		this.endDate = endDate;
 		this.type = ProjectType.TEAM;
-		this.object = object;
+		this.objective = objective;
 		this.progress = progress;
 	}
 

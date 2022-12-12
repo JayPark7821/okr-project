@@ -7,7 +7,7 @@ public interface ProjectMasterService {
 
 	ProjectMaster registerProjectMaster(ProjectMasterCommand.RegisterProjectMaster command);
 
-    ProjectMaster validateProjectMasterWithUser(String projectToken, User user);
+	ProjectMaster validateProjectMasterWithUser(String projectToken, User user);
 
-
+	void validateProjectDueDate(ProjectMaster projectMaster);
 }
