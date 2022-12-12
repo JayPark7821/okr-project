@@ -1,37 +1,7 @@
 package kr.objet.okrproject.interfaces.project;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayNameGeneration;
-import org.junit.jupiter.api.DisplayNameGenerator;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.TestMethodOrder;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import kr.objet.okrproject.common.exception.ErrorCode;
 import kr.objet.okrproject.common.utils.JwtTokenUtils;
 import kr.objet.okrproject.domain.initiative.Initiative;
@@ -46,10 +16,26 @@ import kr.objet.okrproject.infrastructure.project.ProjectMasterRepository;
 import kr.objet.okrproject.infrastructure.team.TeamMemberRepository;
 import kr.objet.okrproject.infrastructure.user.UserRepository;
 import kr.objet.okrproject.interfaces.initiative.InitiativeSaveDto;
-import kr.objet.okrproject.interfaces.keyresult.KeyResultSaveDto;
-import kr.objet.okrproject.interfaces.project.ProjectSaveDto;
-import kr.objet.okrproject.interfaces.project.ProjectSaveDtoFixture;
-import kr.objet.okrproject.interfaces.team.TeamMemberDto;
+import org.junit.jupiter.api.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -273,60 +259,6 @@ class ProjectMasterIntegrationTest {
 	}
 
 
-
-	@Order(6)
-	@Test
-	void keyResult_등록_성공() throws Exception {
-		//given
-		KeyResultSaveDto dto = KeyResultSaveDto.builder()
-			.name("testKeyResult")
-			.projectToken(projectMaster.getProjectMasterToken())
-			.build();
-		//when
-		MvcResult mvcResult = mvc.perform(post(keyResultUrl)
-				.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
-				.contentType(MediaType.APPLICATION_JSON)
-				.characterEncoding(StandardCharsets.UTF_8)
-				.content(objectMapper.writeValueAsBytes(dto))
-			)
-			.andDo(print())
-			.andExpect(status().isCreated())
-			.andReturn();
-
-		//then
-		JsonNode jsonNode = objectMapper.readTree(mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8));
-		String keyResultToken = jsonNode.get("result").asText();
-		KeyResult savedKeyResult = keyResultRepository.findByKeyResultToken(keyResultToken).orElseThrow();
-		assertThat(savedKeyResult.getName()).isEqualTo(dto.getName());
-	}
-
-	@Order(7)
-	@Test
-	void keyResult_등록_실패_요청_유저가_해당_프로젝트에_맴버X() throws Exception {
-		//given
-		KeyResultSaveDto dto = KeyResultSaveDto.builder()
-			.name("testKeyResult")
-			.projectToken(projectMaster.getProjectMasterToken())
-			.build();
-
-		String token = JwtTokenUtils.generateToken("user3@naver.com", secretKey, expiredTimeMs);
-
-		//when
-		MvcResult mvcResult = mvc.perform(post(keyResultUrl)
-				.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
-				.contentType(MediaType.APPLICATION_JSON)
-				.characterEncoding(StandardCharsets.UTF_8)
-				.content(objectMapper.writeValueAsBytes(dto))
-			)
-			.andDo(print())
-			.andExpect(status().isBadRequest())
-			.andReturn();
-
-		//then
-		JsonNode jsonNode = objectMapper.readTree(mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8));
-		String message = jsonNode.get("message").toString();
-		assertThat(message).contains(ErrorCode.INVALID_PROJECT_TOKEN.getMessage());
-	}
 
 	@Order(8)
 	@Test
