@@ -36,7 +36,7 @@ public class ProjectMasterCommand {
 				.startDate(this.sdt)
 				.endDate(this.edt)
 				.type(ProjectType.SINGLE)
-				.object(this.objective)
+				.objective(this.objective)
 				.progress(0)
 				.build();
 

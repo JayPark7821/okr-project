@@ -14,7 +14,7 @@ import org.junit.jupiter.api.DisplayNameGenerator;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 public class ProjectSaveDtoFixture {
-	private static ProjectSaveDto create(String sdt, String edt, int min, int max) {
+	public static ProjectSaveDto create(String sdt, String edt, int min, int max) {
 		Predicate<Field> sdtPredicate = named("sdt").and(ofType(String.class))
 			.and(inClass(ProjectSaveDto.class));
 		Predicate<Field> edtPredicate = named("edt").and(ofType(String.class))
@@ -22,19 +22,19 @@ public class ProjectSaveDtoFixture {
 
 		EasyRandomParameters param = new EasyRandomParameters()
 			.collectionSizeRange(min, max)
-			.dateRange(LocalDate.of(2022, 1, 1),
-				LocalDate.of(2022, 12, 1))
+			.dateRange(LocalDate.now().minusDays(200),
+				LocalDate.now())
 			.randomize(sdtPredicate, () -> sdt)
 			.randomize(edtPredicate, () -> edt);
 		return new EasyRandom(param).nextObject(ProjectSaveDto.class);
 	}
 
-	public static ProjectSaveDto getProjectSaveDto(int sdtDays, int edtDays, int min, int max, String pattern) {
+	public static String getDateString(int calcDays, String pattern) {
+		if (calcDays < 0) {
+			return LocalDate.now().minusDays(calcDays * -1).format(DateTimeFormatter.ofPattern(pattern));
+		} else {
+			return LocalDate.now().plusDays(calcDays).format(DateTimeFormatter.ofPattern(pattern));
+		}
 
-		String sdt = LocalDate.now().minusDays(sdtDays).format(DateTimeFormatter.ofPattern(pattern));
-		String edt = LocalDate.now().minusDays(edtDays).format(DateTimeFormatter.ofPattern(pattern));
-
-		return create(sdt, edt, min, max);
 	}
-
 }
