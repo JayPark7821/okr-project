@@ -41,15 +41,23 @@ public class ProjectFacade {
 		SortType sortType,
 		String includeFinishedProjectYN,
 		User user,
-		Pageable page) {
+		Pageable page
+	) {
 
 		Page<ProjectMaster> results =
 			projectMasterService.retrieveProject(sortType, includeFinishedProjectYN, user, page);
 		return results.map(r -> new ProjectMasterInfo.Response(r, user.getEmail()));
 	}
 
-	private void registerKeyResultsFromCommand(ProjectMasterCommand.RegisterProjectMaster command,
-		ProjectMaster projectMaster) {
+	public ProjectMasterInfo.DetailResponse searchProjectDetail(String projectToken, User user) {
+		ProjectMaster result = projectMasterService.retrieveProjectDetail(projectToken, user);
+		return null;
+	}
+
+	private void registerKeyResultsFromCommand(
+		ProjectMasterCommand.RegisterProjectMaster command,
+		ProjectMaster projectMaster
+	) {
 		command.getKeyResults().forEach(keyResult -> {
 			keyResultService.registerKeyResult(
 				new KeyResultCommand.RegisterKeyResultWithProject(keyResult, projectMaster)

@@ -12,6 +12,9 @@ import kr.objet.okrproject.domain.user.User;
 
 @Repository
 public interface ProjectMasterRepository extends JpaRepository<ProjectMaster, Long> {
+
+	Optional<ProjectMaster> findProjectDetailByProjectMasterTokenAndUser(String projectToken, User user);
+
 	Optional<ProjectMaster> findByProjectMasterToken(String token);
 
 	@Query("select p " +

@@ -14,7 +14,7 @@ public class ProjectMasterInfo {
 	@Getter
 	public static class Response {
 
-		private final Long id;
+		private final String projectToken;
 		private final String name;
 		private final String objective;
 		private final boolean newProject;
@@ -26,7 +26,7 @@ public class ProjectMasterInfo {
 		private final String projectType;
 
 		public Response(ProjectMaster entity, String email) {
-			this.id = entity.getId();
+			this.projectToken = entity.getProjectMasterToken();
 			this.name = entity.getName();
 			this.objective = entity.getObjective();
 			this.progress = entity.getProgress();
@@ -44,5 +44,8 @@ public class ProjectMasterInfo {
 				.map(TeamMember::isNew)
 				.orElseThrow(() -> new OkrApplicationException(ErrorCode.INVALID_USER_INFO));
 		}
+	}
+
+	public static class DetailResponse {
 	}
 }

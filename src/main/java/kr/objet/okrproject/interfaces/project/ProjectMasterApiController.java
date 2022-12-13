@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +19,7 @@ import kr.objet.okrproject.common.Response;
 import kr.objet.okrproject.common.exception.ErrorCode;
 import kr.objet.okrproject.common.exception.OkrApplicationException;
 import kr.objet.okrproject.common.utils.ClassUtils;
+import kr.objet.okrproject.domain.project.ProjectMasterInfo;
 import kr.objet.okrproject.domain.user.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -77,6 +79,23 @@ public class ProjectMasterApiController {
 		} else {
 			throw new OkrApplicationException(ErrorCode.INVALID_FINISHED_RPOJECT_YN);
 		}
+	}
 
+	@GetMapping("/{projectId}")
+	public ResponseEntity<Response<ProjectMasterDto.Response>> searchProjectDetail(
+		@PathVariable("projectToken") String projectToken,
+		Authentication authentication
+	) {
+
+		User user = ClassUtils.getSafeCastInstance(authentication.getPrincipal(), User.class)
+			.orElseThrow(() -> new OkrApplicationException(ErrorCode.CASTING_USER_FAILED));
+
+		ProjectMasterInfo.DetailResponse response = projectFacade.searchProjectDetail(projectToken, user);
+
+		return Response
+			.success(
+				HttpStatus.OK,
+				null
+			);
 	}
 }

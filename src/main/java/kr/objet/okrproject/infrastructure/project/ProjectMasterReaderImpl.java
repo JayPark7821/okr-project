@@ -35,4 +35,11 @@ public class ProjectMasterReaderImpl implements ProjectMasterReader {
 	) {
 		return projectMasterQueryRepository.retrieveProject(sortType, includeFinishedProjectYN, user, page);
 	}
+
+	@Override
+	public ProjectMaster retrieveProjectDetail(String projectToken, User user) {
+		Optional<ProjectMaster> result =
+			projectMasterRepository.findProjectDetailByProjectMasterTokenAndUser(projectToken, user);
+		return null;
+	}
 }

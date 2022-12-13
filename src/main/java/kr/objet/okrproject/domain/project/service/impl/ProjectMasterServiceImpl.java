@@ -54,4 +54,9 @@ public class ProjectMasterServiceImpl implements ProjectMasterService {
 	) {
 		return projectMasterReader.retrieveProject(sortType, includeFinishedProjectYN, user, page);
 	}
+
+	@Override
+	public ProjectMaster retrieveProjectDetail(String projectToken, User user) {
+		return projectMasterReader.retrieveProjectDetail(projectToken, user);
+	}
 }

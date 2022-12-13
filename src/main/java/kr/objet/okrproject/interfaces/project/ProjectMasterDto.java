@@ -3,6 +3,7 @@ package kr.objet.okrproject.interfaces.project;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -12,8 +13,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import kr.objet.okrproject.common.exception.ErrorCode;
 import kr.objet.okrproject.common.exception.OkrApplicationException;
 import kr.objet.okrproject.common.utils.DateValid;
+import kr.objet.okrproject.domain.keyresult.KeyResult;
+import kr.objet.okrproject.domain.project.ProjectMaster;
 import kr.objet.okrproject.domain.project.ProjectMasterInfo;
 import kr.objet.okrproject.domain.project.service.ProjectMasterCommand;
+import kr.objet.okrproject.domain.user.User;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -88,8 +92,8 @@ public class ProjectMasterDto {
 	@NoArgsConstructor
 	public static class Response {
 
-		@Schema(description = "프로젝트 id", example = "125")
-		private Long id;
+		@Schema(description = "프로젝트 토큰", example = "125")
+		private String projectToken;
 
 		@Schema(description = "프로젝트 명", example = "OKR 프로젝트")
 		private String name;
@@ -119,7 +123,7 @@ public class ProjectMasterDto {
 		private String projectType;
 
 		public Response(ProjectMasterInfo.Response response) {
-			this.id = response.getId();
+			this.projectToken = response.getProjectToken();
 			this.name = response.getName();
 			this.objective = response.getObjective();
 			this.newProject = response.isNewProject();
@@ -130,5 +134,79 @@ public class ProjectMasterDto {
 			this.teamMemberProfileImages = response.getTeamMemberProfileImages();
 			this.projectType = response.getProjectType();
 		}
+	}
+
+	@Getter
+	@NoArgsConstructor
+	public static class DetailResponse {
+
+		@Schema(description = "프로젝트 토큰", example = "123")
+		private String projectToken;
+
+		@Schema(description = "프로젝트 명", example = "OKR프로젝트")
+		private String projectName;
+
+		@Schema(description = "프로젝트 objective", example = "OKR 기반 일정관리 어플을 출시하자!")
+		private String projectObjective;
+
+		@Schema(description = "프로젝트 시작일자.", example = "2022.09.03")
+		private LocalDate projectStartDt;
+
+		@Schema(description = "프로젝트 종료.", example = "2022.10.03")
+		private LocalDate projectEndDt;
+
+		@Schema(description = "key result list", example = "[{name}]")
+		private List<ProjectKeyResultResponseDto> keyResult;
+
+		private List<UserInfoResponseDto> teamMemberInfoList;
+
+		@Schema(description = "프로젝트 타입", example = "SINGLE, TEAM")
+		private String projectType;
+
+		public DetailResponse(ProjectMaster entity) {
+			this.projectToken = entity.getProjectMasterToken();
+			this.projectName = entity.getName();
+			this.projectObjective = entity.getObjective();
+			this.projectStartDt = entity.getStartDate();
+			this.projectEndDt = entity.getEndDate();
+			this.projectType = entity.getType().getCode();
+			this.teamMemberInfoList = entity.getTeamMember()
+				.stream()
+				.map(t -> new UserInfoResponseDto(t.getUser()))
+				.collect(Collectors.toList());
+			this.keyResult = entity.getKeyResults()
+				.stream()
+				.map(ProjectKeyResultResponseDto::new)
+				.collect(Collectors.toList());
+		}
+
+		private static class ProjectKeyResultResponseDto {
+
+			private String keyResultToken;
+			private String keyResultName;
+
+			public ProjectKeyResultResponseDto(KeyResult keyResult) {
+				this.keyResultToken = keyResult.getKeyResultToken();
+				this.keyResultName = keyResult.getName();
+			}
+		}
+
+		private static class UserInfoResponseDto {
+			@Schema(description = "유저명", example = "홍길동")
+			private String userName;
+
+			@Schema(description = "이미지url", example = "~~~~~")
+			private String profileImageUrl;
+
+			@Schema(description = "대표분야", example = "백엔드 개발자")
+			private String jobField;
+
+			public UserInfoResponseDto(User user) {
+				this.userName = user.getUsername();
+				this.profileImageUrl = user.getProfileImageUrl();
+				this.jobField = user.getJobField().getTitle();
+			}
+		}
+
 	}
 }
