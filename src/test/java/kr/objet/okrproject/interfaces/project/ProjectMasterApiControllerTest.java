@@ -14,6 +14,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.web.servlet.MockMvc;
@@ -22,13 +24,14 @@ import org.springframework.test.web.servlet.MvcResult;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import kr.objet.okrproject.application.project.ProjectFacade;
+import kr.objet.okrproject.common.exception.ErrorCode;
 import kr.objet.okrproject.config.WithMockCustomUser;
 import kr.objet.okrproject.domain.project.service.ProjectMasterCommand;
 import kr.objet.okrproject.domain.user.User;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @WebMvcTest(controllers = ProjectMasterApiController.class)
-class ProjectMasterApiTest {
+class ProjectMasterApiControllerTest {
 
 	private final String url = "/api/v1/project";
 	@Autowired
@@ -42,7 +45,7 @@ class ProjectMasterApiTest {
 	@WithMockCustomUser(seq = 1L, email = "test@test.com")
 	void 프로젝트_등록_성공() throws Exception {
 		//given
-		ProjectSaveDto projectSaveDto = ProjectSaveDtoFixture.create(
+		ProjectMasterDto.Save projectSaveDto = ProjectSaveDtoFixture.create(
 			ProjectSaveDtoFixture.getDateString(-5, "yyyy-MM-dd"),
 			ProjectSaveDtoFixture.getDateString(0, "yyyy-MM-dd"),
 			3,
@@ -67,7 +70,7 @@ class ProjectMasterApiTest {
 	@Test
 	void 프로젝트_등록_실패_권한없음() throws Exception {
 		//given
-		ProjectSaveDto projectSaveDto = ProjectSaveDtoFixture.create(
+		ProjectMasterDto.Save projectSaveDto = ProjectSaveDtoFixture.create(
 			ProjectSaveDtoFixture.getDateString(-5, "yyyy-MM-dd"),
 			ProjectSaveDtoFixture.getDateString(0, "yyyy-MM-dd"),
 			3,
@@ -89,7 +92,7 @@ class ProjectMasterApiTest {
 	@WithMockCustomUser(seq = 1L, email = "test@test.com")
 	void 프로젝트_등록_실패_keyResult_3개_초과() throws Exception {
 		//given
-		ProjectSaveDto projectSaveDto = ProjectSaveDtoFixture.create(
+		ProjectMasterDto.Save projectSaveDto = ProjectSaveDtoFixture.create(
 			ProjectSaveDtoFixture.getDateString(-5, "yyyy-MM-dd"),
 			ProjectSaveDtoFixture.getDateString(0, "yyyy-MM-dd"),
 			5,
@@ -108,26 +111,64 @@ class ProjectMasterApiTest {
 
 	@Test
 	@WithMockCustomUser(seq = 1L, email = "test@test.com")
-	void 프로젝트_등록_실패_프로젝트_종료일이_오늘이전() throws Exception {
+	void 프로젝트_조회_성공() throws Exception {
 		//given
-		ProjectSaveDto projectSaveDto = ProjectSaveDtoFixture.create(
-			ProjectSaveDtoFixture.getDateString(-5, "yyyy-MM-dd"),
-			ProjectSaveDtoFixture.getDateString(-1, "yyyy-MM-dd"),
-			0,
-			3
-		);
+		SortType sort = SortType.RECENTLY_CREATE;
+		String includeFinishedProjectYN = "Y";
+		given(projectFacade.retrieveProject(eq(sort), eq(includeFinishedProjectYN), any(User.class),
+			any(Pageable.class))).
+			willReturn(mock(Page.class));
 		//when
-		MvcResult mvcResult = mvc.perform(post(url)
+		MvcResult mvcResult = mvc.perform(
+				get(url + "?sortType=" + sort.getCode() + "&includeFinishedProjectYN=" + includeFinishedProjectYN)
+					.contentType(MediaType.APPLICATION_JSON)
+					.characterEncoding(StandardCharsets.UTF_8)
+					.with(SecurityMockMvcRequestPostProcessors.csrf())
+			)
+			.andDo(print())
+			.andExpect(status().isOk())
+			.andReturn();
+	}
+
+	@Test
+	@WithMockCustomUser(seq = 1L, email = "test@test.com")
+	void 프로젝트_조회_실패_종료프로젝트_검색조건_오류() throws Exception {
+		//given
+		SortType sort = SortType.RECENTLY_CREATE;
+		//when
+		MvcResult mvcResult = mvc.perform(get(url + "?sortType=" + sort.getCode() + "&includeFinishedProjectYN=a")
 				.contentType(MediaType.APPLICATION_JSON)
 				.characterEncoding(StandardCharsets.UTF_8)
-				.content(objectMapper.writeValueAsBytes(projectSaveDto))
 				.with(SecurityMockMvcRequestPostProcessors.csrf())
 			)
 			.andDo(print())
 			.andExpect(status().isBadRequest())
 			.andReturn();
+
 		//then
-		assertThat(mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8)).contains("종료 일짜가 지난 프로젝트입니다.");
+		assertThat(mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8))
+			.contains(ErrorCode.INVALID_FINISHED_RPOJECT_YN.getMessage());
+
+	}
+
+	@Test
+	@WithMockCustomUser(seq = 1L, email = "test@test.com")
+	void 프로젝트_조회_실패_정렬타입_검색조건_오류() throws Exception {
+		//given
+
+		//when
+		MvcResult mvcResult = mvc.perform(get(url + "?sortType=" + "gereytfff" + "&includeFinishedProjectYN=Y")
+				.contentType(MediaType.APPLICATION_JSON)
+				.characterEncoding(StandardCharsets.UTF_8)
+				.with(SecurityMockMvcRequestPostProcessors.csrf())
+			)
+			.andDo(print())
+			.andExpect(status().isBadRequest())
+			.andReturn();
+
+		//then
+		assertThat(mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8))
+			.contains(ErrorCode.INVALID_SORT_TYPE.getMessage());
 	}
 
 }

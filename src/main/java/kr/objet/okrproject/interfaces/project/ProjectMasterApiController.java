@@ -2,9 +2,13 @@ package kr.objet.okrproject.interfaces.project;
 
 import javax.validation.Valid;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +19,7 @@ import kr.objet.okrproject.common.Response;
 import kr.objet.okrproject.common.exception.ErrorCode;
 import kr.objet.okrproject.common.exception.OkrApplicationException;
 import kr.objet.okrproject.common.utils.ClassUtils;
+import kr.objet.okrproject.domain.project.ProjectMasterInfo;
 import kr.objet.okrproject.domain.user.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,8 +34,9 @@ public class ProjectMasterApiController {
 
 	@PostMapping
 	public ResponseEntity<Response<String>> registerProject(
-		@RequestBody @Valid ProjectSaveDto requestDto,
-		Authentication authentication) {
+		@RequestBody @Valid ProjectMasterDto.Save requestDto,
+		Authentication authentication
+	) {
 
 		User user = ClassUtils.getSafeCastInstance(authentication.getPrincipal(), User.class)
 			.orElseThrow(() -> new OkrApplicationException(ErrorCode.CASTING_USER_FAILED));
@@ -42,4 +48,54 @@ public class ProjectMasterApiController {
 			);
 	}
 
+	@GetMapping
+	public ResponseEntity<Response<Page<ProjectMasterDto.Response>>> findProject(
+		String sortType,
+		String includeFinishedProjectYN,
+		Authentication authentication,
+		Pageable pageable
+	) {
+
+		String finishedProjectYN = includeFinishedProjectYN == null ? "N" : includeFinishedProjectYN.toUpperCase();
+
+		if (finishedProjectYN.matches("[YN]")) {
+
+			User user = ClassUtils.getSafeCastInstance(authentication.getPrincipal(), User.class)
+				.orElseThrow(() -> new OkrApplicationException(ErrorCode.CASTING_USER_FAILED));
+
+			Page<ProjectMasterDto.Response> response =
+				projectFacade.retrieveProject(
+					SortType.of(sortType),
+					finishedProjectYN,
+					user,
+					pageable
+				).map(ProjectMasterDto.Response::new);
+
+			return Response
+				.success(
+					HttpStatus.OK,
+					response
+				);
+		} else {
+			throw new OkrApplicationException(ErrorCode.INVALID_FINISHED_RPOJECT_YN);
+		}
+	}
+
+	@GetMapping("/{projectToken}")
+	public ResponseEntity<Response<ProjectMasterDto.DetailResponse>> searchProjectDetail(
+		@PathVariable("projectToken") String projectToken,
+		Authentication authentication
+	) {
+
+		User user = ClassUtils.getSafeCastInstance(authentication.getPrincipal(), User.class)
+			.orElseThrow(() -> new OkrApplicationException(ErrorCode.CASTING_USER_FAILED));
+
+		ProjectMasterInfo.DetailResponse response = projectFacade.searchProjectDetail(projectToken, user);
+
+		return Response
+			.success(
+				HttpStatus.OK,
+				null
+			);
+	}
 }
