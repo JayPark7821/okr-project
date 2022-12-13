@@ -57,6 +57,7 @@ public class ProjectMasterServiceImpl implements ProjectMasterService {
 
 	@Override
 	public ProjectMaster retrieveProjectDetail(String projectToken, User user) {
-		return projectMasterReader.retrieveProjectDetail(projectToken, user);
+		return projectMasterReader.retrieveProjectDetail(projectToken, user)
+			.orElseThrow(() -> new OkrApplicationException(ErrorCode.INVALID_PROJECT_TOKEN));
 	}
 }

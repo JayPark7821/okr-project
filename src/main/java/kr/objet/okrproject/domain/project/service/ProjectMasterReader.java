@@ -15,5 +15,5 @@ public interface ProjectMasterReader {
 
 	Page<ProjectMaster> retrieveProject(SortType sortType, String includeFinishedProjectYN, User user, Pageable page);
 
-	ProjectMaster retrieveProjectDetail(String projectToken, User user);
+	Optional<ProjectMaster> retrieveProjectDetail(String projectToken, User user);
 }

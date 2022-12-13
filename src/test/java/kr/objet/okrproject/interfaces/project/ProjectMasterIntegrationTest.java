@@ -328,8 +328,11 @@ class ProjectMasterIntegrationTest {
 		JsonNode contents = jsonNode.get("result").get("content");
 		assertThat(contents.size()).isEqualTo(3);
 		assertThat(contents.get(0).get("name").asText()).isEqualTo("프로젝트 조회 테스트용 프로젝트(프로젝트 60)");
+		assertThat(contents.get(0).get("teamMemberEmails").toString())
+			.contains("projectMasterRetrieveTest@naver.com", "user7@naver.com", "user6@naver.com");
 		assertThat(contents.get(1).get("name").asText()).isEqualTo("프로젝트 조회 테스트용 프로젝트");
 		assertThat(contents.get(2).get("name").asText()).isEqualTo("프로젝트 조회 테스트용 프로젝트(프로젝트 70)");
+
 	}
 
 	@Test
@@ -374,6 +377,28 @@ class ProjectMasterIntegrationTest {
 		JsonNode jsonNode = objectMapper.readTree(mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8));
 		assertThat(jsonNode.get("message").asText())
 			.contains(ErrorCode.INVALID_SORT_TYPE.getMessage());
+	}
+
+	@Test
+	void 프로젝트_상세_조회_성공() throws Exception {
+		//given
+
+		//when
+		MvcResult mvcResult = mvc.perform(
+				get(ProjectUrl + "/mst_K42334fffrgg6421")
+					.header(HttpHeaders.AUTHORIZATION, "Bearer " + retrieveTestToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.characterEncoding(StandardCharsets.UTF_8)
+					.with(SecurityMockMvcRequestPostProcessors.csrf())
+			)
+			.andDo(print())
+			.andExpect(status().isOk())
+			.andReturn();
+
+		//then
+		JsonNode jsonNode = objectMapper.readTree(mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8));
+		JsonNode contents = jsonNode.get("result").get("content");
+		System.out.println("contents = " + contents);
 	}
 
 }

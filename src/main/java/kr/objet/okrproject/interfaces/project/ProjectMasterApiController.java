@@ -81,7 +81,7 @@ public class ProjectMasterApiController {
 		}
 	}
 
-	@GetMapping("/{projectId}")
+	@GetMapping("/{projectToken}")
 	public ResponseEntity<Response<ProjectMasterDto.Response>> searchProjectDetail(
 		@PathVariable("projectToken") String projectToken,
 		Authentication authentication

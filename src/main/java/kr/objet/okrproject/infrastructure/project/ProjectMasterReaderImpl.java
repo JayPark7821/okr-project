@@ -37,9 +37,7 @@ public class ProjectMasterReaderImpl implements ProjectMasterReader {
 	}
 
 	@Override
-	public ProjectMaster retrieveProjectDetail(String projectToken, User user) {
-		Optional<ProjectMaster> result =
-			projectMasterRepository.findProjectDetailByProjectMasterTokenAndUser(projectToken, user);
-		return null;
+	public Optional<ProjectMaster> retrieveProjectDetail(String projectToken, User user) {
+		return projectMasterRepository.findProjectDetailByProjectMasterTokenAndUser(projectToken, user);
 	}
 }
