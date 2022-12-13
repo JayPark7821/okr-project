@@ -1,12 +1,5 @@
 package kr.objet.okrproject.application.user;
 
-import java.util.Objects;
-import java.util.UUID;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Service;
-
 import kr.objet.okrproject.common.exception.ErrorCode;
 import kr.objet.okrproject.common.exception.OkrApplicationException;
 import kr.objet.okrproject.common.utils.JwtTokenUtils;
@@ -14,13 +7,17 @@ import kr.objet.okrproject.domain.guest.Guest;
 import kr.objet.okrproject.domain.guest.GuestCommand;
 import kr.objet.okrproject.domain.guest.service.GuestService;
 import kr.objet.okrproject.domain.token.service.RefreshTokenService;
-import kr.objet.okrproject.domain.user.User;
 import kr.objet.okrproject.domain.user.UserInfo;
-import kr.objet.okrproject.domain.user.auth.OAuth2UserInfo;
 import kr.objet.okrproject.domain.user.enums.ProviderType;
 import kr.objet.okrproject.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import java.util.Objects;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -57,24 +54,19 @@ public class UserFacade {
 	public UserInfo.Response loginWithSocialIdToken(String provider, String idToken) {
 
 		ProviderType providerType = ProviderType.of(provider);
-		OAuth2UserInfo userInfo = userService.getUserInfoFromIdToken(providerType, idToken);
-		User user = userService.findUserBy(userInfo.getEmail());
+		UserInfo.AuthProcess authProcess = userService.getUserInfoFromIdToken(providerType, idToken);
 
-		boolean isJoining = userService.isJoining(user, providerType);
-
-		if (isJoining) {
-			Guest guest = guestService.registerGuest(new GuestCommand.RegisterGuest(userInfo, providerType));
+		if (authProcess.isJoining()) {
+			Guest guest = guestService.registerGuest(new GuestCommand.RegisterGuest(authProcess));
 			return UserInfo.Response.join(guest);
 		} else {
-			String accessToken = JwtTokenUtils.generateToken(user.getEmail(), secretKey, expiredTimeMs);
-			String refreshToken = refreshTokenService.generateRefreshToken(user.getEmail());
-			return UserInfo.Response.login(user,accessToken,refreshToken);
+			TokenInfo token = tokenService.generateTokenSet(authProcess.getEmail());
+			return UserInfo.Response.login(authProcess,token);
 		}
 	}
 
 	private String generateTempPw() {
 		String uuid = UUID.randomUUID().toString();
-		System.out.println("uuid = " + uuid);
 		return passwordEncoder.encode(uuid);
 
 	}

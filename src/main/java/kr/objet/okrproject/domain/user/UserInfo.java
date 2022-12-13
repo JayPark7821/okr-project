@@ -1,14 +1,13 @@
 package kr.objet.okrproject.domain.user;
 
 
-import kr.objet.okrproject.common.utils.TokenGenerator;
 import kr.objet.okrproject.domain.guest.Guest;
-import kr.objet.okrproject.domain.guest.GuestInfo;
-import kr.objet.okrproject.domain.user.User;
+import kr.objet.okrproject.domain.user.auth.OAuth2UserInfo;
 import kr.objet.okrproject.domain.user.enums.ProviderType;
 import kr.objet.okrproject.domain.user.enums.RoleType;
 import kr.objet.okrproject.domain.user.enums.jobtype.JobFieldDetail;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 public class UserInfo {
 
@@ -71,4 +70,38 @@ public class UserInfo {
 			);
 		}
 	}
+
+	@Getter
+	@NoArgsConstructor
+	public static class AuthProcess {
+		private String id;
+		private String email;
+		private String name;
+		private ProviderType providerType;
+		private RoleType roleType;
+		private JobFieldDetail jobFieldDetail;
+		private String profileImage;
+		private boolean isJoining;
+
+		public AuthProcess(User user) {
+			this.id = user.getUserId();
+			this.email = user.getEmail();
+			this.name = user.getUsername();
+			this.providerType = user.getProviderType();
+			this.roleType = user.getRoleType();
+			this.jobFieldDetail = user.getJobField();
+			this.profileImage = user.getProfileImageUrl();
+			this.isJoining = false;
+		}
+
+		public AuthProcess(OAuth2UserInfo info, ProviderType provider) {
+			this.id = info.getId();
+			this.email = info.getEmail();
+			this.name = info.getName();
+			this.providerType = provider;
+			this.profileImage = info.getImageUrl();
+			this.isJoining = true;
+		}
+	}
+
 }

@@ -1,34 +1,22 @@
 package kr.objet.okrproject.domain.user;
 
-import java.util.Collection;
-import java.util.List;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import kr.objet.okrproject.common.entity.BaseTimeEntity;
+import kr.objet.okrproject.common.exception.ErrorCode;
+import kr.objet.okrproject.common.exception.OkrApplicationException;
+import kr.objet.okrproject.domain.user.enums.ProviderType;
+import kr.objet.okrproject.domain.user.enums.RoleType;
+import kr.objet.okrproject.domain.user.enums.jobtype.JobFieldDetail;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import kr.objet.okrproject.common.entity.BaseTimeEntity;
-import kr.objet.okrproject.domain.user.enums.ProviderType;
-import kr.objet.okrproject.domain.user.enums.RoleType;
-import kr.objet.okrproject.domain.user.enums.jobtype.JobFieldDetail;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.util.Collection;
+import java.util.List;
 
 @Getter
 @Setter
@@ -124,6 +112,14 @@ public class User extends BaseTimeEntity implements UserDetails {
 		this.providerType = providerType;
 		this.roleType = roleType;
 		this.jobField = jobField;
+	}
+
+	public void validateProvider( ProviderType providerType) {
+
+		if (providerType != this.providerType) {
+			throw new OkrApplicationException(ErrorCode.MISS_MATCH_PROVIDER,
+					this.providerType + "(으)로 가입한 계정이 있습니다.");
+		}
 	}
 
 	@Override

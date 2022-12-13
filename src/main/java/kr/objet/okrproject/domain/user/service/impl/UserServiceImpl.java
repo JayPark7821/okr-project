@@ -1,10 +1,9 @@
 package kr.objet.okrproject.domain.user.service.impl;
 
-import org.springframework.stereotype.Service;
-
 import kr.objet.okrproject.common.exception.ErrorCode;
 import kr.objet.okrproject.common.exception.OkrApplicationException;
 import kr.objet.okrproject.domain.user.User;
+import kr.objet.okrproject.domain.user.UserInfo;
 import kr.objet.okrproject.domain.user.auth.OAuth2UserInfo;
 import kr.objet.okrproject.domain.user.auth.TokenVerifyProcessor;
 import kr.objet.okrproject.domain.user.enums.ProviderType;
@@ -12,9 +11,10 @@ import kr.objet.okrproject.domain.user.service.UserReader;
 import kr.objet.okrproject.domain.user.service.UserService;
 import kr.objet.okrproject.domain.user.service.UserStore;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -25,8 +25,14 @@ public class UserServiceImpl implements UserService {
 	private final TokenVerifyProcessor tokenVerifyProcessor;
 
 	@Override
-	public OAuth2UserInfo getUserInfoFromIdToken(ProviderType providerType, String idToken) {
-		return tokenVerifyProcessor.verifyIdToken(providerType, idToken);
+	public UserInfo.AuthProcess getUserInfoFromIdToken(ProviderType providerType, String idToken) {
+		OAuth2UserInfo oAuth2UserInfo = tokenVerifyProcessor.verifyIdToken(providerType, idToken);
+		Optional<User> user = userReader.findUserByEmail(oAuth2UserInfo.getEmail());
+
+		return user.map(u -> {
+			u.validateProvider(providerType);
+			return new UserInfo.AuthProcess(u);
+		}).orElseGet(() -> new UserInfo.AuthProcess(oAuth2UserInfo, providerType));
 	}
 
 
@@ -50,19 +56,6 @@ public class UserServiceImpl implements UserService {
 	public void validateUserWithEmail(String email) {
 		userReader.findUserByEmail(email)
 				.orElseThrow(() -> new OkrApplicationException(ErrorCode.INVALID_USER_EMAIL));
-	}
-
-	@Override
-	public boolean isJoining(User user, ProviderType providerType) {
-		if (user != null) {
-			if (providerType != user.getProviderType()) {
-				throw new OkrApplicationException(ErrorCode.MISS_MATCH_PROVIDER,
-					user.getProviderType() + "(으)로 가입한 계정이 있습니다.");
-			}
-			return false;
-		} else {
-			return true;
-		}
 	}
 
 	@Override

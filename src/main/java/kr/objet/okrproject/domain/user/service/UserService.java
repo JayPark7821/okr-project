@@ -1,14 +1,13 @@
 package kr.objet.okrproject.domain.user.service;
 
 import kr.objet.okrproject.domain.user.User;
-import kr.objet.okrproject.domain.user.auth.OAuth2UserInfo;
+import kr.objet.okrproject.domain.user.UserInfo;
 import kr.objet.okrproject.domain.user.enums.ProviderType;
 
 import java.util.List;
 
 public interface UserService {
-	OAuth2UserInfo getUserInfoFromIdToken(ProviderType providerType, String idToken);
-	boolean isJoining(User user, ProviderType providerType);
+	UserInfo.AuthProcess getUserInfoFromIdToken(ProviderType providerType, String idToken);
 	User store(User user);
 	User findUserBy(String email);
 	User loadUserByEmail(String email);
