@@ -3,9 +3,11 @@ package kr.objet.okrproject.domain.project;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import kr.objet.okrproject.common.exception.ErrorCode;
 import kr.objet.okrproject.common.exception.OkrApplicationException;
+import kr.objet.okrproject.domain.keyresult.KeyResult;
 import kr.objet.okrproject.domain.team.TeamMember;
 import lombok.Getter;
 
@@ -46,6 +48,46 @@ public class ProjectMasterInfo {
 		}
 	}
 
+	@Getter
 	public static class DetailResponse {
+
+		private String projectToken;
+
+		private String name;
+
+		private String objective;
+
+		private LocalDate sdt;
+
+		private LocalDate edt;
+
+		private List<ProjectKeyResultInfo> keyResults;
+
+		private String projectType;
+
+		public DetailResponse(ProjectMaster entity) {
+			this.projectToken = entity.getProjectMasterToken();
+			this.name = entity.getName();
+			this.objective = entity.getObjective();
+			this.sdt = entity.getStartDate();
+			this.edt = entity.getEndDate();
+			this.projectType = entity.getType().getCode();
+			this.keyResults = entity.getKeyResults()
+				.stream()
+				.map(ProjectKeyResultInfo::new)
+				.collect(Collectors.toList());
+		}
+
+		@Getter
+		public static class ProjectKeyResultInfo {
+
+			private String keyResultToken;
+			private String name;
+
+			public ProjectKeyResultInfo(KeyResult keyResult) {
+				this.keyResultToken = keyResult.getKeyResultToken();
+				this.name = keyResult.getName();
+			}
+		}
 	}
 }

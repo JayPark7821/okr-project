@@ -51,7 +51,7 @@ public class ProjectFacade {
 
 	public ProjectMasterInfo.DetailResponse searchProjectDetail(String projectToken, User user) {
 		ProjectMaster result = projectMasterService.retrieveProjectDetail(projectToken, user);
-		return null;
+		return new ProjectMasterInfo.DetailResponse(result);
 	}
 
 	private void registerKeyResultsFromCommand(
