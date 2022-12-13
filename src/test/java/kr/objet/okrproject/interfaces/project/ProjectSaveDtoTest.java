@@ -21,14 +21,14 @@ class ProjectSaveDtoTest {
 	@Test
 	void keyResult_3개_초과() throws Exception {
 		//given
-		ProjectSaveDto projectSaveDto = ProjectSaveDtoFixture.create(
+		ProjectMasterDto.Save projectSaveDto = ProjectSaveDtoFixture.create(
 			ProjectSaveDtoFixture.getDateString(-5, "yyyy-MM-dd"),
 			ProjectSaveDtoFixture.getDateString(0, "yyyy-MM-dd"),
 			5,
 			5
 		);
 		//when
-		Set<ConstraintViolation<ProjectSaveDto>> validate = Validation.buildDefaultValidatorFactory()
+		Set<ConstraintViolation<ProjectMasterDto.Save>> validate = Validation.buildDefaultValidatorFactory()
 			.getValidator()
 			.validate(projectSaveDto);
 
@@ -40,14 +40,14 @@ class ProjectSaveDtoTest {
 	@Test
 	void 날짜_포멧_검증_실패() throws Exception {
 		//given
-		ProjectSaveDto projectSaveDto = ProjectSaveDtoFixture.create(
+		ProjectMasterDto.Save projectSaveDto = ProjectSaveDtoFixture.create(
 			ProjectSaveDtoFixture.getDateString(-5, "yyyyMMdd"),
 			ProjectSaveDtoFixture.getDateString(0, "yyyyMMdd"),
 			0,
 			3
 		);
 		//when
-		Set<ConstraintViolation<ProjectSaveDto>> validate = Validation.buildDefaultValidatorFactory()
+		Set<ConstraintViolation<ProjectMasterDto.Save>> validate = Validation.buildDefaultValidatorFactory()
 			.getValidator()
 			.validate(projectSaveDto);
 
@@ -59,7 +59,7 @@ class ProjectSaveDtoTest {
 	@Test
 	void command_변환_실패_프로젝트_종료일자_이후_시작일자() throws Exception {
 		//given
-		ProjectSaveDto projectSaveDto = ProjectSaveDtoFixture.create(
+		ProjectMasterDto.Save projectSaveDto = ProjectSaveDtoFixture.create(
 			ProjectSaveDtoFixture.getDateString(-1, "yyyy-MM-dd"),
 			ProjectSaveDtoFixture.getDateString(-5, "yyyy-MM-dd"),
 			0,
@@ -76,7 +76,7 @@ class ProjectSaveDtoTest {
 	@Test
 	void command_변환_실패_프로젝트_종료일자가_오늘이전() throws Exception {
 		//given
-		ProjectSaveDto projectSaveDto = ProjectSaveDtoFixture.create(
+		ProjectMasterDto.Save projectSaveDto = ProjectSaveDtoFixture.create(
 			ProjectSaveDtoFixture.getDateString(-5, "yyyy-MM-dd"),
 			ProjectSaveDtoFixture.getDateString(-4, "yyyy-MM-dd"),
 			0,
@@ -89,5 +89,4 @@ class ProjectSaveDtoTest {
 
 		assertThat(exception.getMessage()).isEqualTo(ErrorCode.INVALID_PROJECT_END_DATE.getMessage());
 	}
-
 }

@@ -14,11 +14,11 @@ import org.junit.jupiter.api.DisplayNameGenerator;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 public class ProjectSaveDtoFixture {
-	public static ProjectSaveDto create(String sdt, String edt, int min, int max) {
+	public static ProjectMasterDto.Save create(String sdt, String edt, int min, int max) {
 		Predicate<Field> sdtPredicate = named("sdt").and(ofType(String.class))
-			.and(inClass(ProjectSaveDto.class));
+			.and(inClass(ProjectMasterDto.Save.class));
 		Predicate<Field> edtPredicate = named("edt").and(ofType(String.class))
-			.and(inClass(ProjectSaveDto.class));
+			.and(inClass(ProjectMasterDto.Save.class));
 
 		EasyRandomParameters param = new EasyRandomParameters()
 			.collectionSizeRange(min, max)
@@ -26,7 +26,7 @@ public class ProjectSaveDtoFixture {
 				LocalDate.now())
 			.randomize(sdtPredicate, () -> sdt)
 			.randomize(edtPredicate, () -> edt);
-		return new EasyRandom(param).nextObject(ProjectSaveDto.class);
+		return new EasyRandom(param).nextObject(ProjectMasterDto.Save.class);
 	}
 
 	public static String getDateString(int calcDays, String pattern) {
