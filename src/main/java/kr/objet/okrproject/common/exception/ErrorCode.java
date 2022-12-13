@@ -32,7 +32,10 @@ public enum ErrorCode {
 	INVALID_END_DATE_FOR_INITIATIVE(HttpStatus.BAD_REQUEST, "Initiative의 마감일은 오늘 이전일 수 없습니다."),
 	INVALID_END_DATE_FOR_INITIATIVE_SDT(HttpStatus.BAD_REQUEST, "Initiative의 마감일이 시작일 이전일 수 없습니다."),
 	INVALID_INITIATIVE_END_DATE(HttpStatus.BAD_REQUEST, "Initiative의 마감일은 프로젝트 시작, 종료일 사이어야 합니다."),
-	INVALID_KEYRESULT_TOKEN(HttpStatus.BAD_REQUEST, "잘못된 KeyResult token 입니다.");
+	INVALID_KEYRESULT_TOKEN(HttpStatus.BAD_REQUEST, "잘못된 KeyResult token 입니다."),
+	INVALID_SORT_TYPE(HttpStatus.BAD_REQUEST, "잘못된 정렬 코드 입니다."),
+
+	INVALID_FINISHED_RPOJECT_YN(HttpStatus.BAD_REQUEST, "종료된 프로젝트 포함여부는 Y 또는 N 만 가능합니다. " );
 
 	private HttpStatus status;
 	private String message;
