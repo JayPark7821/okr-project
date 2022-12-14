@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -57,4 +58,7 @@ public class InitiativeFacade {
 				.collect(Collectors.toList());
 	}
 
+	public List<String> searchActiveInitiativesByDate(YearMonth searchYearMonth, User user) {
+		return initiativeService.searchActiveInitiativesByDate(searchYearMonth, user);
+	}
 }

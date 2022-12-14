@@ -17,7 +17,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -58,6 +61,30 @@ public class InitiativeServiceImpl implements InitiativeService {
 	@Override
 	public List<Initiative> searchInitiativesByDate(LocalDate searchDate, User user) {
 		return initiativeReader.searchInitiativesByDate(searchDate, user);
+	}
+
+	@Override
+	public List<String> searchActiveInitiativesByDate(YearMonth searchYearMonth, User user) {
+		LocalDate monthEndDt = searchYearMonth.atEndOfMonth();
+		LocalDate monthStDt = monthEndDt.minusDays(monthEndDt.lengthOfMonth() - 1);
+
+		List<Initiative> initiatives = initiativeReader.searchActiveInitiativesByDate(monthEndDt,monthStDt, user);
+		return initiatives.stream()
+				.map(i -> getFromDate(monthStDt, i)
+						.datesUntil(getToDate(monthEndDt, i))
+						.map(LocalDate::toString)
+						.collect(Collectors.toList()))
+				.flatMap(Collection::stream)
+				.distinct()
+				.collect(Collectors.toList());
+	}
+
+	private static LocalDate getToDate(LocalDate monthEndDt, Initiative i) {
+		return (i.getEdt().isBefore(monthEndDt) ? i.getEdt() : monthEndDt).plusDays(1);
+	}
+
+	private static LocalDate getFromDate(LocalDate monthStDt, Initiative i) {
+		return i.getSdt().isAfter(monthStDt) ? i.getSdt() : monthStDt;
 	}
 
 }

@@ -24,4 +24,7 @@ public interface InitiativeRepository extends JpaRepository<Initiative, Long> {
             "and :searchDate between i.sdt and i.edt " +
             "and t.user =:user")
     List<Initiative> findInitiativesByDateAndUser(@Param("searchDate")LocalDate searchDate, @Param("user")User user);
+
+
+
 }

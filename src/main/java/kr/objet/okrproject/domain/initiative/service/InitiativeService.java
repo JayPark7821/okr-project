@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.List;
 
 public interface InitiativeService {
@@ -19,4 +20,6 @@ public interface InitiativeService {
 	Page<Initiative> searchInitiatives(String keyResultToken, User user, Pageable page);
 
     List<Initiative> searchInitiativesByDate(LocalDate searchDate, User user);
+
+	List<String> searchActiveInitiativesByDate(YearMonth searchYearMonth, User user);
 }

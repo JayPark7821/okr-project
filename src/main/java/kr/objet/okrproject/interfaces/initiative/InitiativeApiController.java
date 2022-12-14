@@ -17,9 +17,12 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+import java.time.YearMonth;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static kr.objet.okrproject.common.utils.DateFormatValidator.validateDate;
+import static kr.objet.okrproject.common.utils.DateFormatValidator.validateYearMonth;
 
 @Slf4j
 @RestController
@@ -89,14 +92,23 @@ public class InitiativeApiController {
 				);
 	}
 
+	@GetMapping("/yearmonth/{yearmonth}")
+	public ResponseEntity<Response<List<String>>> searchActiveInitiativesByDate(
+			@PathVariable("yearmonth")  String yearMonth,
+			Authentication authentication
+	) {
 
+		YearMonth searchYearMonth = validateYearMonth(yearMonth);
 
-	private static LocalDate validateDate(String date) {
-		try {
-			return LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyyMMdd"));
-		} catch (Exception e) {
-			throw new OkrApplicationException(ErrorCode.INVALID_SEARCH_DATE_FORM);
-		}
+		User user = ClassUtils.getSafeCastInstance(authentication.getPrincipal(), User.class)
+				.orElseThrow(() -> new OkrApplicationException(ErrorCode.CASTING_USER_FAILED));
+
+				List<String> results = initiativeFacade.searchActiveInitiativesByDate(searchYearMonth, user);
+
+		return Response
+				.success(
+						HttpStatus.OK,
+						results
+				);
 	}
-
 }

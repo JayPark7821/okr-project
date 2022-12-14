@@ -12,4 +12,6 @@ public interface InitiativeReader {
 	Page<Initiative> searchInitiatives(String keyResultToken, User user, Pageable page);
 
     List<Initiative> searchInitiativesByDate(LocalDate searchDate, User user);
+
+    List<Initiative> searchActiveInitiativesByDate(LocalDate monthEndDt,LocalDate monthStDt, User user);
 }

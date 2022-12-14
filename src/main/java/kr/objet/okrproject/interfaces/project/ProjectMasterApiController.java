@@ -1,24 +1,5 @@
 package kr.objet.okrproject.interfaces.project;
 
-import java.time.YearMonth;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import javax.validation.Valid;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import kr.objet.okrproject.application.project.ProjectFacade;
 import kr.objet.okrproject.common.Response;
 import kr.objet.okrproject.common.exception.ErrorCode;
@@ -27,6 +8,19 @@ import kr.objet.okrproject.common.utils.ClassUtils;
 import kr.objet.okrproject.domain.user.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.time.YearMonth;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static kr.objet.okrproject.common.utils.DateFormatValidator.validateYearMonth;
 
 @Slf4j
 @RestController
@@ -151,12 +145,4 @@ public class ProjectMasterApiController {
 			);
 	}
 
-	private static YearMonth validateYearMonth(String yearMonth) {
-		try {
-			return yearMonth == null ? YearMonth.now() :
-				YearMonth.parse(yearMonth, DateTimeFormatter.ofPattern("yyyy-MM"));
-		} catch (Exception e) {
-			throw new OkrApplicationException(ErrorCode.INVALID_YEARMONTH_FORMAT);
-		}
-	}
 }

@@ -1,25 +1,23 @@
 package kr.objet.okrproject.infrastructure.initiative;
 
-import static kr.objet.okrproject.domain.initiative.QInitiative.*;
-import static kr.objet.okrproject.domain.project.QProjectMaster.*;
-import static kr.objet.okrproject.domain.team.QTeamMember.*;
-import static kr.objet.okrproject.domain.user.QUser.*;
-
-import java.util.List;
-
-import javax.persistence.EntityManager;
-
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.impl.JPAQuery;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import kr.objet.okrproject.domain.initiative.Initiative;
+import kr.objet.okrproject.domain.user.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
-import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.jpa.impl.JPAQuery;
-import com.querydsl.jpa.impl.JPAQueryFactory;
+import javax.persistence.EntityManager;
+import java.time.LocalDate;
+import java.util.List;
 
-import kr.objet.okrproject.domain.initiative.Initiative;
-import kr.objet.okrproject.domain.user.User;
+import static kr.objet.okrproject.domain.initiative.QInitiative.initiative;
+import static kr.objet.okrproject.domain.project.QProjectMaster.projectMaster;
+import static kr.objet.okrproject.domain.team.QTeamMember.teamMember;
+import static kr.objet.okrproject.domain.user.QUser.user;
 
 @Repository
 public class InitiativeQueryRepository {
@@ -58,4 +56,16 @@ public class InitiativeQueryRepository {
 		return initiative.keyResult.keyResultToken.eq(keyResultToken);
 	}
 
+	public List<Initiative> searchActiveInitiativesByDate(LocalDate monthEndDt, LocalDate monthStDt, User requester) {
+		return queryFactory
+				.select(initiative)
+				.from(initiative)
+				.innerJoin(initiative.teamMember, teamMember)
+				.innerJoin(teamMember.projectMaster, projectMaster)
+				.innerJoin(teamMember.user, user)
+				.where(user.eq(requester)
+						.and(initiative.edt.after(monthStDt).and(initiative.sdt.before(monthEndDt)))
+						.and(initiative.done.eq(false)))
+				.fetch();
+	}
 }

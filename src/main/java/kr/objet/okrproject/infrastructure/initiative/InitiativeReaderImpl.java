@@ -30,4 +30,9 @@ public class InitiativeReaderImpl implements InitiativeReader {
 		return initiativeRepository.findInitiativesByDateAndUser(searchDate, user);
 	}
 
+	@Override
+	public List<Initiative> searchActiveInitiativesByDate(LocalDate monthEndDt,LocalDate monthStDt, User user) {
+		return initiativeQueryRepository.searchActiveInitiativesByDate(monthEndDt, monthStDt,user);
+	}
+
 }

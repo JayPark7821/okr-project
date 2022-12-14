@@ -271,4 +271,25 @@ public class InitiativeIntegrationTest {
 		assertThat(result.toString()).contains("detail6", "detail7");
 	}
 
+
+	@Test
+	void month_각_날짜에_initiative가_있는지_조회() throws Exception {
+		// given
+		String date = "2027-11";
+
+		//when
+		MvcResult mvcResult = mvc.perform(get(initiativeUrl + "/yearmonth/" +date )
+						.header(HttpHeaders.AUTHORIZATION, "Bearer " + initiativeToken)
+						.contentType(MediaType.APPLICATION_JSON)
+						.characterEncoding(StandardCharsets.UTF_8)
+				)
+				.andDo(print())
+				.andExpect(status().isOk())
+				.andReturn();
+		//then
+		JsonNode jsonNode = objectMapper.readTree(mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8));
+		JsonNode result = jsonNode.get("result");
+		assertThat(result.size()).isEqualTo(2);
+		assertThat(result.toString()).contains("detail6", "detail7");
+	}
 }
