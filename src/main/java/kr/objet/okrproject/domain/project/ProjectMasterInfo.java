@@ -1,9 +1,8 @@
 package kr.objet.okrproject.domain.project;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import kr.objet.okrproject.common.exception.ErrorCode;
 import kr.objet.okrproject.common.exception.OkrApplicationException;
@@ -23,8 +22,7 @@ public class ProjectMasterInfo {
 		private final double progress;
 		private final LocalDate sdt;
 		private final LocalDate edt;
-		private List<String> teamMemberEmails = new ArrayList<>();
-		private List<String> teamMemberProfileImages = new ArrayList<>();
+		private final List<TeamMember> teamMembers;
 		private final String projectType;
 
 		public Response(ProjectMaster entity, String email) {
@@ -35,11 +33,7 @@ public class ProjectMasterInfo {
 			this.sdt = entity.getStartDate();
 			this.edt = entity.getEndDate();
 			this.projectType = entity.getType().getCode();
-
-			for (TeamMember teamMember : entity.getTeamMember()) {
-				this.teamMemberEmails.add(teamMember.getUser().getEmail());
-				this.teamMemberProfileImages.add(teamMember.getUser().getProfileImageUrl());
-			}
+			this.teamMembers = entity.getTeamMember();
 			this.newProject = entity.getTeamMember().stream()
 				.filter(t -> t.getUser().getEmail().equals(email))
 				.findFirst()
@@ -51,19 +45,19 @@ public class ProjectMasterInfo {
 	@Getter
 	public static class DetailResponse {
 
-		private String projectToken;
+		private final String projectToken;
 
-		private String name;
+		private final String name;
 
-		private String objective;
+		private final String objective;
 
-		private LocalDate sdt;
+		private final LocalDate sdt;
 
-		private LocalDate edt;
+		private final LocalDate edt;
 
-		private List<ProjectKeyResultInfo> keyResults;
+		private final List<KeyResult> keyResults;
 
-		private String projectType;
+		private final String projectType;
 
 		public DetailResponse(ProjectMaster entity) {
 			this.projectToken = entity.getProjectMasterToken();
@@ -72,22 +66,55 @@ public class ProjectMasterInfo {
 			this.sdt = entity.getStartDate();
 			this.edt = entity.getEndDate();
 			this.projectType = entity.getType().getCode();
-			this.keyResults = entity.getKeyResults()
-				.stream()
-				.map(ProjectKeyResultInfo::new)
-				.collect(Collectors.toList());
+			this.keyResults = entity.getKeyResults();
 		}
 
-		@Getter
-		public static class ProjectKeyResultInfo {
+	}
 
-			private String keyResultToken;
-			private String name;
+	@Getter
+	public static class ProgressResponse {
 
-			public ProjectKeyResultInfo(KeyResult keyResult) {
-				this.keyResultToken = keyResult.getKeyResultToken();
-				this.name = keyResult.getName();
-			}
+		private final String dDay;
+		private final String period;
+		private final String progress;
+		private final List<TeamMember> teamMembers;
+
+		private final String projectType;
+
+		public ProgressResponse(ProjectMaster entity) {
+			long until = LocalDate.now().until(entity.getEndDate(), ChronoUnit.DAYS);
+			this.dDay = "D" + (until >= 0 ? "-" + until : "+" + until * -1);
+			this.period = entity.getStartDate() + "-" + entity.getEndDate();
+			this.progress = Double.toString(entity.getProgress());
+			this.projectType = entity.getType().getCode();
+			this.teamMembers = entity.getTeamMember();
+		}
+	}
+
+	@Getter
+	public static class CalendarResponse {
+		private final Long id;
+
+		private final String name;
+
+		private final String objective;
+
+		private final double progress;
+
+		private final LocalDate sdt;
+
+		private final LocalDate edt;
+
+		private final String projectType;
+
+		public CalendarResponse(ProjectMaster entity) {
+			this.id = entity.getId();
+			this.name = entity.getName();
+			this.objective = entity.getObjective();
+			this.progress = entity.getProgress();
+			this.sdt = entity.getStartDate();
+			this.edt = entity.getEndDate();
+			this.projectType = entity.getType().getCode();
 		}
 	}
 }

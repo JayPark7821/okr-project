@@ -13,8 +13,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import kr.objet.okrproject.common.exception.ErrorCode;
 import kr.objet.okrproject.common.exception.OkrApplicationException;
 import kr.objet.okrproject.common.utils.DateValid;
+import kr.objet.okrproject.domain.keyresult.KeyResult;
 import kr.objet.okrproject.domain.project.ProjectMasterInfo;
 import kr.objet.okrproject.domain.project.service.ProjectMasterCommand;
+import kr.objet.okrproject.domain.team.TeamMember;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -51,7 +53,7 @@ public class ProjectMasterDto {
 
 		@Valid
 		@NotNull(message = "Key Result는 필수 값입니다.")
-		@Size(max = 3, message = "Key Result는 3개 까지만 등록이 가능합니다.")
+		@Size(min = 1, max = 3, message = "Key Result는 1~3개 까지만 등록이 가능합니다.")
 		@Schema(example = "프로젝트 Key Result List [kr1,kr2,kr3...]")
 		private List<String> keyResults;
 
@@ -111,10 +113,7 @@ public class ProjectMasterDto {
 		private LocalDate edt;
 
 		@Schema(description = "프로젝트 참여자 email", example = "[test@gmail.com, test2@gmail.com]")
-		private List<String> teamMemberEmails;
-
-		@Schema(description = "프로젝트 참여자 프로필 이미지", example = "[]]")
-		private List<String> teamMemberProfileImages;
+		private List<ProjectTeamResponseDto> teamMembers;
 
 		@Schema(description = "프로젝트 타입", example = "SINGLE, TEAM")
 		private String projectType;
@@ -127,9 +126,11 @@ public class ProjectMasterDto {
 			this.progress = response.getProgress();
 			this.sdt = response.getSdt();
 			this.edt = response.getEdt();
-			this.teamMemberEmails = response.getTeamMemberEmails();
-			this.teamMemberProfileImages = response.getTeamMemberProfileImages();
 			this.projectType = response.getProjectType();
+			this.teamMembers = response.getTeamMembers()
+				.stream()
+				.map(ProjectTeamResponseDto::new)
+				.collect(Collectors.toList());
 		}
 	}
 
@@ -171,16 +172,91 @@ public class ProjectMasterDto {
 				.collect(Collectors.toList());
 
 		}
+	}
 
-		private static class ProjectKeyResultResponseDto {
+	@Getter
+	@NoArgsConstructor
+	public static class ProjectKeyResultResponseDto {
 
-			private String keyResultToken;
-			private String keyResultName;
+		private String keyResultToken;
+		private String keyResultName;
 
-			public ProjectKeyResultResponseDto(ProjectMasterInfo.DetailResponse.ProjectKeyResultInfo keyResult) {
-				this.keyResultToken = keyResult.getKeyResultToken();
-				this.keyResultName = keyResult.getName();
-			}
+		public ProjectKeyResultResponseDto(KeyResult keyResult) {
+			this.keyResultToken = keyResult.getKeyResultToken();
+			this.keyResultName = keyResult.getName();
+		}
+	}
+
+	@Getter
+	public static class ProgressResponse {
+
+		private final String dDay;
+		private final String period;
+		private final String progress;
+		private final List<ProjectTeamResponseDto> teamMembers;
+
+		private final String projectType;
+
+		public ProgressResponse(ProjectMasterInfo.ProgressResponse response) {
+			this.dDay = response.getDDay();
+			this.period = response.getPeriod();
+			this.progress = response.getProgress();
+			this.projectType = response.getProjectType();
+			this.teamMembers = response.getTeamMembers()
+				.stream().map(ProjectTeamResponseDto::new)
+				.collect(Collectors.toList());
+		}
+	}
+
+	@Getter
+	@NoArgsConstructor
+	public static class ProjectTeamResponseDto {
+
+		private String userEmail;
+		private String userName;
+		private String profileImageUrl;
+		private String jobField;
+
+		public ProjectTeamResponseDto(TeamMember entity) {
+			this.userEmail = entity.getUser().getEmail();
+			this.userName = entity.getUser().getUsername();
+			this.profileImageUrl = entity.getUser().getProfileImageUrl();
+			this.jobField = entity.getUser().getJobField().getTitle();
+		}
+	}
+
+	@Getter
+	public static class CalendarResponse {
+
+		@Schema(description = "프로젝트 id", example = "125")
+		private Long id;
+
+		@Schema(description = "프로젝트 명", example = "OKR 프로젝트")
+		private String name;
+
+		@Schema(description = "프로젝트 object", example = "OKR 서비스 애플리케이션을 개발한다.")
+		private String objective;
+
+		@Schema(description = "진척도", example = "20")
+		private double progress;
+
+		@Schema(description = "프로젝트 시작일자", example = "2022.08.11")
+		private LocalDate sdt;
+
+		@Schema(description = "프로젝트 종료일자", example = "2022.09.11")
+		private LocalDate edt;
+
+		@Schema(description = "프로젝트 타입", example = "SINGLE, TEAM")
+		private String projectType;
+
+		public CalendarResponse(ProjectMasterInfo.CalendarResponse response) {
+			this.id = response.getId();
+			this.name = response.getName();
+			this.objective = response.getObjective();
+			this.progress = response.getProgress();
+			this.sdt = response.getSdt();
+			this.edt = response.getEdt();
+			this.projectType = response.getProjectType();
 		}
 	}
 }

@@ -16,6 +16,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import kr.objet.okrproject.common.entity.BaseEntity;
+import kr.objet.okrproject.common.exception.ErrorCode;
+import kr.objet.okrproject.common.exception.OkrApplicationException;
 import kr.objet.okrproject.common.utils.TokenGenerator;
 import kr.objet.okrproject.domain.keyresult.KeyResult;
 import kr.objet.okrproject.domain.project.enums.ProjectType;
@@ -77,6 +79,12 @@ public class ProjectMaster extends BaseEntity {
 	public String addTeamMember(TeamMember teamMember) {
 		this.teamMember.add(teamMember);
 		return teamMember.getUser().getEmail();
+	}
+
+	public void validateProjectDueDate() {
+		if (LocalDate.now().isAfter(this.endDate)) {
+			throw new OkrApplicationException(ErrorCode.INVALID_PROJECT_END_DATE);
+		}
 	}
 
 	@Builder

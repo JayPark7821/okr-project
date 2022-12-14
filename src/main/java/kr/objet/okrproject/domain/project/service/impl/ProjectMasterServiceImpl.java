@@ -1,6 +1,7 @@
 package kr.objet.okrproject.domain.project.service.impl;
 
-import java.time.LocalDate;
+import java.time.YearMonth;
+import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -39,13 +40,6 @@ public class ProjectMasterServiceImpl implements ProjectMasterService {
 	}
 
 	@Override
-	public void validateProjectDueDate(ProjectMaster projectMaster) {
-		if (LocalDate.now().isAfter(projectMaster.getEndDate())) {
-			throw new OkrApplicationException(ErrorCode.INVALID_PROJECT_END_DATE);
-		}
-	}
-
-	@Override
 	public Page<ProjectMaster> retrieveProject(
 		SortType sortType,
 		String includeFinishedProjectYN,
@@ -59,5 +53,16 @@ public class ProjectMasterServiceImpl implements ProjectMasterService {
 	public ProjectMaster retrieveProjectDetail(String projectToken, User user) {
 		return projectMasterReader.retrieveProjectDetail(projectToken, user)
 			.orElseThrow(() -> new OkrApplicationException(ErrorCode.INVALID_PROJECT_TOKEN));
+	}
+
+	@Override
+	public ProjectMaster retrieveProjectProgress(String projectToken, User user) {
+		return projectMasterReader.findByProjectTokenAndUser(projectToken, user)
+			.orElseThrow(() -> new OkrApplicationException(ErrorCode.INVALID_PROJECT_TOKEN));
+	}
+
+	@Override
+	public List<ProjectMaster> searchProjectsForCalendar(YearMonth yearMonth, User user) {
+		return projectMasterReader.searchProjectsForCalendar(yearMonth, user);
 	}
 }

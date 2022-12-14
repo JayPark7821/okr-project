@@ -1,5 +1,9 @@
 package kr.objet.okrproject.application.project;
 
+import java.time.YearMonth;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -54,6 +58,11 @@ public class ProjectFacade {
 		return new ProjectMasterInfo.DetailResponse(result);
 	}
 
+	public ProjectMasterInfo.ProgressResponse searchProjectProgressDetail(String projectToken, User user) {
+		ProjectMaster result = projectMasterService.retrieveProjectProgress(projectToken, user);
+		return new ProjectMasterInfo.ProgressResponse(result);
+	}
+
 	private void registerKeyResultsFromCommand(
 		ProjectMasterCommand.RegisterProjectMaster command,
 		ProjectMaster projectMaster
@@ -63,5 +72,10 @@ public class ProjectFacade {
 				new KeyResultCommand.RegisterKeyResultWithProject(keyResult, projectMaster)
 			);
 		});
+	}
+
+	public List<ProjectMasterInfo.CalendarResponse> searchProjectsForCalendar(YearMonth yearMonth, User user) {
+		List<ProjectMaster> results = projectMasterService.searchProjectsForCalendar(yearMonth, user);
+		return results.stream().map(ProjectMasterInfo.CalendarResponse::new).collect(Collectors.toList());
 	}
 }

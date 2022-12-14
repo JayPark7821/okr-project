@@ -4,6 +4,8 @@ import static kr.objet.okrproject.domain.project.QProjectMaster.*;
 import static kr.objet.okrproject.domain.team.QTeamMember.*;
 import static kr.objet.okrproject.domain.user.QUser.*;
 
+import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.List;
 import java.util.Objects;
 
@@ -82,5 +84,24 @@ public class ProjectMasterQueryRepository {
 
 	private BooleanExpression includeFinishedProject(String YN) {
 		return Objects.equals(YN, "Y") ? null : projectMaster.progress.lt(100);
+	}
+
+	public List<ProjectMaster> searchProjectsForCalendar(YearMonth yearMonth, User requester) {
+		return queryFactory
+			.selectDistinct(projectMaster)
+			.from(projectMaster)
+			.innerJoin(projectMaster.teamMember, teamMember)
+			.innerJoin(teamMember.user, user)
+			.where(user.eq(requester),
+				getProjectWithinMonth(yearMonth))
+			.orderBy(projectMaster.id.desc())
+			.fetch();
+	}
+
+	private BooleanExpression getProjectWithinMonth(YearMonth yearMonth) {
+		LocalDate monthEndDt = yearMonth.atEndOfMonth();
+		LocalDate monthStDt = monthEndDt.minusDays(monthEndDt.lengthOfMonth() - 1);
+
+		return projectMaster.endDate.after(monthStDt).and(projectMaster.startDate.before(monthEndDt));
 	}
 }
