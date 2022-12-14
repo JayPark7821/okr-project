@@ -1,5 +1,7 @@
 package kr.objet.okrproject.infrastructure.project;
 
+import java.time.YearMonth;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -40,4 +42,10 @@ public class ProjectMasterReaderImpl implements ProjectMasterReader {
 	public Optional<ProjectMaster> retrieveProjectDetail(String projectToken, User user) {
 		return projectMasterRepository.findProjectDetailByProjectMasterTokenAndUser(projectToken, user);
 	}
+
+	@Override
+	public List<ProjectMaster> searchProjectsForCalendar(YearMonth yearMonth, User user) {
+		return projectMasterQueryRepository.searchProjectsForCalendar(yearMonth, user);
+	}
+
 }

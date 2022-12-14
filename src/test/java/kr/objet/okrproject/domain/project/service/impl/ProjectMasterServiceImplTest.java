@@ -1,10 +1,8 @@
 package kr.objet.okrproject.domain.project.service.impl;
 
-import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
-import java.time.LocalDate;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -25,7 +23,6 @@ import kr.objet.okrproject.domain.project.service.ProjectMasterCommand;
 import kr.objet.okrproject.domain.project.service.ProjectMasterReader;
 import kr.objet.okrproject.domain.project.service.ProjectMasterStore;
 import kr.objet.okrproject.domain.project.service.fixture.ProjectMasterCommandFixture;
-import kr.objet.okrproject.domain.project.service.fixture.ProjectMasterFixture;
 import kr.objet.okrproject.domain.user.User;
 
 @ExtendWith(MockitoExtension.class)
@@ -92,29 +89,4 @@ class ProjectMasterServiceImplTest {
 
 	}
 
-	@Test
-	void 프로젝트마김일_검증_성공() throws Exception {
-		//given
-		ProjectMaster projectMaster = ProjectMasterFixture.create(
-			LocalDate.now().minusDays(5),
-			LocalDate.now().minusDays(0)
-		);
-		//when
-		assertDoesNotThrow(() -> sut.validateProjectDueDate(projectMaster));
-		//then
-	}
-
-	@Test
-	void 프로젝트마김일_검증_실패_프로젝트종료일자_지남() throws Exception {
-		//given
-		ProjectMaster projectMaster = ProjectMasterFixture.create(
-			LocalDate.now().minusDays(5),
-			LocalDate.now().minusDays(1)
-		);
-		//when
-		OkrApplicationException exception = assertThrows(OkrApplicationException.class,
-			() -> sut.validateProjectDueDate(projectMaster));
-		//then
-		assertThat(exception.getMessage()).isEqualTo(ErrorCode.INVALID_PROJECT_END_DATE.getMessage());
-	}
 }

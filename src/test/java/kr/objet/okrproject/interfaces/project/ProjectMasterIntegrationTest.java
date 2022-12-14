@@ -6,6 +6,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Objects;
 
@@ -72,6 +75,7 @@ class ProjectMasterIntegrationTest {
 	private User user;
 	private String saveTestToken;
 	private String retrieveTestToken;
+	private String calendarTestToken;
 	private ProjectMaster projectMaster;
 
 	@BeforeEach
@@ -79,8 +83,10 @@ class ProjectMasterIntegrationTest {
 		if (Objects.isNull(user)) {
 			String projectLeaderEmail = "projectMasterTest@naver.com";
 			String retrieveTestUser = "projectMasterRetrieveTest@naver.com";
+			String calendarTestUser = "projectCalendarTest@naver.com";
 			saveTestToken = JwtTokenUtils.generateToken(projectLeaderEmail, secretKey, expiredTimeMs);
 			retrieveTestToken = JwtTokenUtils.generateToken(retrieveTestUser, secretKey, expiredTimeMs);
+			calendarTestToken = JwtTokenUtils.generateToken(calendarTestUser, secretKey, expiredTimeMs);
 
 		}
 	}
@@ -168,7 +174,7 @@ class ProjectMasterIntegrationTest {
 
 		//then
 		JsonNode jsonNode = objectMapper.readTree(mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8));
-		assertThat(jsonNode.get("message").asText()).contains("Key Result는 3개 까지만 등록이 가능합니다.");
+		assertThat(jsonNode.get("message").asText()).contains("Key Result는 1~3개 까지만 등록이 가능합니다.");
 	}
 
 	@Test
@@ -328,8 +334,7 @@ class ProjectMasterIntegrationTest {
 		JsonNode contents = jsonNode.get("result").get("content");
 		assertThat(contents.size()).isEqualTo(3);
 		assertThat(contents.get(0).get("name").asText()).isEqualTo("프로젝트 조회 테스트용 프로젝트(프로젝트 60)");
-		assertThat(contents.get(0).get("teamMemberEmails").toString())
-			.contains("projectMasterRetrieveTest@naver.com", "user7@naver.com", "user6@naver.com");
+		assertThat(contents.get(0).get("teamMembers").size()).isEqualTo(3);
 		assertThat(contents.get(1).get("name").asText()).isEqualTo("프로젝트 조회 테스트용 프로젝트");
 		assertThat(contents.get(2).get("name").asText()).isEqualTo("프로젝트 조회 테스트용 프로젝트(프로젝트 70)");
 
@@ -399,6 +404,98 @@ class ProjectMasterIntegrationTest {
 		JsonNode jsonNode = objectMapper.readTree(mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8));
 		JsonNode contents = jsonNode.get("result").get("content");
 		System.out.println("contents = " + contents);
+	}
+
+	@Test
+	void 프로젝트_상세_조회_실패_참여X() throws Exception {
+		//given
+
+		//when
+		MvcResult mvcResult = mvc.perform(
+				get(ProjectUrl + "/mst_Kiwqnp1Nq6lbTNn0")
+					.header(HttpHeaders.AUTHORIZATION, "Bearer " + retrieveTestToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.characterEncoding(StandardCharsets.UTF_8)
+					.with(SecurityMockMvcRequestPostProcessors.csrf())
+			)
+			.andDo(print())
+			.andExpect(status().isBadRequest())
+			.andReturn();
+
+		//then
+		JsonNode jsonNode = objectMapper.readTree(mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8));
+		assertThat(jsonNode.get("message").asText())
+			.contains(ErrorCode.INVALID_PROJECT_TOKEN.getMessage());
+	}
+
+	@Test
+	void 프로젝트_진행도_조회_성공() throws Exception {
+		//given
+		LocalDate endDate = LocalDate.parse("2004-12-12", DateTimeFormatter.ISO_DATE);
+		long until = LocalDate.now().until(endDate, ChronoUnit.DAYS);
+		//when
+		MvcResult mvcResult = mvc.perform(
+				get(ProjectUrl + "/mst_K42334fffrgg6421" + "/side")
+					.header(HttpHeaders.AUTHORIZATION, "Bearer " + retrieveTestToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.characterEncoding(StandardCharsets.UTF_8)
+					.with(SecurityMockMvcRequestPostProcessors.csrf())
+			)
+			.andDo(print())
+			.andExpect(status().isOk())
+			.andReturn();
+
+		//then
+		JsonNode jsonNode = objectMapper.readTree(mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8));
+		JsonNode result = jsonNode.get("result");
+		assertThat(result.get("dday").asText()).contains("+" + String.valueOf(until * -1));
+		assertThat(result.get("progress").asText()).isEqualTo("100.0");
+	}
+
+	@Test
+	void 프로젝트_달력_조회_성공() throws Exception {
+		//given
+		String yearMonth = "2022-11";
+		//when
+		MvcResult mvcResult = mvc.perform(
+				get(ProjectUrl + "/calendar/" + yearMonth)
+					.header(HttpHeaders.AUTHORIZATION, "Bearer " + calendarTestToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.characterEncoding(StandardCharsets.UTF_8)
+					.with(SecurityMockMvcRequestPostProcessors.csrf())
+			)
+			.andDo(print())
+			.andExpect(status().isOk())
+			.andReturn();
+
+		//then
+		JsonNode jsonNode = objectMapper.readTree(mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8));
+		JsonNode result = jsonNode.get("result");
+		assertThat(result.size()).isEqualTo(2);
+		assertThat(result.get(0).get("name").asText()).contains("프로젝트 for 달력 2");
+		assertThat(result.get(1).get("name").asText()).contains("프로젝트 for 달력 4");
+	}
+
+	@Test
+	void 프로젝트_달력_조회_성공_0건() throws Exception {
+		//given
+		String yearMonth = "2023-11";
+		//when
+		MvcResult mvcResult = mvc.perform(
+				get(ProjectUrl + "/calendar/" + yearMonth)
+					.header(HttpHeaders.AUTHORIZATION, "Bearer " + calendarTestToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.characterEncoding(StandardCharsets.UTF_8)
+					.with(SecurityMockMvcRequestPostProcessors.csrf())
+			)
+			.andDo(print())
+			.andExpect(status().isOk())
+			.andReturn();
+
+		//then
+		JsonNode jsonNode = objectMapper.readTree(mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8));
+		JsonNode result = jsonNode.get("result");
+		assertThat(result.size()).isEqualTo(0);
 	}
 
 }

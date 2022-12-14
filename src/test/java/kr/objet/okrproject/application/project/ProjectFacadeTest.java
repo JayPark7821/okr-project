@@ -1,7 +1,10 @@
 package kr.objet.okrproject.application.project;
 
+import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
+
+import java.time.LocalDate;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -16,9 +19,11 @@ import kr.objet.okrproject.application.user.fixture.UserFixture;
 import kr.objet.okrproject.domain.keyresult.service.KeyResultCommand;
 import kr.objet.okrproject.domain.keyresult.service.KeyResultService;
 import kr.objet.okrproject.domain.project.ProjectMaster;
+import kr.objet.okrproject.domain.project.ProjectMasterInfo;
 import kr.objet.okrproject.domain.project.service.ProjectMasterCommand;
 import kr.objet.okrproject.domain.project.service.ProjectMasterService;
 import kr.objet.okrproject.domain.project.service.fixture.ProjectMasterCommandFixture;
+import kr.objet.okrproject.domain.project.service.fixture.ProjectMasterFixture;
 import kr.objet.okrproject.domain.team.service.TeamMemberCommand;
 import kr.objet.okrproject.domain.team.service.TeamMemberService;
 import kr.objet.okrproject.domain.user.User;
@@ -43,8 +48,8 @@ class ProjectFacadeTest {
 		MockitoAnnotations.openMocks(this);
 		sut = new ProjectFacade(
 			projectMasterService,
-				teamMemberService,
-				keyResultService
+			teamMemberService,
+			keyResultService
 		);
 	}
 
@@ -68,6 +73,35 @@ class ProjectFacadeTest {
 			.registerProjectTeamMember(any(TeamMemberCommand.RegisterProjectLeader.class));
 		then(keyResultService).should(times(projectMasterCommand.getKeyResults().size()))
 			.registerKeyResult(any(KeyResultCommand.RegisterKeyResultWithProject.class));
+	}
 
+	@Test
+	void Info객체변환_테스트() throws Exception {
+		//given
+		ProjectMaster projectMaster = ProjectMasterFixture.create(LocalDate.now().minusDays(5),
+			LocalDate.now().plusDays(10));
+
+		given(projectMasterService.retrieveProjectProgress(eq(projectMaster.getProjectMasterToken()),
+			any(User.class))).willReturn(projectMaster);
+		//when
+		ProjectMasterInfo.ProgressResponse result = assertDoesNotThrow(
+			() -> sut.searchProjectProgressDetail(projectMaster.getProjectMasterToken(), mock(User.class)));
+		//then
+		assertThat(result.getDDay()).isEqualTo("D-10");
+	}
+
+	@Test
+	void Info객체변환_테스트_D_plus_DAY() throws Exception {
+		//given
+		ProjectMaster projectMaster = ProjectMasterFixture.create(LocalDate.now().minusDays(5),
+			LocalDate.now().minusDays(2));
+
+		given(projectMasterService.retrieveProjectProgress(eq(projectMaster.getProjectMasterToken()),
+			any(User.class))).willReturn(projectMaster);
+		//when
+		ProjectMasterInfo.ProgressResponse result = assertDoesNotThrow(
+			() -> sut.searchProjectProgressDetail(projectMaster.getProjectMasterToken(), mock(User.class)));
+		//then
+		assertThat(result.getDDay()).isEqualTo("D+2");
 	}
 }
