@@ -1,5 +1,7 @@
 package kr.objet.okrproject.domain.project.service;
 
+import java.time.YearMonth;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -16,4 +18,6 @@ public interface ProjectMasterReader {
 	Page<ProjectMaster> retrieveProject(SortType sortType, String includeFinishedProjectYN, User user, Pageable page);
 
 	Optional<ProjectMaster> retrieveProjectDetail(String projectToken, User user);
+
+	List<ProjectMaster> searchProjectsForCalendar(YearMonth yearMonth, User user);
 }

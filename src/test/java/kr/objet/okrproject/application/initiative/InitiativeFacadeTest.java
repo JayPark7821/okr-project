@@ -4,6 +4,8 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
+import java.time.LocalDate;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -62,7 +64,7 @@ class InitiativeFacadeTest {
 		InitiativeCommand.registerInitiative command = InitiativeCommandFixture.create();
 		User user = UserFixture.create();
 		TeamMember member = TeamMemberFixture.createMember(user, ProjectRoleType.MEMBER);
-		ProjectMaster projectMaster = ProjectMasterFixture.create();
+		ProjectMaster projectMaster = ProjectMasterFixture.create(LocalDate.now().minusDays(10), LocalDate.now());
 		projectMaster.addTeamMember(member);
 		KeyResult keyResult = KeyResultFixture.create(projectMaster);
 		Initiative initiative = InitiativeFixture.create();
@@ -70,8 +72,6 @@ class InitiativeFacadeTest {
 		//given
 		given(keyResultService.validateKeyResultWithUser(command.getKeyResultToken(), user))
 			.willReturn(keyResult);
-		doNothing().when(projectMasterService)
-			.validateProjectDueDate(keyResult.getProjectMaster());
 		doNothing().when(initiativeService)
 			.validateInitiativeDates(command.getSdt(), command.getEdt(), keyResult);
 		given(initiativeService.registerInitiative(command, keyResult,

@@ -4,6 +4,7 @@ insert into user_table (user_seq, user_id,username, password, email, email_verif
     (11,'testId11', 'testUser2','password','keyResultTest@naver.com','Y','GOOGLE','USER','PRODUCER_CP','profile_image_url' ),
     (12,'testId12', 'testUser2','password','initiativeTest@naver.com','Y','GOOGLE','USER','PRODUCER_CP','profile_image_url' ),
     (13,'testId13', 'testUser2','password','projectMasterRetrieveTest@naver.com','Y','GOOGLE','USER','PRODUCER_CP','profile_image_url' ),
+    (14,'testId14', 'testUser2','password','projectCalendarTest@naver.com','Y','GOOGLE','USER','PRODUCER_CP','profile_image_url' ),
     ( 3,'testId3', 'testUser3','password','user1@naver.com','Y','GOOGLE','USER','PRODUCER_CP','profile_image_url' ),
     ( 4,'testId4', 'testUser4','password','user2@naver.com','Y','GOOGLE','USER','PRODUCER_CP','profile_image_url' ),
     ( 5,'testId5', 'testUser5','password','user3@naver.com','Y','GOOGLE','USER','PRODUCER_CP','profile_image_url' ),
@@ -19,11 +20,16 @@ insert into project_master
 (99998, '2022-12-12', '2022-12-12', 'testUser1', 'testUser1', '2022-12-14', '팀 맴버 테스트용 프로젝트', '프로젝트 objective 2', 0.0, 'mst_Kiwqnp1Nq6lbTNn0', '2022-12-07', 'SINGLE'),
 (99997, '2000-12-12', '2023-12-12', 'testUser1', 'testUser1', '2023-12-14', 'key result 테스트용 프로젝트', '프로젝트 objective 3', 0.0, 'mst_Kiwqnp1Nq6lb6421', '2000-12-12', 'TEAM'),
 (99996, '2000-12-12', '2023-12-12', 'testUser1', 'testUser1', '2023-12-14', 'Initiative 테스트용 프로젝트', '프로젝트 objective 4', 0.0, 'mst_K4e8a5s7d6lb6421', '2000-12-12', 'TEAM'),
-(99995, '2000-12-12', '2023-12-12', 'testUser1', 'testUser1', '2023-12-14', '프로젝트 조회 테스트용 프로젝트', '프로젝트 objective 4', 0.0, 'mst_K42334fffrgg6421', '2000-12-12', 'TEAM'),
-(99994, '2001-12-12', '2023-12-12', 'testUser1', 'testUser1', '2023-12-10', '프로젝트 조회 테스트용 프로젝트(프로젝트 완료)', '프로젝트 objective 4', 100.0, 'mst_K42334fffrgg6421', '2000-12-12', 'TEAM'),
-(99993, '2002-12-12', '2023-12-12', 'testUser1', 'testUser1', '2033-12-12', '프로젝트 조회 테스트용 프로젝트(프로젝트 70)', '프로젝트 objective 4', 70.0, 'mst_K42334fffrgg6421', '2000-12-12', 'TEAM'),
-(99992, '2003-12-12', '2023-12-12', 'testUser1', 'testUser1', '2003-12-12', '프로젝트 조회 테스트용 프로젝트(프로젝트 60)', '프로젝트 objective 4', 60.0, 'mst_K42334fffrgg6421', '2000-12-12', 'TEAM'),
-(99991, '2004-12-12', '2023-12-12', 'testUser1', 'testUser1', '2004-12-12', '프로젝트 조회 테스트용 프로젝트(프로젝트 완료2)', '프로젝트 objective 4', 100.0, 'mst_K42334fffrgg6421', '2000-12-12', 'TEAM')
+(99995, '2000-12-12', '2023-12-12', 'testUser1', 'testUser1', '2023-12-14', '프로젝트 조회 테스트용 프로젝트', '프로젝트 objective 4', 0.0, 'mst_K4232g4g5rgg6421', '2000-12-12', 'TEAM'),
+(99994, '2001-12-12', '2023-12-12', 'testUser1', 'testUser1', '2023-12-10', '프로젝트 조회 테스트용 프로젝트(프로젝트 완료)', '프로젝트 objective 4', 100.0, 'mst_as3fg34tgg6421', '2000-12-12', 'TEAM'),
+(99993, '2002-12-12', '2023-12-12', 'testUser1', 'testUser1', '2033-12-12', '프로젝트 조회 테스트용 프로젝트(프로젝트 70)', '프로젝트 objective 4', 70.0, 'mst_3gbyy554frgg6421', '2000-12-12', 'TEAM'),
+(99992, '2003-12-12', '2023-12-12', 'testUser1', 'testUser1', '2003-12-12', '프로젝트 조회 테스트용 프로젝트(프로젝트 60)', '프로젝트 objective 4', 60.0, 'mst_K4g4tfdaergg6421', '2000-12-12', 'TEAM'),
+(99991, '2004-12-12', '2023-12-12', 'testUser1', 'testUser1', '2004-12-12', '프로젝트 조회 테스트용 프로젝트(프로젝트 완료2)', '프로젝트 objective 4', 100.0, 'mst_K42334fffrgg6421', '2000-12-12', 'TEAM'),
+(99990, '2004-12-12', '2023-12-12', 'testUser1', 'testUser1', '2022-10-01', '프로젝트 for 달력 1', '프로젝트 objective 달력 1', 100.0, 'mst_K42334fffrgg6421', '2022-01-12', 'TEAM'),
+(99989, '2004-12-12', '2023-12-12', 'testUser1', 'testUser1', '2022-11-12', '프로젝트 for 달력 2', '프로젝트 objective 달력 2', 100.0, 'mst_K42h45dfd4gg6421', '2022-01-01', 'TEAM'),
+(99988, '2004-12-12', '2023-12-12', 'testUser1', 'testUser1', '2022-09-12', '프로젝트 for 달력 3', '프로젝트 objective 달력 3', 100.0, 'mst_ff4g34fffrgg6421', '2022-01-12', 'TEAM'),
+(99987, '2004-12-12', '2023-12-12', 'testUser1', 'testUser1', '2022-12-12', '프로젝트 for 달력 4', '프로젝트 objective 달력 4', 100.0, 'mst_aa344tg5dfgg6421', '2022-01-12', 'TEAM'),
+(99986, '2004-12-12', '2023-12-12', 'testUser1', 'testUser1', '2022-01-12', '프로젝트 for 달력 5', '프로젝트 objective 달력 5', 100.0, 'mst_qq2f4gbffrgg6421', '2022-01-12', 'TEAM')
 ;
 
 
@@ -44,7 +50,12 @@ insert into team_member
 ('2022-12-12', '2022-12-12', 'testUser1', 'testUser1', false, 'MEMBER', 99992, 13),
 ('2022-12-12', '2022-12-12', 'testUser1', 'testUser1', true, 'MEMBER', 99992, 9),
 ('2022-12-12', '2022-12-12', 'testUser1', 'testUser1', true, 'MEMBER', 99992, 8),
-('2022-12-12', '2022-12-12', 'testUser1', 'testUser1', true, 'MEMBER', 99991, 13)
+('2022-12-12', '2022-12-12', 'testUser1', 'testUser1', true, 'MEMBER', 99991, 13),
+('2022-12-12', '2022-12-12', 'testUser1', 'testUser1', true, 'MEMBER', 99990, 14),
+('2022-12-12', '2022-12-12', 'testUser1', 'testUser1', true, 'MEMBER', 99989, 14),
+('2022-12-12', '2022-12-12', 'testUser1', 'testUser1', true, 'MEMBER', 99988, 14),
+('2022-12-12', '2022-12-12', 'testUser1', 'testUser1', true, 'MEMBER', 99987, 14),
+('2022-12-12', '2022-12-12', 'testUser1', 'testUser1', true, 'MEMBER', 99986, 14)
 ;
 
 
@@ -58,6 +69,10 @@ insert into key_result
 (99994, '2022-12-12', '2022-12-12', 'testUser1', 'testUser1', 'key_325fdggrtQ25zQMs', 'testKeyResult 6', 99996),
 (99993, '2022-12-12', '2022-12-12', 'testUser1', 'testUser1', 'key_32hhuggrtQ25zQMs', 'testKeyResult 7', 99992),
 (99992, '2022-12-12', '2022-12-12', 'testUser1', 'testUser1', 'key_325fd23ftQ25zQMs', 'testKeyResult 8', 99992),
-(99991, '2022-12-12', '2022-12-12', 'testUser1', 'testUser1', 'key_3235gggrtQ25zQMs', 'testKeyResult 9', 99992)
-
+(99991, '2022-12-12', '2022-12-12', 'testUser1', 'testUser1', 'key_3235gggrtQ25zQMs', 'testKeyResult 9', 99991),
+(99990, '2022-12-12', '2022-12-12', 'testUser1', 'testUser1', 'key_aaaaaaaaeeQ25zQMs', 'testKeyResult 10', 99990),
+(99989, '2022-12-12', '2022-12-12', 'testUser1', 'testUser1', 'key_fghjbuiiitQ25zQMs', 'testKeyResult 11', 99989),
+(99988, '2022-12-12', '2022-12-12', 'testUser1', 'testUser1', 'key_guyopuyjytQ25zQMs', 'testKeyResult 12', 99988),
+(99987, '2022-12-12', '2022-12-12', 'testUser1', 'testUser1', 'key_243tgasw3tQ25zQMs', 'testKeyResult 13', 99987),
+(99986, '2022-12-12', '2022-12-12', 'testUser1', 'testUser1', 'key_t433t43fdQ25fzQMs', 'testKeyResult 14', 99986)
 ;

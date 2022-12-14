@@ -38,6 +38,25 @@ class ProjectSaveDtoTest {
 	}
 
 	@Test
+	void keyResult_0개() throws Exception {
+		//given
+		ProjectMasterDto.Save projectSaveDto = ProjectSaveDtoFixture.create(
+			ProjectSaveDtoFixture.getDateString(-5, "yyyy-MM-dd"),
+			ProjectSaveDtoFixture.getDateString(0, "yyyy-MM-dd"),
+			0,
+			0
+		);
+		//when
+		Set<ConstraintViolation<ProjectMasterDto.Save>> validate = Validation.buildDefaultValidatorFactory()
+			.getValidator()
+			.validate(projectSaveDto);
+
+		//then
+		assertThat(validate.isEmpty()).isFalse();
+
+	}
+
+	@Test
 	void 날짜_포멧_검증_실패() throws Exception {
 		//given
 		ProjectMasterDto.Save projectSaveDto = ProjectSaveDtoFixture.create(
