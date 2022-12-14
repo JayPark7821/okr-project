@@ -1,30 +1,26 @@
 package kr.objet.okrproject.infrastructure.project;
 
-import static kr.objet.okrproject.domain.project.QProjectMaster.*;
-import static kr.objet.okrproject.domain.team.QTeamMember.*;
-import static kr.objet.okrproject.domain.user.QUser.*;
-
-import java.time.LocalDate;
-import java.time.YearMonth;
-import java.util.List;
-import java.util.Objects;
-
-import javax.persistence.EntityManager;
-
+import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.impl.JPAQuery;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import kr.objet.okrproject.domain.project.ProjectMaster;
+import kr.objet.okrproject.domain.user.User;
+import kr.objet.okrproject.interfaces.project.SortType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
-import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.jpa.impl.JPAQuery;
-import com.querydsl.jpa.impl.JPAQueryFactory;
+import javax.persistence.EntityManager;
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.util.List;
+import java.util.Objects;
 
-import kr.objet.okrproject.domain.project.ProjectMaster;
-import kr.objet.okrproject.domain.user.QUser;
-import kr.objet.okrproject.domain.user.User;
-import kr.objet.okrproject.interfaces.project.SortType;
+import static kr.objet.okrproject.domain.project.QProjectMaster.projectMaster;
+import static kr.objet.okrproject.domain.team.QTeamMember.teamMember;
+import static kr.objet.okrproject.domain.user.QUser.user;
 
 @Repository
 public class ProjectMasterQueryRepository {
@@ -44,7 +40,6 @@ public class ProjectMasterQueryRepository {
 		Pageable pageable
 	) {
 
-		QUser teamUser = new QUser("teamUser");
 		List<ProjectMaster> results = queryFactory
 			.select(projectMaster)
 			.from(projectMaster)
@@ -92,8 +87,8 @@ public class ProjectMasterQueryRepository {
 			.from(projectMaster)
 			.innerJoin(projectMaster.teamMember, teamMember)
 			.innerJoin(teamMember.user, user)
-			.where(user.eq(requester),
-				getProjectWithinMonth(yearMonth))
+			.where(user.eq(requester)
+					.and(getProjectWithinMonth(yearMonth)))
 			.orderBy(projectMaster.id.desc())
 			.fetch();
 	}
