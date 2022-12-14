@@ -1,11 +1,5 @@
 package kr.objet.okrproject.domain.initiative.service.impl;
 
-import java.time.LocalDate;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-
 import kr.objet.okrproject.common.exception.ErrorCode;
 import kr.objet.okrproject.common.exception.OkrApplicationException;
 import kr.objet.okrproject.domain.initiative.Initiative;
@@ -18,6 +12,12 @@ import kr.objet.okrproject.domain.team.TeamMember;
 import kr.objet.okrproject.domain.user.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -53,6 +53,11 @@ public class InitiativeServiceImpl implements InitiativeService {
 	@Override
 	public Page<Initiative> searchInitiatives(String keyResultToken, User user, Pageable page) {
 		return initiativeReader.searchInitiatives(keyResultToken, user, page);
+	}
+
+	@Override
+	public List<Initiative> searchInitiativesByDate(LocalDate searchDate, User user) {
+		return initiativeReader.searchInitiativesByDate(searchDate, user);
 	}
 
 }

@@ -1,14 +1,16 @@
 package kr.objet.okrproject.infrastructure.initiative;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Component;
-
 import kr.objet.okrproject.domain.initiative.Initiative;
 import kr.objet.okrproject.domain.initiative.service.InitiativeReader;
 import kr.objet.okrproject.domain.user.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Component;
+
+import java.time.LocalDate;
+import java.util.List;
 
 @Slf4j
 @Component
@@ -22,4 +24,10 @@ public class InitiativeReaderImpl implements InitiativeReader {
 	public Page<Initiative> searchInitiatives(String keyResultToken, User user, Pageable page) {
 		return initiativeQueryRepository.searchInitiatives(keyResultToken, user, page);
 	}
+
+	@Override
+	public List<Initiative> searchInitiativesByDate(LocalDate searchDate, User user) {
+		return initiativeRepository.findInitiativesByDateAndUser(searchDate, user);
+	}
+
 }

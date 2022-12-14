@@ -1,13 +1,15 @@
 package kr.objet.okrproject.interfaces.initiative;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
-import java.nio.charset.StandardCharsets;
-import java.util.Objects;
-
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import kr.objet.okrproject.common.exception.ErrorCode;
+import kr.objet.okrproject.common.utils.JwtTokenUtils;
+import kr.objet.okrproject.domain.initiative.Initiative;
+import kr.objet.okrproject.domain.user.User;
+import kr.objet.okrproject.infrastructure.initiative.InitiativeRepository;
+import kr.objet.okrproject.infrastructure.project.ProjectMasterRepository;
+import kr.objet.okrproject.infrastructure.user.UserRepository;
+import kr.objet.okrproject.interfaces.project.ProjectSaveDtoFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -21,17 +23,14 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
-import kr.objet.okrproject.common.exception.ErrorCode;
-import kr.objet.okrproject.common.utils.JwtTokenUtils;
-import kr.objet.okrproject.domain.initiative.Initiative;
-import kr.objet.okrproject.domain.user.User;
-import kr.objet.okrproject.infrastructure.initiative.InitiativeRepository;
-import kr.objet.okrproject.infrastructure.project.ProjectMasterRepository;
-import kr.objet.okrproject.infrastructure.user.UserRepository;
-import kr.objet.okrproject.interfaces.project.ProjectSaveDtoFixture;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @SpringBootTest
@@ -246,8 +245,30 @@ public class InitiativeIntegrationTest {
 			.andReturn();
 		//then
 		JsonNode jsonNode = objectMapper.readTree(mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8));
-		String message = jsonNode.get("message").asText();
+		JsonNode result = jsonNode.get("result").get("content");
+		assertThat(result.size()).isEqualTo(2);
+		assertThat(result.toString()).contains("detail1", "detail2");
+	}
 
+	@Test
+	void initiative_날짜로_조회() throws Exception {
+		// given
+		String date = "20251112";
+
+		//when
+		MvcResult mvcResult = mvc.perform(get(initiativeUrl + "/date/" +date )
+				.header(HttpHeaders.AUTHORIZATION, "Bearer " + initiativeToken)
+				.contentType(MediaType.APPLICATION_JSON)
+				.characterEncoding(StandardCharsets.UTF_8)
+			)
+			.andDo(print())
+			.andExpect(status().isOk())
+			.andReturn();
+		//then
+		JsonNode jsonNode = objectMapper.readTree(mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8));
+		JsonNode result = jsonNode.get("result");
+		assertThat(result.size()).isEqualTo(2);
+		assertThat(result.toString()).contains("detail6", "detail7");
 	}
 
 }

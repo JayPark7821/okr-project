@@ -1,19 +1,5 @@
 package kr.objet.okrproject.interfaces.initiative;
 
-import javax.validation.Valid;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import kr.objet.okrproject.application.initiative.InitiativeFacade;
 import kr.objet.okrproject.common.Response;
 import kr.objet.okrproject.common.exception.ErrorCode;
@@ -22,6 +8,18 @@ import kr.objet.okrproject.common.utils.ClassUtils;
 import kr.objet.okrproject.domain.user.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -65,6 +63,40 @@ public class InitiativeApiController {
 				HttpStatus.OK,
 				response
 			);
+	}
+
+	@GetMapping("/date/{date}")
+	public ResponseEntity<Response<List<InitiativeDto.Response>>> searchInitiativesByDate(
+			@PathVariable("date")  String date,
+			Authentication authentication
+	) {
+
+		LocalDate searchDate = validateDate(date);
+
+		User user = ClassUtils.getSafeCastInstance(authentication.getPrincipal(), User.class)
+				.orElseThrow(() -> new OkrApplicationException(ErrorCode.CASTING_USER_FAILED));
+
+		List<InitiativeDto.Response> response =
+				initiativeFacade.searchInitiativesByDate(searchDate, user)
+						.stream()
+						.map(InitiativeDto.Response::new)
+						.collect(Collectors.toList());
+
+		return Response
+				.success(
+						HttpStatus.OK,
+						response
+				);
+	}
+
+
+
+	private static LocalDate validateDate(String date) {
+		try {
+			return LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyyMMdd"));
+		} catch (Exception e) {
+			throw new OkrApplicationException(ErrorCode.INVALID_SEARCH_DATE_FORM);
+		}
 	}
 
 }
