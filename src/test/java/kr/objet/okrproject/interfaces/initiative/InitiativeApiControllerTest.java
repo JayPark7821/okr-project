@@ -47,7 +47,7 @@ class InitiativeApiControllerTest {
 		String initiativeName = "ini name";
 		String initiativeDetail = "initiative detail";
 		KeyResult keyResult = KeyResultFixture.create();
-		InitiativeSaveDto dto = InitiativeSaveDto.builder()
+		InitiativeDto.Save dto = InitiativeDto.Save.builder()
 			.keyResultToken(keyResult.getKeyResultToken())
 			.edt(ProjectSaveDtoFixture.getDateString(-6, "yyyy-MM-dd"))
 			.sdt(ProjectSaveDtoFixture.getDateString(-10, "yyyy-MM-dd"))

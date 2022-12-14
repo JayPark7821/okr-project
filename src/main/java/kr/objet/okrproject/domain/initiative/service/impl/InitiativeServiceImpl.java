@@ -2,6 +2,8 @@ package kr.objet.okrproject.domain.initiative.service.impl;
 
 import java.time.LocalDate;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import kr.objet.okrproject.common.exception.ErrorCode;
@@ -13,6 +15,7 @@ import kr.objet.okrproject.domain.initiative.service.InitiativeService;
 import kr.objet.okrproject.domain.initiative.service.InitiativeStore;
 import kr.objet.okrproject.domain.keyresult.KeyResult;
 import kr.objet.okrproject.domain.team.TeamMember;
+import kr.objet.okrproject.domain.user.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -46,4 +49,10 @@ public class InitiativeServiceImpl implements InitiativeService {
 		Initiative initiative = command.toEntity(keyResult, teamMember);
 		return initiativeStore.store(initiative);
 	}
+
+	@Override
+	public Page<Initiative> searchInitiatives(String keyResultToken, User user, Pageable page) {
+		return initiativeReader.searchInitiatives(keyResultToken, user, page);
+	}
+
 }

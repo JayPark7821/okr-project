@@ -7,6 +7,7 @@ import javax.validation.constraints.Size;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import kr.objet.okrproject.domain.guest.GuestCommand;
+import kr.objet.okrproject.domain.user.User;
 import kr.objet.okrproject.domain.user.UserInfo;
 import kr.objet.okrproject.domain.user.enums.ProviderType;
 import kr.objet.okrproject.domain.user.enums.RoleType;
@@ -26,7 +27,7 @@ public class UserDto {
 
 		@Valid
 		@NotNull(message = "사용자 이름은 필수 값입니다.")
-		@Size(min=1,max =100)
+		@Size(min = 1, max = 100)
 		@Schema(description = "사용자 이름", example = "홍길동")
 		private String name;
 
@@ -37,7 +38,7 @@ public class UserDto {
 		@Email
 		private String email;
 
-		@Size(min=1,max =100)
+		@Size(min = 1, max = 100)
 		@Schema(description = "대표 분야", example = "백엔드 개발자")
 		private String jobField;
 
@@ -51,6 +52,7 @@ public class UserDto {
 		}
 
 	}
+
 	@Getter
 	public static class LoginResponse {
 
@@ -91,6 +93,26 @@ public class UserDto {
 			this.accessToken = response.getAccessToken();
 			this.refreshToken = response.getRefreshToken();
 		}
-
 	}
+
+	@Getter
+	@NoArgsConstructor
+	public static class UserBrief {
+
+		@Schema(description = "유저명", example = "홍길동")
+		private String userName;
+
+		@Schema(description = "이미지url", example = "~~~~~")
+		private String profileImageUrl;
+
+		@Schema(description = "대표분야", example = "백엔드 개발자")
+		private String jobField;
+
+		public UserBrief(User user) {
+			this.userName = user.getUsername();
+			this.profileImageUrl = user.getProfileImageUrl();
+			this.jobField = user.getJobField().getTitle();
+		}
+	}
+
 }

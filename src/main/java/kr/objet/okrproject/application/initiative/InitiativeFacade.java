@@ -1,8 +1,11 @@
 package kr.objet.okrproject.application.initiative;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import kr.objet.okrproject.domain.initiative.Initiative;
+import kr.objet.okrproject.domain.initiative.InitiativeInfo;
 import kr.objet.okrproject.domain.initiative.service.InitiativeCommand;
 import kr.objet.okrproject.domain.initiative.service.InitiativeService;
 import kr.objet.okrproject.domain.keyresult.KeyResult;
@@ -33,5 +36,15 @@ public class InitiativeFacade {
 
 		return initiative.getInitiativeToken();
 
+	}
+
+	public Page<InitiativeInfo.Response> searchInitiatives(String keyResultToken, User user, Pageable page) {
+		KeyResult keyResult = keyResultService.validateKeyResultWithUser(keyResultToken, user);
+
+		Page<Initiative> results = initiativeService.searchInitiatives(keyResultToken, user, page);
+
+		return results.map(i -> {
+			return new InitiativeInfo.Response(i, user);
+		});
 	}
 }

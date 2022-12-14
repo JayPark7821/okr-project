@@ -2,9 +2,13 @@ package kr.objet.okrproject.interfaces.initiative;
 
 import javax.validation.Valid;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,7 +33,7 @@ public class InitiativeApiController {
 
 	@PostMapping
 	public ResponseEntity<Response<String>> registerKeyResult(
-		@RequestBody @Valid InitiativeSaveDto requestDto,
+		@RequestBody @Valid InitiativeDto.Save requestDto,
 		Authentication authentication) {
 
 		User user = ClassUtils.getSafeCastInstance(authentication.getPrincipal(), User.class)
@@ -39,6 +43,27 @@ public class InitiativeApiController {
 			.success(
 				HttpStatus.CREATED,
 				initiativeFacade.registerInitiative(requestDto.toCommand(), user)
+			);
+	}
+
+	@GetMapping("/{keyResultToken}")
+	public ResponseEntity<Response<Page<InitiativeDto.Response>>> searchInitiatives(
+		@PathVariable("keyResultToken") String keyResultToken,
+		Authentication authentication,
+		Pageable page
+	) {
+
+		User user = ClassUtils.getSafeCastInstance(authentication.getPrincipal(), User.class)
+			.orElseThrow(() -> new OkrApplicationException(ErrorCode.CASTING_USER_FAILED));
+
+		Page<InitiativeDto.Response> response =
+			initiativeFacade.searchInitiatives(keyResultToken, user, page)
+				.map(InitiativeDto.Response::new);
+
+		return Response
+			.success(
+				HttpStatus.OK,
+				response
 			);
 	}
 
