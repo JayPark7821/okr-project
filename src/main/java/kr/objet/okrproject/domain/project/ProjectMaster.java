@@ -76,9 +76,9 @@ public class ProjectMaster extends BaseEntity {
 		this.type = ProjectType.TEAM;
 	}
 
-	public String addTeamMember(TeamMember teamMember) {
+	public ProjectMaster addTeamMember(TeamMember teamMember) {
 		this.teamMember.add(teamMember);
-		return teamMember.getUser().getEmail();
+		return this;
 	}
 
 	public void validateProjectDueDate() {

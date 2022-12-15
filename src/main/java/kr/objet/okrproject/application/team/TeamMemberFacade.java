@@ -8,7 +8,7 @@ import kr.objet.okrproject.common.exception.ErrorCode;
 import kr.objet.okrproject.common.exception.OkrApplicationException;
 import kr.objet.okrproject.domain.project.ProjectMaster;
 import kr.objet.okrproject.domain.project.service.ProjectMasterService;
-import kr.objet.okrproject.domain.team.TeamMember;
+import kr.objet.okrproject.domain.team.TeamMemberSavedInfo;
 import kr.objet.okrproject.domain.team.service.TeamMemberCommand;
 import kr.objet.okrproject.domain.team.service.TeamMemberService;
 import kr.objet.okrproject.domain.user.User;
@@ -31,12 +31,13 @@ public class TeamMemberFacade {
 			command.getProjectToken(),
 			user
 		);
-		teamMemberService.checkIsUserProjectLeader(projectMaster.getTeamMember(), user);
 
 		List<User> users = userService.findUsersByEmails(command.getUserEmails());
-		List<TeamMember> teamMembers = teamMemberService.findTeamMembersByProjectMasterAndUsers(projectMaster, users);
 
-		return teamMemberService.checkUsersAndRegisterTeamMember(users, teamMembers, projectMaster).toDto();
+		TeamMemberSavedInfo teamMemberSavedInfo =
+			teamMemberService.inviteTeamMembers(projectMaster, user, users);
+
+		return teamMemberSavedInfo.toDto();
 	}
 
 	public String validateEmail(String projectToken, String email, User user) {
