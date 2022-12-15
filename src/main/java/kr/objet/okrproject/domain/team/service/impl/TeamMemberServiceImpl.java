@@ -1,11 +1,5 @@
 package kr.objet.okrproject.domain.team.service.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.springframework.stereotype.Service;
-
 import kr.objet.okrproject.common.exception.ErrorCode;
 import kr.objet.okrproject.common.exception.OkrApplicationException;
 import kr.objet.okrproject.domain.project.ProjectMaster;
@@ -19,6 +13,11 @@ import kr.objet.okrproject.domain.team.service.TeamMemberStore;
 import kr.objet.okrproject.domain.user.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -67,6 +66,11 @@ public class TeamMemberServiceImpl implements TeamMemberService {
 		} else {
 			throw new OkrApplicationException(ErrorCode.NO_USERS_ADDED);
 		}
+	}
+
+	@Override
+	public List<TeamMember> findTeamMembersByEmailsNotIn(List<String> addedEmailList, ProjectMaster projectMaster) {
+		return teamMemberReader.findTeamMembersByEmailsNotIn(addedEmailList, projectMaster);
 	}
 
 	private List<User> checkUsersWhetherTeamMemberOrNot(List<User> users, List<TeamMember> teamMembers) {

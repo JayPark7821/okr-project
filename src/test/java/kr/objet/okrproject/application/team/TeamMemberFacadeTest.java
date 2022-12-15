@@ -1,9 +1,15 @@
 package kr.objet.okrproject.application.team;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.BDDMockito.*;
-
+import kr.objet.okrproject.application.user.fixture.UserFixture;
+import kr.objet.okrproject.common.exception.ErrorCode;
+import kr.objet.okrproject.common.exception.OkrApplicationException;
+import kr.objet.okrproject.domain.notification.service.NotificationService;
+import kr.objet.okrproject.domain.project.ProjectMaster;
+import kr.objet.okrproject.domain.project.service.ProjectMasterService;
+import kr.objet.okrproject.domain.project.service.fixture.ProjectMasterFixture;
+import kr.objet.okrproject.domain.team.service.TeamMemberService;
+import kr.objet.okrproject.domain.user.User;
+import kr.objet.okrproject.domain.user.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -13,15 +19,10 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import kr.objet.okrproject.application.user.fixture.UserFixture;
-import kr.objet.okrproject.common.exception.ErrorCode;
-import kr.objet.okrproject.common.exception.OkrApplicationException;
-import kr.objet.okrproject.domain.project.ProjectMaster;
-import kr.objet.okrproject.domain.project.service.ProjectMasterService;
-import kr.objet.okrproject.domain.project.service.fixture.ProjectMasterFixture;
-import kr.objet.okrproject.domain.team.service.TeamMemberService;
-import kr.objet.okrproject.domain.user.User;
-import kr.objet.okrproject.domain.user.service.UserService;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.BDDMockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
@@ -37,6 +38,8 @@ class TeamMemberFacadeTest {
 
 	@Mock
 	private UserService userService;
+	@Mock
+	private NotificationService notificationService;
 
 	@BeforeEach
 	void init() {
@@ -44,7 +47,8 @@ class TeamMemberFacadeTest {
 		sut = new TeamMemberFacade(
 			projectMasterService,
 			teamMemberService,
-			userService
+			userService,
+			notificationService
 		);
 	}
 

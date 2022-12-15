@@ -1,6 +1,7 @@
 package kr.objet.okrproject.domain.notification;
 
 import kr.objet.okrproject.domain.user.User;
+import lombok.Builder;
 import lombok.Getter;
 
 public class NotificationCommand {
@@ -11,10 +12,11 @@ public class NotificationCommand {
 		private final Notifications notifications;
 		private final String msg;
 
-		public send(User to, Notifications notifications, String msg) {
+		@Builder
+		public send(User to, Notifications notifications, String...param) {
 			this.to = to;
 			this.notifications = notifications;
-			this.msg = msg;
+			this.msg = notifications.getMsg(param);
 		}
 
 		public Notification toEntity() {

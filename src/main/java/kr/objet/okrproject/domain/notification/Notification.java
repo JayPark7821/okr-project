@@ -1,22 +1,12 @@
 package kr.objet.okrproject.domain.notification;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-
 import kr.objet.okrproject.common.entity.BaseTimeEntity;
 import kr.objet.okrproject.domain.user.User;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import javax.persistence.*;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -47,10 +37,10 @@ public class Notification extends BaseTimeEntity {
 		this.isChecked = true;
 	}
 
-	public Notification(User user, Notifications type, String... param) {
+	public Notification(User user, Notifications type, String msg) {
 		this.user = user;
 		this.type = type;
-		this.msg = type.getMsg(param);
+		this.msg = msg;
 		this.isChecked = false;
 	}
 }
