@@ -1,16 +1,15 @@
 package kr.objet.okrproject.infrastructure.team;
 
-import java.util.List;
-import java.util.Optional;
-
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-
 import kr.objet.okrproject.domain.project.ProjectMaster;
 import kr.objet.okrproject.domain.team.TeamMember;
 import kr.objet.okrproject.domain.team.TeamMemberId;
 import kr.objet.okrproject.domain.user.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import java.util.List;
+import java.util.Optional;
 
 public interface TeamMemberRepository extends JpaRepository<TeamMember, TeamMemberId> {
 
@@ -40,4 +39,14 @@ public interface TeamMemberRepository extends JpaRepository<TeamMember, TeamMemb
 		"join fetch t.user u " +
 		"where m.id = :projectId ")
 	List<TeamMember> findTeamMembersByProjectId(@Param("projectId") Long projectId);
+
+	@Query("select t " +
+			"from TeamMember t " +
+			"join fetch t.projectMaster p " +
+			"join fetch t.user u " +
+			"where u.email not in :emails " +
+			"and t.projectMaster =:projectMaster")
+    List<TeamMember> findTeamMembersByEmailsNotIn(@Param("emails") List<String> emails, @Param("projectMaster") ProjectMaster projectMaster);
+
+
 }

@@ -10,4 +10,6 @@ public interface TeamMemberReader {
     List<TeamMember> findTeamMembersByProjectMasterAndUsers(ProjectMaster projectMaster, List<User> users);
 
     List<TeamMember> findTeamMembersByProjectId(Long projectId);
+
+    List<TeamMember> findTeamMembersByEmailsNotIn(List<String> addedEmailList, ProjectMaster projectMaster);
 }

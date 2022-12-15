@@ -11,11 +11,9 @@ public interface TeamMemberService {
 
 	TeamMember registerProjectTeamMember(TeamMemberCommand.RegisterProjectLeader command);
 
-	void checkIsUserProjectLeader(List<TeamMember> teamMemberList, User user);
-
-    List<TeamMember> findTeamMembersByProjectMasterAndUsers(ProjectMaster projectMaster, List<User> users);
-
-	TeamMemberSavedInfo checkUsersAndRegisterTeamMember(List<User> users, List<TeamMember> teamMembers, ProjectMaster projectMaster);
-
 	void validateEmailWithProject(String email, Long projectId);
+
+	TeamMemberSavedInfo inviteTeamMembers(ProjectMaster projectMaster, User user, List<User> users);
+
+	List<TeamMember> findTeamMembersByEmailsNotIn(List<String> addedEmailList, ProjectMaster projectMaster);
 }

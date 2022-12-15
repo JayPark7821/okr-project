@@ -26,4 +26,10 @@ public class TeamMemberReaderImpl implements TeamMemberReader {
     public List<TeamMember> findTeamMembersByProjectId(Long projectId) {
         return teamMemberRepository.findTeamMembersByProjectId(projectId);
     }
+
+    @Override
+    public List<TeamMember> findTeamMembersByEmailsNotIn(List<String> addedEmailList, ProjectMaster projectMaster) {
+        return teamMemberRepository.findTeamMembersByEmailsNotIn(addedEmailList, projectMaster);
+    }
+
 }
