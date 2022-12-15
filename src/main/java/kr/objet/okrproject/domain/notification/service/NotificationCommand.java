@@ -1,5 +1,7 @@
-package kr.objet.okrproject.domain.notification;
+package kr.objet.okrproject.domain.notification.service;
 
+import kr.objet.okrproject.domain.notification.Notification;
+import kr.objet.okrproject.domain.notification.Notifications;
 import kr.objet.okrproject.domain.user.User;
 import lombok.Builder;
 import lombok.Getter;
