@@ -45,10 +45,13 @@ public class Notification extends BaseTimeEntity {
 	private String msg;
 
 	@Column(name = "checked")
+	@Enumerated(EnumType.STRING)
 	private NotificationCheckType status;
 
-	public void checkNotification() {
-		this.status = NotificationCheckType.CHECKED;
+	public void updateStatus() {
+		this.status = this.status.equals(NotificationCheckType.NEW) ?
+			NotificationCheckType.CHECKED :
+			NotificationCheckType.DELETED;
 	}
 
 	public Notification(User user, Notifications type, String msg) {

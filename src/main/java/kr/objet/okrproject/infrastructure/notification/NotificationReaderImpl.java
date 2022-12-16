@@ -1,6 +1,7 @@
 package kr.objet.okrproject.infrastructure.notification;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Component;
 
@@ -20,5 +21,10 @@ public class NotificationReaderImpl implements NotificationReader {
 	@Override
 	public List<Notification> findNotificationsByUser(User user) {
 		return notificationRepository.findNotificationsByUser(user);
+	}
+
+	@Override
+	public Optional<Notification> findByUserAndNotificationToken(User user, String token) {
+		return notificationRepository.findByUserAndNotificationToken(user, token);
 	}
 }

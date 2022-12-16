@@ -11,15 +11,21 @@ import kr.objet.okrproject.domain.notification.Notification;
 import kr.objet.okrproject.domain.user.User;
 
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
-	List<Notification> findAllByUser(User user);
 
 	@Query("select n " +
 		"from Notification n " +
 		"join n.user u " +
-		"where u.email = :email")
+		"where u.email = :email " +
+		"and n.status <> kr.objet.okrproject.domain.notification.NotificationCheckType.DELETED ")
 	List<Notification> findAllByEmail(@Param("email") String email);
 
-	List<Notification> findNotificationsByUser(User user);
+	@Query("select n " +
+		"from Notification n " +
+		"where n.user =:user " +
+		"and n.status <> kr.objet.okrproject.domain.notification.NotificationCheckType.DELETED ")
+	List<Notification> findNotificationsByUser(@Param("user") User user);
 
 	Optional<Notification> findByNotificationToken(String notiToken);
+
+	Optional<Notification> findByUserAndNotificationToken(User user, String token);
 }

@@ -10,4 +10,7 @@ public interface NotificationService {
 	void pushNotification(List<NotificationCommand.send> commands);
 
 	List<NotificationInfo.Response> findNotificationsByUser(User user);
+
+	void updateNotificationStatus(User user, String token);
+
 }

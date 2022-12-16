@@ -22,6 +22,6 @@ public class NotificationFacade {
 	}
 
 	public void updateNotificationStatus(User user, String token) {
-
+		notificationService.updateNotificationStatus(user, token);
 	}
 }

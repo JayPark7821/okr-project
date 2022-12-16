@@ -4,7 +4,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import kr.objet.okrproject.common.exception.ErrorCode;
+import kr.objet.okrproject.common.exception.OkrApplicationException;
 import kr.objet.okrproject.domain.notification.Notification;
 import kr.objet.okrproject.domain.notification.NotificationInfo;
 import kr.objet.okrproject.domain.notification.service.NotificationCommand;
@@ -18,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class NotificationServiceImpl implements NotificationService {
 
 	private final NotificationStore notificationStore;
@@ -37,5 +41,12 @@ public class NotificationServiceImpl implements NotificationService {
 		return notifications.stream()
 			.map(NotificationInfo.Response::new)
 			.collect(Collectors.toList());
+	}
+
+	@Override
+	public void updateNotificationStatus(User user, String token) {
+		Notification notification = notificationReader.findByUserAndNotificationToken(user, token)
+			.orElseThrow(() -> new OkrApplicationException(ErrorCode.INVALID_NOTIFICAION_TOKEN));
+		notification.updateStatus();
 	}
 }

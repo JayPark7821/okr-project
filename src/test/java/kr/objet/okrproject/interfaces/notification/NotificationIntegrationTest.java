@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -78,13 +79,14 @@ class NotificationIntegrationTest {
 		//then
 		JsonNode jsonNode = objectMapper.readTree(mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8));
 		JsonNode result = jsonNode.get("result");
-		assertThat(result.size()).isEqualTo(7);
+		assertThat(result.size()).isEqualTo(5);
 	}
 
 	@Test
+	@Order(1)
 	void 메시지_상태변경_확인() throws Exception {
 		//given
-		String notiToken = "noti_eKTgf234fey1SERx";
+		String notiToken = "noti_111fey1SERx";
 		Optional<Notification> beforeNotification =
 			notificationRepository.findByNotificationToken(notiToken);
 
@@ -100,10 +102,10 @@ class NotificationIntegrationTest {
 			.andExpect(status().isOk())
 			.andReturn();
 
-		//then
 		Optional<Notification> afterNotification =
 			notificationRepository.findByNotificationToken(notiToken);
 
 		assertThat(afterNotification.get().getStatus()).isEqualTo(NotificationCheckType.CHECKED);
+
 	}
 }

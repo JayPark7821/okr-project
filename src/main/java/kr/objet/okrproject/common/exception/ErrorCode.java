@@ -1,8 +1,9 @@
 package kr.objet.okrproject.common.exception;
 
+import org.springframework.http.HttpStatus;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.springframework.http.HttpStatus;
 
 @Getter
 @AllArgsConstructor
@@ -35,7 +36,8 @@ public enum ErrorCode {
 	INVALID_SORT_TYPE(HttpStatus.BAD_REQUEST, "잘못된 정렬 코드 입니다."),
 	INVALID_FINISHED_RPOJECT_YN(HttpStatus.BAD_REQUEST, "종료된 프로젝트 포함여부는 Y 또는 N 만 가능합니다. "),
 	INVALID_SEARCH_DATE_FORM(HttpStatus.BAD_REQUEST, "날짜는 8자리의 yyyyMMdd 형식이어야 합니다."),
-	INVALID_YEARMONTH_FORMAT(HttpStatus.BAD_REQUEST, "년월 형식(yyyy-MM)에 맞지 않습니다");
+	INVALID_YEARMONTH_FORMAT(HttpStatus.BAD_REQUEST, "년월 형식(yyyy-MM)에 맞지 않습니다"),
+	INVALID_NOTIFICAION_TOKEN(HttpStatus.BAD_REQUEST, "잘못된 Notification token 입니다.");
 
 	private HttpStatus status;
 	private String message;

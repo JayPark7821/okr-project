@@ -17,12 +17,12 @@ public class Response<T> {
 
 	public static ResponseEntity<Response<Void>> error(HttpStatus status, String message) {
 		return ResponseEntity.status(status)
-			.body(new Response<>(status.value(), message,null));
+			.body(new Response<>(status.value(), message, null));
 	}
 
-	public static ResponseEntity<Response<Void>> error(ErrorCode errorCode ) {
+	public static ResponseEntity<Response<Void>> error(ErrorCode errorCode) {
 		return ResponseEntity.status(errorCode.getStatus())
-			.body(new Response<>(errorCode.getStatus().value(), errorCode.getMessage(),null));
+			.body(new Response<>(errorCode.getStatus().value(), errorCode.getMessage(), null));
 	}
 
 	public static <T> ResponseEntity<Response<T>> success(HttpStatus status, T result) {
@@ -30,5 +30,9 @@ public class Response<T> {
 			.body(new Response<>(status.value(), "SUCCESS", result));
 	}
 
+	public static ResponseEntity<Response<Void>> success(HttpStatus status) {
+		return ResponseEntity.status(status)
+			.body(new Response<>(status.value(), "SUCCESS", null));
+	}
 
 }
