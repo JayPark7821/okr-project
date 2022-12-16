@@ -16,6 +16,7 @@ import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 
 import kr.objet.okrproject.common.entity.BaseEntity;
+import kr.objet.okrproject.common.utils.TokenGenerator;
 import kr.objet.okrproject.domain.initiative.Initiative;
 import kr.objet.okrproject.domain.team.TeamMember;
 import lombok.AccessLevel;
@@ -28,11 +29,14 @@ import lombok.NoArgsConstructor;
 @Entity
 public class Feedback extends BaseEntity {
 
+	private static final String FEEDBACK_PREFIX = "key_";
+
 	@Id
 	@Column(name = "feedback_id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long feedbackId;
 
+	private String feedbackToken;
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "project_initiative_id", updatable = false)
 	private Initiative initiative;
@@ -59,6 +63,7 @@ public class Feedback extends BaseEntity {
 
 	@Builder
 	public Feedback(Initiative initiative, TeamMember teamMember, FeedbackType grade, String opinion) {
+		this.feedbackToken = TokenGenerator.randomCharacterWithPrefix(FEEDBACK_PREFIX);
 		this.initiative = initiative;
 		this.teamMember = teamMember;
 		this.grade = grade;
