@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -26,5 +27,10 @@ public class FeedbackReaderImpl implements FeedbackReader {
 	@Override
 	public List<Feedback> getAllFeedbackListForInitiative(String token) {
 		return feedbackQueryRepository.getAllFeedbackListForInitiative(token);
+	}
+
+	@Override
+	public Optional<Feedback> findByFeedbackTokenAndUser(String feedbackToken, User user) {
+		return feedbackRepository.findByFeedbackTokenAndUser(feedbackToken, user);
 	}
 }

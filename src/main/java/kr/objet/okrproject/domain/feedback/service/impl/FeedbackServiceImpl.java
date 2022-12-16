@@ -1,5 +1,7 @@
 package kr.objet.okrproject.domain.feedback.service.impl;
 
+import kr.objet.okrproject.common.exception.ErrorCode;
+import kr.objet.okrproject.common.exception.OkrApplicationException;
 import kr.objet.okrproject.domain.feedback.Feedback;
 import kr.objet.okrproject.domain.feedback.SearchRange;
 import kr.objet.okrproject.domain.feedback.service.FeedbackCommand;
@@ -12,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -36,5 +39,14 @@ public class FeedbackServiceImpl implements FeedbackService {
 	@Override
 	public List<Feedback> getAllFeedbackListForInitiative(String token) {
 		return feedbackReader.getAllFeedbackListForInitiative(token);
+	}
+
+	@Transactional
+	@Override
+	public String setFeedbackChecked(String feedbackToken, User user) {
+		Feedback feedback = feedbackReader.findByFeedbackTokenAndUser(feedbackToken, user)
+				.orElseThrow(()-> new OkrApplicationException(ErrorCode.INVALID_FEEDBACK_TOKEN));
+		feedback.checkFeedback();
+		return feedback.getFeedbackToken();
 	}
 }

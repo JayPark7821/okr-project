@@ -56,4 +56,8 @@ public class FeedbackFacade {
 	public Integer getCountForFeedbackToGive(User user) {
 		return initiativeService.getCountForFeedbackToGive(user);
 	}
+
+	public String setFeedbackChecked(String feedbackToken, User user) {
+		return feedbackService.setFeedbackChecked(feedbackToken, user);
+	}
 }

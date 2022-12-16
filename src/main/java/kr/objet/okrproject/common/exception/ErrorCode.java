@@ -1,9 +1,8 @@
 package kr.objet.okrproject.common.exception;
 
-import org.springframework.http.HttpStatus;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.springframework.http.HttpStatus;
 
 @Getter
 @AllArgsConstructor
@@ -41,7 +40,7 @@ public enum ErrorCode {
 	INVALID_INITIATIVE_TOKEN(HttpStatus.BAD_REQUEST, "잘못된 Initiative token 입니다."),
 	INITIATIVE_IS_NOT_FINISHED(HttpStatus.BAD_REQUEST, "완료되지 않은 Initative에는 피드백을 남길 수 없습니다."),
 	INVALID_SEARCH_RANGE_TYPE(HttpStatus.BAD_REQUEST, "잘못된 검색 기간입니다."),
-	;
+    INVALID_FEEDBACK_TOKEN(HttpStatus.BAD_REQUEST, "잘못된 Feedback token 입니다." );
 
 	private HttpStatus status;
 	private String message;

@@ -14,4 +14,6 @@ public interface FeedbackService {
 	Page<Feedback> getAllFeedbackList(SearchRange range, User user, Pageable pageable);
 
     List<Feedback> getAllFeedbackListForInitiative(String token);
+
+    String setFeedbackChecked(String feedbackToken, User user);
 }

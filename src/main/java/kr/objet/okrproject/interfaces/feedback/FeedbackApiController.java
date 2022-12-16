@@ -85,4 +85,22 @@ public class FeedbackApiController {
 				feedbackFacade.getCountForFeedbackToGive(user)
 			);
 	}
+
+	@PutMapping("/{feedbackToken}")
+	public ResponseEntity<Response<String>> setFeedbackCheck(
+			@PathVariable("feedbackToken") String feedbackToken,
+			Authentication authentication
+	) {
+
+		User user = ClassUtils.getSafeCastInstance(authentication.getPrincipal(), User.class)
+				.orElseThrow(() -> new OkrApplicationException(ErrorCode.CASTING_USER_FAILED));
+
+
+		return Response
+			.success(
+				HttpStatus.OK,
+				feedbackFacade.setFeedbackChecked(feedbackToken, user)
+			);
+	}
+
 }

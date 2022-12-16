@@ -22,8 +22,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import java.nio.charset.StandardCharsets;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -335,6 +334,61 @@ public class FeedbackIntegrationTest {
 		JsonNode jsonNode = objectMapper.readTree(mvcResult);
 		JsonNode result = jsonNode.get("result");
 		assertThat(result.asText()).isEqualTo("2");
+
+	}
+
+	@Test
+	void 피드백_상태업데이트_성공() throws Exception {
+		//given
+		String feedbackToken = "feedback_el6awefwaeyWx39";
+		Feedback beforeFeedback = feedbackRepository.findByFeedbackToken(feedbackToken).orElseThrow();
+		assertThat(beforeFeedback.isChecked()).isFalse();
+
+		//when
+		String mvcResult = mvc.perform(put(feedbackUrl + "/" + feedbackToken)
+						.header(HttpHeaders.AUTHORIZATION, "Bearer " + feedbackRetrieveToken)
+						.contentType(MediaType.APPLICATION_JSON)
+						.characterEncoding(StandardCharsets.UTF_8)
+				)
+				.andDo(print())
+				.andExpect(status().isOk())
+				.andReturn()
+				.getResponse()
+				.getContentAsString(StandardCharsets.UTF_8);
+		//then
+		JsonNode jsonNode = objectMapper.readTree(mvcResult);
+		JsonNode result = jsonNode.get("result");
+		Feedback feedback = feedbackRepository.findByFeedbackToken("feedback_el6awefwaeyWx39").orElseThrow();
+		assertThat(result.asText()).isEqualTo("feedback_el6awefwaeyWx39");
+		assertThat(feedback.isChecked()).isTrue();
+
+
+	}
+	@Test
+	void 피드백_상태업데이트_실패_본인_피드백토큰아님() throws Exception {
+		//given
+		String feedbackToken = "feedback_el6awefwaeyWx39";
+		Feedback beforeFeedback = feedbackRepository.findByFeedbackToken(feedbackToken).orElseThrow();
+		assertThat(beforeFeedback.isChecked()).isFalse();
+
+		//when
+		String mvcResult = mvc.perform(put(feedbackUrl + "/" + feedbackToken)
+						.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+						.contentType(MediaType.APPLICATION_JSON)
+						.characterEncoding(StandardCharsets.UTF_8)
+				)
+				.andDo(print())
+				.andExpect(status().isBadRequest())
+				.andReturn()
+				.getResponse()
+				.getContentAsString(StandardCharsets.UTF_8);
+		//then
+		JsonNode jsonNode = objectMapper.readTree(mvcResult);
+		JsonNode message = jsonNode.get("message");
+		Feedback feedback = feedbackRepository.findByFeedbackToken("feedback_el6awefwaeyWx39").orElseThrow();
+		assertThat(message.asText()).isEqualTo(ErrorCode.INVALID_FEEDBACK_TOKEN.getMessage());
+		assertThat(feedback.isChecked()).isFalse();
+
 
 	}
 }
