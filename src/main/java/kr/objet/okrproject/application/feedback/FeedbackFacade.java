@@ -1,9 +1,5 @@
 package kr.objet.okrproject.application.feedback;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-
 import kr.objet.okrproject.domain.feedback.Feedback;
 import kr.objet.okrproject.domain.feedback.FeedbackInfo;
 import kr.objet.okrproject.domain.feedback.SearchRange;
@@ -16,6 +12,9 @@ import kr.objet.okrproject.domain.project.service.ProjectMasterService;
 import kr.objet.okrproject.domain.user.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
@@ -28,7 +27,7 @@ public class FeedbackFacade {
 
 	public String registerFeedback(FeedbackCommand.SaveRequest command, User user) {
 
-		ProjectMaster projectMaster = projectMasterService.validateProjectMasterWithUser(
+		ProjectMaster projectMaster = projectMasterService.validateUserWithProjectMasterToken(
 			command.getProjectToken(),
 			user
 		);
@@ -47,5 +46,18 @@ public class FeedbackFacade {
 		return feedbackService.getAllFeedbackList(range, user, pageable)
 			.map(FeedbackInfo.Response::new);
 
+	}
+
+	public FeedbackInfo.IniFeedbackResponse getAllFeedbackListForInitiative(String token, User user) {
+		Initiative initiative = initiativeService.validateUserWithProjectMasterToken(token, user);
+		return new FeedbackInfo.IniFeedbackResponse(feedbackService.getAllFeedbackListForInitiative(token), initiative, user);
+	}
+
+	public Integer getCountForFeedbackToGive(User user) {
+		return initiativeService.getCountForFeedbackToGive(user);
+	}
+
+	public String setFeedbackChecked(String feedbackToken, User user) {
+		return feedbackService.setFeedbackChecked(feedbackToken, user);
 	}
 }

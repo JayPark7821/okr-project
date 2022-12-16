@@ -1,16 +1,15 @@
 package kr.objet.okrproject.domain.initiative.service;
 
-import java.time.LocalDate;
-import java.time.YearMonth;
-import java.util.List;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-
 import kr.objet.okrproject.domain.initiative.Initiative;
 import kr.objet.okrproject.domain.keyresult.KeyResult;
 import kr.objet.okrproject.domain.team.TeamMember;
 import kr.objet.okrproject.domain.user.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.util.List;
 
 public interface InitiativeService {
 	void validateInitiativeDates(LocalDate sdt, LocalDate edt, KeyResult keyResult);
@@ -27,4 +26,9 @@ public interface InitiativeService {
 	Initiative findByInitiativeToken(String initiativeToken);
 
 	Initiative validateInitiativeForFeedback(String initiativeToken);
+
+	Initiative validateUserWithProjectMasterToken(String token, User user);
+
+	Integer getCountForFeedbackToGive(User user);
+
 }

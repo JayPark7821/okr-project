@@ -1,6 +1,11 @@
 package kr.objet.okrproject.domain.feedback;
 
+import kr.objet.okrproject.domain.initiative.Initiative;
+import kr.objet.okrproject.domain.user.User;
 import lombok.Getter;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class FeedbackInfo {
 
@@ -28,4 +33,20 @@ public class FeedbackInfo {
 		}
 	}
 
+	@Getter
+    public static class IniFeedbackResponse {
+
+		private boolean myInitiative;
+		private boolean wroteFeedback;
+		private List<FeedbackInfo.Response> feedbacks;
+
+		public IniFeedbackResponse(List<Feedback> feedbacks, Initiative initiative, User feedbackRequester) {
+			this.feedbacks = feedbacks.stream().map(Response::new).collect(Collectors.toList());
+			if (feedbacks.size() > 0) {
+				this.myInitiative = initiative.getTeamMember().getUser().equals(feedbackRequester);
+				this.wroteFeedback = feedbacks.stream()
+						.anyMatch(f -> f.getTeamMember().getUser().equals(feedbackRequester));
+			}
+		}
+	}
 }

@@ -1,12 +1,5 @@
 package kr.objet.okrproject.domain.project.service.impl;
 
-import java.time.YearMonth;
-import java.util.List;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-
 import kr.objet.okrproject.common.exception.ErrorCode;
 import kr.objet.okrproject.common.exception.OkrApplicationException;
 import kr.objet.okrproject.domain.project.ProjectMaster;
@@ -18,6 +11,12 @@ import kr.objet.okrproject.domain.user.User;
 import kr.objet.okrproject.interfaces.project.SortType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+
+import java.time.YearMonth;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -34,7 +33,7 @@ public class ProjectMasterServiceImpl implements ProjectMasterService {
 	}
 
 	@Override
-	public ProjectMaster validateProjectMasterWithUser(String projectToken, User user) {
+	public ProjectMaster validateUserWithProjectMasterToken(String projectToken, User user) {
 		ProjectMaster projectMaster = projectMasterReader.findByProjectTokenAndUser(projectToken, user)
 			.orElseThrow(() -> new OkrApplicationException(ErrorCode.INVALID_PROJECT_TOKEN));
 		if (projectMaster.getTeamMember().size() > 1) {
@@ -69,4 +68,5 @@ public class ProjectMasterServiceImpl implements ProjectMasterService {
 	public List<ProjectMaster> searchProjectsForCalendar(YearMonth yearMonth, User user) {
 		return projectMasterReader.searchProjectsForCalendar(yearMonth, user);
 	}
+ 
 }

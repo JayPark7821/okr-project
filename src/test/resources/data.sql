@@ -66,6 +66,7 @@ insert into team_member
 ('2022-12-12', '2022-12-12', 'testUser1', 'testUser1', true, 'MEMBER', 99986, 14),
 ('2022-12-12', '2022-12-12', 'testUser1', 'testUser1', true, 'MEMBER', 88888, 15),
 ('2022-12-12', '2022-12-12', 'testUser1', 'testUser1', true, 'MEMBER', 88888, 9),
+('2022-12-12', '2022-12-12', 'testUser1', 'testUser1', true, 'MEMBER', 88888, 16),
 ('2022-12-12', '2022-12-12', 'testUser1', 'testUser1', true, 'MEMBER', 88887, 15),
 ('2022-12-12', '2022-12-12', 'testUser1', 'testUser1', true, 'MEMBER', 88886, 15),
 ('2022-12-12', '2022-12-12', 'testUser1', 'testUser1', true, 'MEMBER', 88885, 15),
@@ -101,8 +102,8 @@ insert into key_result
 insert into initiative
 (initiative_id, created_date, last_modified_date, created_by, last_modified_by, initiative_detail, initiative_done, initiative_edt, initiative_token, key_result_id, initiative_name, initiative_sdt, project_id, user_seq) values
 (99999, '2022-12-14', '2022-12-14', 'testUser2', 'testUser2', 'initiative detail1', true, '2023-12-14', 'ini_ixYjj5nODqtb3AH8', 88888, 'ini name', '2000-12-12', 88888, 15),
-(99998, '2022-12-14', '2022-12-14', 'testUser2', 'testUser2', 'initiative detail2', false, '2023-12-14', 'ini_ix324gfODqtb3AH8', 88888, 'ini name', '2000-12-12', 88888, 9),
-(99997, '2022-12-14', '2022-12-14', 'testUser2', 'testUser2', 'initiative detail3', false, '2023-12-14', 'ini_g43gfd4ODqtb3AH8', 88887, 'ini name', '2000-12-12', 88888, 15),
+(99998, '2022-12-14', '2022-12-14', 'testUser2', 'testUser2', 'initiative detail2', true, '2023-12-14', 'ini_ix324gfODqtb3AH8', 88888, 'ini name', '2000-12-12', 88888, 9),
+(99997, '2022-12-14', '2022-12-14', 'testUser2', 'testUser2', 'initiative detail3', true, '2023-12-14', 'ini_g43gfd4ODqtb3AH8', 88887, 'ini name', '2000-12-12', 88888, 15),
 (99996, '2022-12-14', '2022-12-14', 'testUser2', 'testUser2', 'initiative detail4', false, '2023-12-14', 'ini_ixYjj5F43frfdAH8', 88885, 'ini name', '2000-12-12', 88887, 15),
 (99995, '2022-12-14', '2022-12-14', 'testUser2', 'testUser2', 'initiative detail5', false, '2023-12-14', 'ini_f43qerfdgbffhAH8', 88884, 'ini name', '2000-12-12', 88886, 15),
 (99994, '2022-12-14', '2022-12-14', 'testUser2', 'testUser2', 'initiative detail6', false, '2027-11-14', 'ini_ixYjj5nOF432wrH8', 88883, 'ini name', '2000-12-12', 88885, 15),
@@ -126,4 +127,10 @@ insert into feedback (feedback_id, created_date, last_modified_date, created_by,
 (9996, '2022-12-16', '2022-12-16', 'testUser2', 'testUser2', 'feedback_el6adsff3fffff9', 'BEST_RESULT', 99999, false, '정말 좋아요!!', 88888, 17),
 (9995, '2022-12-16', '2022-12-16', 'testUser2', 'testUser2', 'feedback_el6awe4gx39rrrr', 'BEST_RESULT', 99999, false, '정말 좋아요!!', 88888, 17),
 (9994, '2022-12-16', '2022-12-16', 'testUser2', 'testUser2', 'feedback_el612grerfcvds9', 'BEST_RESULT', 99999, false, '정말 좋아요!!', 88888, 17),
-(9993, '2022-12-16', '2022-12-16', 'testUser2', 'testUser2', 'feedback_el612XNk3rSyWx9', 'BEST_RESULT', 99999, false, '정말 좋아요!!', 88888, 17);
+(9993, '2022-12-16', '2022-12-16', 'testUser2', 'testUser2', 'feedback_el612XNk3rSyWx9', 'BEST_RESULT', 99999, false, '정말 좋아요!!', 88888, 17),
+(9992, '2022-12-16', '2022-12-16', 'testUser2', 'testUser2', 'feedback_el6q34zazzSyWx9', 'BEST_RESULT', 99998, false, '정말 좋아요!!', 88888, 17),
+(9991, '2022-12-16', '2022-12-16', 'testUser2', 'testUser2', 'feedback_aaaaaaaaaaayWx9', 'BEST_RESULT', 99998, false, '정말 좋아요!!', 88888, 16),
+(9990, '2022-12-16', '2022-12-16', 'testUser2', 'testUser2', 'feedback_aaa333333aayWx9', 'BEST_RESULT', 99997, false, '정말 좋아요!!', 88888, 15)
+;
+
+

@@ -1,18 +1,5 @@
 package kr.objet.okrproject.application.keyresult;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.BDDMockito.*;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayNameGeneration;
-import org.junit.jupiter.api.DisplayNameGenerator;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.mockito.junit.jupiter.MockitoExtension;
-
 import kr.objet.okrproject.application.user.fixture.UserFixture;
 import kr.objet.okrproject.common.exception.ErrorCode;
 import kr.objet.okrproject.common.exception.OkrApplicationException;
@@ -25,6 +12,20 @@ import kr.objet.okrproject.domain.project.service.ProjectMasterService;
 import kr.objet.okrproject.domain.project.service.fixture.ProjectMasterFixture;
 import kr.objet.okrproject.domain.user.User;
 import kr.objet.okrproject.interfaces.keyresult.KeyResultSaveDtoFixture;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.DisplayNameGenerator;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.BDDMockito.any;
+import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
@@ -56,7 +57,7 @@ class KeyResultFacadeTest {
         ProjectMaster projectMaster = ProjectMasterFixture.create();
         KeyResult keyResult = KeyResultFixture.create();
 
-        given(projectMasterService.validateProjectMasterWithUser(command.getProjectToken(), user))
+        given(projectMasterService.validateUserWithProjectMasterToken(command.getProjectToken(), user))
             .willReturn(projectMaster);
         given(keyResultService.registerKeyResult(any(KeyResultCommand.RegisterKeyResultWithProject.class)))
             .willReturn(keyResult);
@@ -78,7 +79,7 @@ class KeyResultFacadeTest {
         ProjectMaster projectMaster = ProjectMasterFixture.create();
         KeyResult keyResult = KeyResultFixture.create();
 
-        given(projectMasterService.validateProjectMasterWithUser(command.getProjectToken(), user))
+        given(projectMasterService.validateUserWithProjectMasterToken(command.getProjectToken(), user))
             .willThrow(new OkrApplicationException(ErrorCode.INVALID_PROJECT_TOKEN));
 
         //when
