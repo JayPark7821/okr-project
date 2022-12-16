@@ -2,8 +2,8 @@ package kr.objet.okrproject.application.team;
 
 import kr.objet.okrproject.common.exception.ErrorCode;
 import kr.objet.okrproject.common.exception.OkrApplicationException;
-import kr.objet.okrproject.domain.notification.NotificationCommand;
 import kr.objet.okrproject.domain.notification.Notifications;
+import kr.objet.okrproject.domain.notification.service.NotificationCommand;
 import kr.objet.okrproject.domain.notification.service.NotificationService;
 import kr.objet.okrproject.domain.project.ProjectMaster;
 import kr.objet.okrproject.domain.project.service.ProjectMasterService;

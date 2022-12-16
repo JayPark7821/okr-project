@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class JobTypeMapper {
-	private Map<String, List<JobTypeDto>> factory = new LinkedHashMap<>();
+	private Map<String, List<JobTypeInfo.Response>> factory = new LinkedHashMap<>();
 
 	public JobTypeMapper() {
 	}
@@ -16,13 +16,13 @@ public class JobTypeMapper {
 		factory.put(key, toEnumValues(e));
 	}
 
-	private List<JobTypeDto> toEnumValues(Class<? extends JobType> e) {
+	private List<JobTypeInfo.Response> toEnumValues(Class<? extends JobType> e) {
 		return Arrays.stream(e.getEnumConstants())
-			.map(JobTypeDto::new)
+			.map(JobTypeInfo.Response::new)
 			.collect(Collectors.toList());
 	}
 
-	public List<JobTypeDto> get(String key) {
+	public List<JobTypeInfo.Response> get(String key) {
 		return factory.get(key);
 	}
 }
