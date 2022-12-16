@@ -35,8 +35,12 @@ public class ProjectMasterServiceImpl implements ProjectMasterService {
 
 	@Override
 	public ProjectMaster validateProjectMasterWithUser(String projectToken, User user) {
-		return projectMasterReader.findByProjectTokenAndUser(projectToken, user)
+		ProjectMaster projectMaster = projectMasterReader.findByProjectTokenAndUser(projectToken, user)
 			.orElseThrow(() -> new OkrApplicationException(ErrorCode.INVALID_PROJECT_TOKEN));
+		if (projectMaster.getTeamMember().size() > 1) {
+			throw new OkrApplicationException(ErrorCode.INVALID_USER_INFO);
+		}
+		return projectMaster;
 	}
 
 	@Override
