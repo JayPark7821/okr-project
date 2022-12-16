@@ -251,7 +251,7 @@ public class FeedbackIntegrationTest {
 	void initiative_피드백_조회_요청자Ini_false_fb작성_true() throws Exception {
 		//given
 		String initiativeToken = "ini_ix324gfODqtb3AH8";
-		token = JwtTokenUtils.generateToken("notificationTest@naver.com", secretKey, expiredTimeMs);
+		String token = JwtTokenUtils.generateToken("notificationTest@naver.com", secretKey, expiredTimeMs);
 
 
 		//when
@@ -292,5 +292,49 @@ public class FeedbackIntegrationTest {
 		JsonNode result = jsonNode.get("result");
 		assertThat(result.get("myInitiative").asText()).isEqualTo("true");
 		assertThat(result.get("wroteFeedback").asText()).isEqualTo("false");
+	}
+
+	@Test
+	void 작성할_피드백_count() throws Exception {
+		//given
+
+		//when
+		String mvcResult = mvc.perform(get(feedbackUrl + "/count")
+						.header(HttpHeaders.AUTHORIZATION, "Bearer " + feedbackRetrieveToken)
+						.contentType(MediaType.APPLICATION_JSON)
+						.characterEncoding(StandardCharsets.UTF_8)
+				)
+				.andDo(print())
+				.andExpect(status().isOk())
+				.andReturn()
+				.getResponse()
+				.getContentAsString(StandardCharsets.UTF_8);
+		//then
+		JsonNode jsonNode = objectMapper.readTree(mvcResult);
+		JsonNode result = jsonNode.get("result");
+		assertThat(result.asText()).isEqualTo("2");
+
+	}
+	@Test
+	void 작성할_피드백_count2() throws Exception {
+		//given
+		String token = JwtTokenUtils.generateToken("user7@naver.com", secretKey, expiredTimeMs);
+
+		//when
+		String mvcResult = mvc.perform(get(feedbackUrl + "/count")
+						.header(HttpHeaders.AUTHORIZATION, "Bearer " + feedbackRetrieveToken)
+						.contentType(MediaType.APPLICATION_JSON)
+						.characterEncoding(StandardCharsets.UTF_8)
+				)
+				.andDo(print())
+				.andExpect(status().isOk())
+				.andReturn()
+				.getResponse()
+				.getContentAsString(StandardCharsets.UTF_8);
+		//then
+		JsonNode jsonNode = objectMapper.readTree(mvcResult);
+		JsonNode result = jsonNode.get("result");
+		assertThat(result.asText()).isEqualTo("2");
+
 	}
 }

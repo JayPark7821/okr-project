@@ -19,4 +19,7 @@ public interface InitiativeReader {
 	Optional<Initiative> findByInitiativeToken(String initiativeToken);
 
     Optional<Initiative> findByInitiativeTokenAndUser(String token, User user);
+
+	Integer getCountForFeedbackToGive(User user);
+
 }

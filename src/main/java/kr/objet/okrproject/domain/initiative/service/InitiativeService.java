@@ -28,4 +28,7 @@ public interface InitiativeService {
 	Initiative validateInitiativeForFeedback(String initiativeToken);
 
 	Initiative validateUserWithProjectMasterToken(String token, User user);
+
+	Integer getCountForFeedbackToGive(User user);
+
 }

@@ -46,4 +46,9 @@ public class InitiativeReaderImpl implements InitiativeReader {
 		return initiativeRepository.findByInitiativeTokenAndUser(token, user);
 	}
 
+	@Override
+	public Integer getCountForFeedbackToGive(User user) {
+		return initiativeRepository.getCountForFeedbackToGive(user);
+	}
+
 }

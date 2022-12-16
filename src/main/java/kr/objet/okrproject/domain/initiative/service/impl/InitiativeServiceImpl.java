@@ -96,6 +96,11 @@ public class InitiativeServiceImpl implements InitiativeService {
 	}
 
 	@Override
+	public Integer getCountForFeedbackToGive(User user) {
+		return initiativeReader.getCountForFeedbackToGive(user);
+	}
+
+	@Override
 	public Initiative findByInitiativeToken(String initiativeToken) {
 		return initiativeReader.findByInitiativeToken(initiativeToken)
 			.orElseThrow(() -> new OkrApplicationException(ErrorCode.INVALID_INITIATIVE_TOKEN));

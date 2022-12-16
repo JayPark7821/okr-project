@@ -72,4 +72,17 @@ public class FeedbackApiController {
 				new FeedbackDto.IniFeedbackResponse(feedbackFacade.getAllFeedbackListForInitiative(token, user))
 			);
 	}
+
+	@GetMapping("/count")
+	public ResponseEntity<Response<Integer>> getCountForFeedbackToGive(Authentication authentication) {
+
+		User user = ClassUtils.getSafeCastInstance(authentication.getPrincipal(), User.class)
+			.orElseThrow(() -> new OkrApplicationException(ErrorCode.CASTING_USER_FAILED));
+
+		return Response
+			.success(
+				HttpStatus.OK,
+				feedbackFacade.getCountForFeedbackToGive(user)
+			);
+	}
 }

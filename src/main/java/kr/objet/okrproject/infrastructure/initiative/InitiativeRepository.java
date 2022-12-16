@@ -36,4 +36,18 @@ public interface InitiativeRepository extends JpaRepository<Initiative, Long> {
             "where i.initiativeToken =:token " +
             "and t.user =:user")
     Optional<Initiative> findByInitiativeTokenAndUser(@Param("token") String token, @Param("user") User user);
+
+
+    @Query("select count(i.iniId)  " +
+            "from Initiative i " +
+            "join i.keyResult k " +
+            "join k.projectMaster p " +
+            "join p.teamMember t " +
+            "where i.done = true " +
+            "and t.user =:user " +
+            "and i.iniId not in (select f.initiative.iniId " +
+            "                    from Feedback f " +
+            "                    inner join f.teamMember fm " +
+            "                    where fm.user = :user ) " )
+    Integer getCountForFeedbackToGive(@Param("user")User user);
 }

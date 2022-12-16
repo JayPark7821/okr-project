@@ -52,4 +52,8 @@ public class FeedbackFacade {
 		Initiative initiative = initiativeService.validateUserWithProjectMasterToken(token, user);
 		return new FeedbackInfo.IniFeedbackResponse(feedbackService.getAllFeedbackListForInitiative(token), initiative, user);
 	}
+
+	public Integer getCountForFeedbackToGive(User user) {
+		return initiativeService.getCountForFeedbackToGive(user);
+	}
 }
