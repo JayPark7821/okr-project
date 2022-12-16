@@ -5,26 +5,26 @@ import lombok.Getter;
 
 public class NotificationInfo {
 
-    @Getter
-    public static class Response {
-        private final Long id;
+	@Getter
+	public static class Response {
+		private final String notiToken;
 
-        private final String notiType;
+		private final String notiType;
 
-        private final String msg;
+		private final String msg;
 
-        private final boolean isChecked;
+		private final NotificationCheckType status;
 
-        private final String createdDate;
+		private final String createdDate;
 
-        @Builder
-        public Response(Long id, String notiType, String msg, boolean isChecked, String createdDate) {
-            this.id = id;
-            this.notiType = notiType;
-            this.msg = msg;
-            this.isChecked = isChecked;
-            this.createdDate = createdDate;
-        }
-    }
+		@Builder
+		public Response(Notification entity) {
+			this.notiToken = entity.getNotificationToken();
+			this.notiType = entity.getType().name();
+			this.msg = entity.getMsg();
+			this.status = entity.getStatus();
+			this.createdDate = entity.getCreatedDate().toString();
+		}
+	}
 
 }

@@ -6,6 +6,7 @@ insert into user_table (user_seq, user_id,username, password, email, email_verif
     (13,'testId13', 'testUser2','password','projectMasterRetrieveTest@naver.com','Y','GOOGLE','USER','PRODUCER_CP','profile_image_url' ),
     (14,'testId14', 'testUser2','password','projectCalendarTest@naver.com','Y','GOOGLE','USER','PRODUCER_CP','profile_image_url' ),
     (15,'testId15', 'testUser2','password','initiativeRetrieveTest@naver.com','Y','GOOGLE','USER','PRODUCER_CP','profile_image_url' ),
+    (16,'testId16', 'testUser2','password','notificationTest@naver.com','Y','GOOGLE','USER','PRODUCER_CP','profile_image_url' ),
     ( 3,'testId3', 'testUser3','password','user1@naver.com','Y','GOOGLE','USER','PRODUCER_CP','profile_image_url' ),
     ( 4,'testId4', 'testUser4','password','user2@naver.com','Y','GOOGLE','USER','PRODUCER_CP','profile_image_url' ),
     ( 5,'testId5', 'testUser5','password','user3@naver.com','Y','GOOGLE','USER','PRODUCER_CP','profile_image_url' ),
@@ -104,3 +105,13 @@ insert into initiative
 (99995, '2022-12-14', '2022-12-14', 'testUser2', 'testUser2', 'initiative detail5', false, '2023-12-14', 'ini_f43qerfdgbffhAH8', 88884, 'ini name', '2000-12-12', 88886, 15),
 (99994, '2022-12-14', '2022-12-14', 'testUser2', 'testUser2', 'initiative detail6', false, '2027-11-14', 'ini_ixYjj5nOF432wrH8', 88883, 'ini name', '2000-12-12', 88885, 15),
 (99993, '2022-12-14', '2022-12-14', 'testUser2', 'testUser2', 'initiative detail7', false, '2026-12-14', 'ini_ixYjj5nODqgrg431', 88882, 'ini name', '2000-12-12', 88884, 15);
+
+
+insert into notification (notification_id, created_date, last_modified_date, checked, message, notification_token, type, user_seq) values
+(9999, '2022-12-17', '2022-12-16', false, '<>님이 <> 팀원이 되셨습니다!👏👏', 'noti_eKTgf234fey1SERx', 'NEW_TEAM_MATE', 16),
+(9998, '2022-12-16', '2022-12-16', false, '<>님이 <> 팀원이 되셨습니다!👏👏', 'noti_eK35grfdey1SERx', 'NEW_TEAM_MATE', 16),
+(9997, '2022-12-18', '2022-12-16', false, '<>님이 <> 팀원이 되셨습니다!👏👏', 'noti_aaaaaMoZey1SERx', 'NEW_TEAM_MATE', 16),
+(9996, '2022-12-19', '2022-12-16', false, '<>님이 <> 팀원이 되셨습니다!👏👏', 'noti_eeeeddoZey1SERx', 'NEW_TEAM_MATE', 16),
+(9995, '2022-12-20', '2022-12-16', false, '<>님이 <> 팀원이 되셨습니다!👏👏', 'noti_e111111Zey1SERx', 'NEW_TEAM_MATE', 16),
+(9994, '2022-12-21', '2022-12-16', false, '<>님이 <> 팀원이 되셨습니다!👏👏', 'noti_eKT43535ey1SERx', 'NEW_TEAM_MATE', 16),
+(9993, '2022-12-22', '2022-12-16', false, '<>님이 <> 팀원이 되셨습니다!👏👏', 'noti_eKT4567yhger5tx', 'NEW_TEAM_MATE', 16);
