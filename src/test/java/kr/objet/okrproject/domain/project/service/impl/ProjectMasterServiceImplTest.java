@@ -1,19 +1,5 @@
 package kr.objet.okrproject.domain.project.service.impl;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.BDDMockito.*;
-
-import java.util.Optional;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayNameGeneration;
-import org.junit.jupiter.api.DisplayNameGenerator;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.mockito.junit.jupiter.MockitoExtension;
-
 import kr.objet.okrproject.application.user.fixture.UserFixture;
 import kr.objet.okrproject.common.exception.ErrorCode;
 import kr.objet.okrproject.common.exception.OkrApplicationException;
@@ -24,6 +10,19 @@ import kr.objet.okrproject.domain.project.service.ProjectMasterReader;
 import kr.objet.okrproject.domain.project.service.ProjectMasterStore;
 import kr.objet.okrproject.domain.project.service.fixture.ProjectMasterCommandFixture;
 import kr.objet.okrproject.domain.user.User;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.DisplayNameGenerator;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.BDDMockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
@@ -69,7 +68,7 @@ class ProjectMasterServiceImplTest {
 			Optional.of(mock(ProjectMaster.class)));
 
 		//when
-		ProjectMaster savedProjectMaster = assertDoesNotThrow(() -> sut.validateProjectMasterWithUser(token, user));
+		ProjectMaster savedProjectMaster = assertDoesNotThrow(() -> sut.validateUserWithProjectMasterToken(token, user));
 	}
 
 	@Test
@@ -82,7 +81,7 @@ class ProjectMasterServiceImplTest {
 
 		//when
 		OkrApplicationException exception = assertThrows(OkrApplicationException.class,
-			() -> sut.validateProjectMasterWithUser(token, user));
+			() -> sut.validateUserWithProjectMasterToken(token, user));
 
 		//then
 		assertEquals(exception.getMessage(), ErrorCode.INVALID_PROJECT_TOKEN.getMessage());

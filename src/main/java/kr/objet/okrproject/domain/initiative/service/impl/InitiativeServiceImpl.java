@@ -1,15 +1,5 @@
 package kr.objet.okrproject.domain.initiative.service.impl;
 
-import java.time.LocalDate;
-import java.time.YearMonth;
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-
 import kr.objet.okrproject.common.exception.ErrorCode;
 import kr.objet.okrproject.common.exception.OkrApplicationException;
 import kr.objet.okrproject.domain.initiative.Initiative;
@@ -22,6 +12,15 @@ import kr.objet.okrproject.domain.team.TeamMember;
 import kr.objet.okrproject.domain.user.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -88,6 +87,17 @@ public class InitiativeServiceImpl implements InitiativeService {
 			throw new OkrApplicationException(ErrorCode.INITIATIVE_IS_NOT_FINISHED);
 		}
 		return initiative;
+	}
+
+	@Override
+	public Initiative validateUserWithProjectMasterToken(String token, User user) {
+		return initiativeReader.findByInitiativeTokenAndUser(token , user)
+				.orElseThrow(() -> new OkrApplicationException(ErrorCode.INVALID_INITIATIVE_TOKEN));
+	}
+
+	@Override
+	public Integer getCountForFeedbackToGive(User user) {
+		return initiativeReader.getCountForFeedbackToGive(user);
 	}
 
 	@Override
