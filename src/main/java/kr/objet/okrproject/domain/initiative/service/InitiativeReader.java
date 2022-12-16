@@ -1,14 +1,13 @@
 package kr.objet.okrproject.domain.initiative.service;
 
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
-
+import kr.objet.okrproject.domain.initiative.Initiative;
+import kr.objet.okrproject.domain.user.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import kr.objet.okrproject.domain.initiative.Initiative;
-import kr.objet.okrproject.domain.user.User;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
 
 public interface InitiativeReader {
 	Page<Initiative> searchInitiatives(String keyResultToken, User user, Pageable page);
@@ -18,4 +17,6 @@ public interface InitiativeReader {
 	List<Initiative> searchActiveInitiativesByDate(LocalDate monthEndDt, LocalDate monthStDt, User user);
 
 	Optional<Initiative> findByInitiativeToken(String initiativeToken);
+
+    Optional<Initiative> findByInitiativeTokenAndUser(String token, User user);
 }

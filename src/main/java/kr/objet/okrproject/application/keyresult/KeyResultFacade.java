@@ -19,7 +19,7 @@ public class KeyResultFacade {
 
 	public String registerKeyResult(KeyResultCommand.RegisterKeyResult command, User user) {
 
-		ProjectMaster projectMaster = projectMasterService.validateProjectMasterWithUser(command.getProjectToken(), user);
+		ProjectMaster projectMaster = projectMasterService.validateUserWithProjectMasterToken(command.getProjectToken(), user);
 
 		KeyResult keyResult = keyResultService.registerKeyResult(
 				new KeyResultCommand.RegisterKeyResultWithProject(command.getName(), projectMaster)

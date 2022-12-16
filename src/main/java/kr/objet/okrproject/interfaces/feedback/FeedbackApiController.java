@@ -1,18 +1,5 @@
 package kr.objet.okrproject.interfaces.feedback;
 
-import javax.validation.Valid;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import kr.objet.okrproject.application.feedback.FeedbackFacade;
 import kr.objet.okrproject.common.Response;
 import kr.objet.okrproject.common.exception.ErrorCode;
@@ -21,6 +8,14 @@ import kr.objet.okrproject.common.utils.ClassUtils;
 import kr.objet.okrproject.domain.user.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @Slf4j
 @RestController
@@ -60,6 +55,21 @@ public class FeedbackApiController {
 				HttpStatus.OK,
 				feedbackFacade.getAllFeedbackList(searchRange, user, pageable)
 					.map(FeedbackDto.Response::new)
+			);
+	}
+
+	@GetMapping("/{initiativeToken}")
+	public ResponseEntity<Response<FeedbackDto.IniFeedbackResponse>> getAllFeedbackListForInitiative(
+		@PathVariable("initiativeToken") String token,
+		Authentication authentication
+	) {
+		User user = ClassUtils.getSafeCastInstance(authentication.getPrincipal(), User.class)
+			.orElseThrow(() -> new OkrApplicationException(ErrorCode.CASTING_USER_FAILED));
+
+		return Response
+			.success(
+				HttpStatus.OK,
+				new FeedbackDto.IniFeedbackResponse(feedbackFacade.getAllFeedbackListForInitiative(token, user))
 			);
 	}
 }

@@ -1,13 +1,12 @@
 package kr.objet.okrproject.infrastructure.project;
 
-import java.util.Optional;
-
+import kr.objet.okrproject.domain.project.ProjectMaster;
+import kr.objet.okrproject.domain.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import kr.objet.okrproject.domain.project.ProjectMaster;
-import kr.objet.okrproject.domain.user.User;
+import java.util.Optional;
 
 public interface ProjectMasterRepository extends JpaRepository<ProjectMaster, Long> {
 
@@ -34,5 +33,4 @@ public interface ProjectMasterRepository extends JpaRepository<ProjectMaster, Lo
 		@Param("token") String token,
 		@Param("user") User user
 	);
-
 }

@@ -78,7 +78,7 @@ class TeamMemberFacadeTest {
 		User user = UserFixture.create();
 		ProjectMaster projectMaster = ProjectMasterFixture.create();
 
-		given(projectMasterService.validateProjectMasterWithUser(token, user))
+		given(projectMasterService.validateUserWithProjectMasterToken(token, user))
 			.willReturn(projectMaster);
 		doNothing().when(teamMemberService).validateEmailWithProject(email, projectMaster.getId());
 		doNothing().when(userService).validateUserWithEmail(email);
@@ -98,7 +98,7 @@ class TeamMemberFacadeTest {
 		User user = UserFixture.create();
 
 		doThrow(new OkrApplicationException(ErrorCode.INVALID_PROJECT_TOKEN))
-			.when(projectMasterService).validateProjectMasterWithUser(token, user);
+			.when(projectMasterService).validateUserWithProjectMasterToken(token, user);
 
 		//when
 		OkrApplicationException exception = assertThrows(OkrApplicationException.class,
@@ -116,7 +116,7 @@ class TeamMemberFacadeTest {
 		User user = UserFixture.create(1L, email);
 		ProjectMaster projectMaster = ProjectMasterFixture.create();
 
-		given(projectMasterService.validateProjectMasterWithUser(token, user))
+		given(projectMasterService.validateUserWithProjectMasterToken(token, user))
 			.willReturn(projectMaster);
 
 		//when
@@ -135,7 +135,7 @@ class TeamMemberFacadeTest {
 		User user = UserFixture.create();
 		ProjectMaster projectMaster = ProjectMasterFixture.create();
 
-		given(projectMasterService.validateProjectMasterWithUser(token, user))
+		given(projectMasterService.validateUserWithProjectMasterToken(token, user))
 			.willReturn(projectMaster);
 
 		doThrow(new OkrApplicationException(ErrorCode.USER_ALREADY_PROJECT_MEMBER))
@@ -157,7 +157,7 @@ class TeamMemberFacadeTest {
 		User user = UserFixture.create();
 		ProjectMaster projectMaster = ProjectMasterFixture.create();
 
-		given(projectMasterService.validateProjectMasterWithUser(token, user))
+		given(projectMasterService.validateUserWithProjectMasterToken(token, user))
 			.willReturn(projectMaster);
 		doNothing().when(teamMemberService).validateEmailWithProject(email, projectMaster.getId());
 

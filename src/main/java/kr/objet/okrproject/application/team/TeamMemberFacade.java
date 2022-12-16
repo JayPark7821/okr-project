@@ -32,7 +32,7 @@ public class TeamMemberFacade {
 	private final NotificationService notificationService;
 
 	public TeamMemberDto.saveResponse inviteTeamMembers(TeamMemberCommand.InviteTeamMember command, User user) {
-		ProjectMaster projectMaster = projectMasterService.validateProjectMasterWithUser(
+		ProjectMaster projectMaster = projectMasterService.validateUserWithProjectMasterToken(
 			command.getProjectToken(),
 			user
 		);
@@ -50,7 +50,7 @@ public class TeamMemberFacade {
 	}
 
 	public String validateEmail(String projectToken, String email, User user) {
-		ProjectMaster projectMaster = projectMasterService.validateProjectMasterWithUser(projectToken, user);
+		ProjectMaster projectMaster = projectMasterService.validateUserWithProjectMasterToken(projectToken, user);
 
 		if (user.getEmail().equals(email)) {
 			throw new OkrApplicationException(ErrorCode.NOT_AVAIL_INVITE_MYSELF);

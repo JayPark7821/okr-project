@@ -26,5 +26,14 @@ public interface InitiativeRepository extends JpaRepository<Initiative, Long> {
     List<Initiative> findInitiativesByDateAndUser(@Param("searchDate")LocalDate searchDate, @Param("user")User user);
 
 
-
+    @Query("SELECT i " +
+            "FROM Initiative i " +
+            "join fetch i.teamMember it " +
+            "join fetch it.user iu " +
+            "join i.keyResult k " +
+            "join k.projectMaster m " +
+            "join m.teamMember t " +
+            "where i.initiativeToken =:token " +
+            "and t.user =:user")
+    Optional<Initiative> findByInitiativeTokenAndUser(@Param("token") String token, @Param("user") User user);
 }

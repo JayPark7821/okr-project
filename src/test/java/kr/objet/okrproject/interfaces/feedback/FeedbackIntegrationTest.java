@@ -1,12 +1,11 @@
 package kr.objet.okrproject.interfaces.feedback;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
-import java.nio.charset.StandardCharsets;
-
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import kr.objet.okrproject.common.exception.ErrorCode;
+import kr.objet.okrproject.common.utils.JwtTokenUtils;
+import kr.objet.okrproject.domain.feedback.Feedback;
+import kr.objet.okrproject.infrastructure.feedback.FeedbackRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -20,13 +19,13 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.nio.charset.StandardCharsets;
 
-import kr.objet.okrproject.common.exception.ErrorCode;
-import kr.objet.okrproject.common.utils.JwtTokenUtils;
-import kr.objet.okrproject.domain.feedback.Feedback;
-import kr.objet.okrproject.infrastructure.feedback.FeedbackRepository;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @SpringBootTest
@@ -62,7 +61,7 @@ public class FeedbackIntegrationTest {
 		// given
 		String opinion = "정말 좋아요!!";
 		String grade = "BEST_RESULT";
-		String initiativeToken = "ini_ixYjj5nODqtb3AH8";
+		String initiativeToken = "ini_ix324gfODqtb3AH8";
 		String projectToken = "mst_qq2f4gbffrgg6421";
 		FeedbackDto.Save dto = new FeedbackDto.Save(opinion, grade, projectToken, initiativeToken);
 
@@ -115,7 +114,7 @@ public class FeedbackIntegrationTest {
 		// given
 		String opinion = "정말 좋아요!!";
 		String grade = "BEST_RESULT";
-		String initiativeToken = "ini_ix324gfODqtb3AH8";
+		String initiativeToken = "ini_ixYjj5F43frfdAH8";
 		String projectToken = "mst_qq2f4gbffrgg6421";
 		FeedbackDto.Save dto = new FeedbackDto.Save(opinion, grade, projectToken, initiativeToken);
 
@@ -178,7 +177,7 @@ public class FeedbackIntegrationTest {
 		//then
 		JsonNode jsonNode = objectMapper.readTree(mvcResult);
 		JsonNode result = jsonNode.get("result");
-		assertThat(result.get("content").size()).isEqualTo(7);
+		assertThat(result.get("content").size()).isEqualTo(8);
 
 	}
 
@@ -200,7 +199,7 @@ public class FeedbackIntegrationTest {
 		//then
 		JsonNode jsonNode = objectMapper.readTree(mvcResult);
 		JsonNode result = jsonNode.get("result");
-		assertThat(result.get("content").size()).isEqualTo(7);
+		assertThat(result.get("content").size()).isEqualTo(8);
 
 	}
 
@@ -224,5 +223,74 @@ public class FeedbackIntegrationTest {
 		JsonNode result = jsonNode.get("message");
 		assertThat(result.asText()).contains(ErrorCode.INVALID_SEARCH_RANGE_TYPE.getMessage());
 
+	}
+
+	@Test
+	void initiative_피드백_조회_요청자Ini_false_fb작성_false() throws Exception {
+		//given
+		String initiativeToken = "ini_ix324gfODqtb3AH8";
+		//when
+		String mvcResult = mvc.perform(get(feedbackUrl + "/" + initiativeToken)
+						.header(HttpHeaders.AUTHORIZATION, "Bearer " + feedbackRetrieveToken)
+						.contentType(MediaType.APPLICATION_JSON)
+						.characterEncoding(StandardCharsets.UTF_8)
+				)
+				.andDo(print())
+				.andExpect(status().isOk())
+				.andReturn()
+				.getResponse()
+				.getContentAsString(StandardCharsets.UTF_8);
+		//then
+		JsonNode jsonNode = objectMapper.readTree(mvcResult);
+		JsonNode result = jsonNode.get("result");
+		assertThat(result.get("myInitiative").asText()).isEqualTo("false");
+		assertThat(result.get("wroteFeedback").asText()).isEqualTo("false");
+	}
+
+	@Test
+	void initiative_피드백_조회_요청자Ini_false_fb작성_true() throws Exception {
+		//given
+		String initiativeToken = "ini_ix324gfODqtb3AH8";
+		token = JwtTokenUtils.generateToken("notificationTest@naver.com", secretKey, expiredTimeMs);
+
+
+		//when
+		String mvcResult = mvc.perform(get(feedbackUrl + "/" + initiativeToken)
+						.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+						.contentType(MediaType.APPLICATION_JSON)
+						.characterEncoding(StandardCharsets.UTF_8)
+				)
+				.andDo(print())
+				.andExpect(status().isOk())
+				.andReturn()
+				.getResponse()
+				.getContentAsString(StandardCharsets.UTF_8);
+		//then
+		JsonNode jsonNode = objectMapper.readTree(mvcResult);
+		JsonNode result = jsonNode.get("result");
+		assertThat(result.get("myInitiative").asText()).isEqualTo("false");
+		assertThat(result.get("wroteFeedback").asText()).isEqualTo("true");
+	}
+
+	@Test
+	void initiative_피드백_조회_요청자Ini_true_fb작성_false() throws Exception {
+		//given
+		String initiativeToken = "ini_ixYjj5nODqtb3AH8";
+		//when
+		String mvcResult = mvc.perform(get(feedbackUrl + "/" + initiativeToken)
+						.header(HttpHeaders.AUTHORIZATION, "Bearer " + feedbackRetrieveToken)
+						.contentType(MediaType.APPLICATION_JSON)
+						.characterEncoding(StandardCharsets.UTF_8)
+				)
+				.andDo(print())
+				.andExpect(status().isOk())
+				.andReturn()
+				.getResponse()
+				.getContentAsString(StandardCharsets.UTF_8);
+		//then
+		JsonNode jsonNode = objectMapper.readTree(mvcResult);
+		JsonNode result = jsonNode.get("result");
+		assertThat(result.get("myInitiative").asText()).isEqualTo("true");
+		assertThat(result.get("wroteFeedback").asText()).isEqualTo("false");
 	}
 }

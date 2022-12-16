@@ -1,9 +1,5 @@
 package kr.objet.okrproject.interfaces.feedback;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 import kr.objet.okrproject.domain.feedback.FeedbackInfo;
 import kr.objet.okrproject.domain.feedback.FeedbackType;
@@ -11,6 +7,12 @@ import kr.objet.okrproject.domain.feedback.service.FeedbackCommand;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class FeedbackDto {
 
@@ -78,5 +80,21 @@ public class FeedbackDto {
 			this.profileImage = response.getProfileImage();
 		}
 	}
+
+	@Getter
+	@NoArgsConstructor
+	public static class IniFeedbackResponse {
+		private boolean myInitiative;
+		private boolean wroteFeedback;
+		private List<Response> feedback;
+
+
+		public IniFeedbackResponse(FeedbackInfo.IniFeedbackResponse response) {
+			this.myInitiative = response.isMyInitiative();
+			this.wroteFeedback = response.isWroteFeedback();
+			this.feedback = response.getFeedbacks().stream().map(Response::new).collect(Collectors.toList());
+		}
+	}
+
 
 }
