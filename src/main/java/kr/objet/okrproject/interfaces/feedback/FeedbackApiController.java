@@ -2,9 +2,12 @@ package kr.objet.okrproject.interfaces.feedback;
 
 import javax.validation.Valid;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,6 +43,23 @@ public class FeedbackApiController {
 			.success(
 				HttpStatus.CREATED,
 				feedbackFacade.registerFeedback(requestDto.toCommand(), user)
+			);
+	}
+
+	@GetMapping
+	public ResponseEntity<Response<Page<FeedbackDto.Response>>> getAllFeedbackList(
+		String searchRange,
+		Pageable pageable,
+		Authentication authentication
+	) {
+		User user = ClassUtils.getSafeCastInstance(authentication.getPrincipal(), User.class)
+			.orElseThrow(() -> new OkrApplicationException(ErrorCode.CASTING_USER_FAILED));
+
+		return Response
+			.success(
+				HttpStatus.OK,
+				feedbackFacade.getAllFeedbackList(searchRange, user, pageable)
+					.map(FeedbackDto.Response::new)
 			);
 	}
 }

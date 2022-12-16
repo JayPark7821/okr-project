@@ -39,7 +39,9 @@ public enum ErrorCode {
 	INVALID_YEARMONTH_FORMAT(HttpStatus.BAD_REQUEST, "년월 형식(yyyy-MM)에 맞지 않습니다"),
 	INVALID_NOTIFICAION_TOKEN(HttpStatus.BAD_REQUEST, "잘못된 Notification token 입니다."),
 	INVALID_INITIATIVE_TOKEN(HttpStatus.BAD_REQUEST, "잘못된 Initiative token 입니다."),
-	INITIATIVE_IS_NOT_FINISHED(HttpStatus.BAD_REQUEST, "완료되지 않은 Initative에는 피드백을 남길 수 없습니다.");
+	INITIATIVE_IS_NOT_FINISHED(HttpStatus.BAD_REQUEST, "완료되지 않은 Initative에는 피드백을 남길 수 없습니다."),
+	INVALID_SEARCH_RANGE_TYPE(HttpStatus.BAD_REQUEST, "잘못된 검색 기간입니다."),
+	;
 
 	private HttpStatus status;
 	private String message;

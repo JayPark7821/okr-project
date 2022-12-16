@@ -117,3 +117,13 @@ insert into notification (notification_id, created_date, last_modified_date, che
 (9995, '2022-12-20', '2022-12-16', 'CHECKED', '<>님이 <> 팀원이 되셨습니다!👏👏', 'noti_e144441Zey1SERx', 'NEW_TEAM_MATE', 16),
 (9994, '2022-12-21', '2022-12-16', 'NEW', '<>님이 <> 팀원이 되셨습니다!👏👏', 'noti_eK5555535ey1SERx', 'NEW_TEAM_MATE', 16),
 (9993, '2022-12-22', '2022-12-16', 'NEW', '<>님이 <> 팀원이 되셨습니다!👏👏', 'noti_6666yhger5tx', 'NEW_TEAM_MATE', 16);
+
+
+insert into feedback (feedback_id, created_date, last_modified_date, created_by, last_modified_by, feedback_token, grade_mark, project_initiative_id, checked, opinion, project_id, user_seq) values
+(9999, '2022-12-16', '2022-12-16', 'testUser2', 'testUser2', 'feedback_el6awefwaeyWx39', 'BEST_RESULT', 99999, false, '정말 좋아요!!', 88888, 17),
+(9998, '2022-12-16', '2022-12-16', 'testUser2', 'testUser2', 'feedback_el61234f23fWx39', 'BEST_RESULT', 99999, false, '정말 좋아요!!', 88888, 17),
+(9997, '2022-12-16', '2022-12-16', 'testUser2', 'testUser2', 'feedback_el612awefdx3239', 'BEST_RESULT', 99999, false, '정말 좋아요!!', 88888, 17),
+(9996, '2022-12-16', '2022-12-16', 'testUser2', 'testUser2', 'feedback_el6adsff3fffff9', 'BEST_RESULT', 99999, false, '정말 좋아요!!', 88888, 17),
+(9995, '2022-12-16', '2022-12-16', 'testUser2', 'testUser2', 'feedback_el6awe4gx39rrrr', 'BEST_RESULT', 99999, false, '정말 좋아요!!', 88888, 17),
+(9994, '2022-12-16', '2022-12-16', 'testUser2', 'testUser2', 'feedback_el612grerfcvds9', 'BEST_RESULT', 99999, false, '정말 좋아요!!', 88888, 17),
+(9993, '2022-12-16', '2022-12-16', 'testUser2', 'testUser2', 'feedback_el612XNk3rSyWx9', 'BEST_RESULT', 99999, false, '정말 좋아요!!', 88888, 17);

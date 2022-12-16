@@ -5,6 +5,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import kr.objet.okrproject.domain.feedback.FeedbackInfo;
 import kr.objet.okrproject.domain.feedback.FeedbackType;
 import kr.objet.okrproject.domain.feedback.service.FeedbackCommand;
 import lombok.Builder;
@@ -50,6 +51,31 @@ public class FeedbackDto {
 		public FeedbackCommand.SaveRequest toCommand() {
 			FeedbackType feedbackType = FeedbackType.of(this.grade);
 			return new FeedbackCommand.SaveRequest(this.opinion, feedbackType, this.projectToken, this.initiativeToken);
+		}
+	}
+
+	@Getter
+	@NoArgsConstructor
+	public static class Response {
+
+		private String projectToken;
+		private String feedbackToken;
+		private String opinion;
+		private FeedbackType grade;
+		private Long writerId;
+		private String writerName;
+		private String writerJob;
+		private String profileImage;
+
+		public Response(FeedbackInfo.Response response) {
+			this.projectToken = response.getProjectToken();
+			this.feedbackToken = response.getFeedbackToken();
+			this.opinion = response.getOpinion();
+			this.grade = response.getGrade();
+			this.writerId = response.getWriterId();
+			this.writerName = response.getWriterName();
+			this.writerJob = response.getWriterJob();
+			this.profileImage = response.getProfileImage();
 		}
 	}
 

@@ -29,7 +29,7 @@ import lombok.NoArgsConstructor;
 @Entity
 public class Feedback extends BaseEntity {
 
-	private static final String FEEDBACK_PREFIX = "key_";
+	private static final String FEEDBACK_PREFIX = "feedback_";
 
 	@Id
 	@Column(name = "feedback_id")

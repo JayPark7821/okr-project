@@ -1,8 +1,12 @@
 package kr.objet.okrproject.application.feedback;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import kr.objet.okrproject.domain.feedback.Feedback;
+import kr.objet.okrproject.domain.feedback.FeedbackInfo;
+import kr.objet.okrproject.domain.feedback.SearchRange;
 import kr.objet.okrproject.domain.feedback.service.FeedbackCommand;
 import kr.objet.okrproject.domain.feedback.service.FeedbackService;
 import kr.objet.okrproject.domain.initiative.Initiative;
@@ -38,4 +42,10 @@ public class FeedbackFacade {
 		return feedback.getFeedbackToken();
 	}
 
+	public Page<FeedbackInfo.Response> getAllFeedbackList(String searchRange, User user, Pageable pageable) {
+		SearchRange range = SearchRange.of(searchRange);
+		return feedbackService.getAllFeedbackList(range, user, pageable)
+			.map(FeedbackInfo.Response::new);
+
+	}
 }

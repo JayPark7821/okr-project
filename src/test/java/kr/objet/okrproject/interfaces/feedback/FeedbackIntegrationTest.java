@@ -47,11 +47,14 @@ public class FeedbackIntegrationTest {
 	@Autowired
 	private MockMvc mvc;
 	private String token;
+	private String feedbackRetrieveToken;
 
 	@BeforeEach
 	void init() {
 		String feedBackTestEmail = "feedbackTest@naver.com";
+		String feedbackRetrieveEmail = "initiativeRetrieveTest@naver.com";
 		token = JwtTokenUtils.generateToken(feedBackTestEmail, secretKey, expiredTimeMs);
+		feedbackRetrieveToken = JwtTokenUtils.generateToken(feedbackRetrieveEmail, secretKey, expiredTimeMs);
 	}
 
 	@Test
@@ -155,5 +158,71 @@ public class FeedbackIntegrationTest {
 		JsonNode jsonNode = objectMapper.readTree(mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8));
 		String message = jsonNode.get("message").asText();
 		assertThat(message).isEqualTo(ErrorCode.INVALID_FEEDBACK_TYPE.getMessage());
+	}
+
+	@Test
+	void 피드백_전체_조회_성공() throws Exception {
+		//given
+
+		//when
+		String mvcResult = mvc.perform(get(feedbackUrl)
+				.header(HttpHeaders.AUTHORIZATION, "Bearer " + feedbackRetrieveToken)
+				.contentType(MediaType.APPLICATION_JSON)
+				.characterEncoding(StandardCharsets.UTF_8)
+			)
+			.andDo(print())
+			.andExpect(status().isOk())
+			.andReturn()
+			.getResponse()
+			.getContentAsString(StandardCharsets.UTF_8);
+		//then
+		JsonNode jsonNode = objectMapper.readTree(mvcResult);
+		JsonNode result = jsonNode.get("result");
+		assertThat(result.get("content").size()).isEqualTo(7);
+
+	}
+
+	@Test
+	void 피드백_전체_조회_성공_ALL() throws Exception {
+		//given
+
+		//when
+		String mvcResult = mvc.perform(get(feedbackUrl + "?searchRange=ALL")
+				.header(HttpHeaders.AUTHORIZATION, "Bearer " + feedbackRetrieveToken)
+				.contentType(MediaType.APPLICATION_JSON)
+				.characterEncoding(StandardCharsets.UTF_8)
+			)
+			.andDo(print())
+			.andExpect(status().isOk())
+			.andReturn()
+			.getResponse()
+			.getContentAsString(StandardCharsets.UTF_8);
+		//then
+		JsonNode jsonNode = objectMapper.readTree(mvcResult);
+		JsonNode result = jsonNode.get("result");
+		assertThat(result.get("content").size()).isEqualTo(7);
+
+	}
+
+	@Test
+	void 피드백_전체_조회_실패_쿼리_파라미터_오류() throws Exception {
+		//given
+
+		//when
+		String mvcResult = mvc.perform(get(feedbackUrl + "?searchRange=test")
+				.header(HttpHeaders.AUTHORIZATION, "Bearer " + feedbackRetrieveToken)
+				.contentType(MediaType.APPLICATION_JSON)
+				.characterEncoding(StandardCharsets.UTF_8)
+			)
+			.andDo(print())
+			.andExpect(status().isBadRequest())
+			.andReturn()
+			.getResponse()
+			.getContentAsString(StandardCharsets.UTF_8);
+		//then
+		JsonNode jsonNode = objectMapper.readTree(mvcResult);
+		JsonNode result = jsonNode.get("message");
+		assertThat(result.asText()).contains(ErrorCode.INVALID_SEARCH_RANGE_TYPE.getMessage());
+
 	}
 }
