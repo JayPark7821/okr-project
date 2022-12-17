@@ -23,4 +23,6 @@ public interface ProjectMasterService {
 
 	List<ProjectMaster> searchProjectsForCalendar(YearMonth yearMonth, User user);
 
+	void updateProgress(ProjectMaster projectMaster);
+
 }

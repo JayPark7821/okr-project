@@ -1,20 +1,5 @@
 package kr.objet.okrproject.application.initiative;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.BDDMockito.*;
-
-import java.time.LocalDate;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayNameGeneration;
-import org.junit.jupiter.api.DisplayNameGenerator;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.mockito.junit.jupiter.MockitoExtension;
-
 import kr.objet.okrproject.application.user.fixture.UserFixture;
 import kr.objet.okrproject.common.exception.ErrorCode;
 import kr.objet.okrproject.common.exception.OkrApplicationException;
@@ -33,6 +18,22 @@ import kr.objet.okrproject.domain.team.ProjectRoleType;
 import kr.objet.okrproject.domain.team.TeamMember;
 import kr.objet.okrproject.domain.team.service.fixture.TeamMemberFixture;
 import kr.objet.okrproject.domain.user.User;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.DisplayNameGenerator;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.time.LocalDate;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.BDDMockito.doNothing;
+import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
@@ -72,12 +73,11 @@ class InitiativeFacadeTest {
 		//given
 		given(keyResultService.validateKeyResultWithUser(command.getKeyResultToken(), user))
 			.willReturn(keyResult);
-		doNothing().when(initiativeService)
-			.validateInitiativeDates(command.getSdt(), command.getEdt(), keyResult);
 		given(initiativeService.registerInitiative(command, keyResult,
 			keyResult.getProjectMaster().getTeamMember().get(0)))
 			.willReturn(initiative);
-
+		doNothing().when(projectMasterService)
+				.updateProgress(projectMaster);
 		//when
 		String initiativeToken = assertDoesNotThrow(
 			() -> sut.registerInitiative(command, user));

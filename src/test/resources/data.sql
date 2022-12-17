@@ -22,7 +22,7 @@ insert into project_master
 (99999, '2022-12-12', '2022-12-12', 'testUser1', 'testUser1', '2022-12-14', '프로젝트 1 멀티 프로젝트', '프로젝트 objective 1', 0.0, 'mst_Kiwqnp1Nq6lb4256', '2022-12-07', 'SINGLE'),
 (99998, '2022-12-12', '2022-12-12', 'testUser1', 'testUser1', '2022-12-14', '팀 맴버 테스트용 프로젝트', '프로젝트 objective 2', 0.0, 'mst_Kiwqnp1Nq6lbTNn0', '2022-12-07', 'SINGLE'),
 (99997, '2000-12-12', '2023-12-12', 'testUser1', 'testUser1', '2023-12-14', 'key result 테스트용 프로젝트', '프로젝트 objective 3', 0.0, 'mst_Kiwqnp1Nq6lb6421', '2000-12-12', 'TEAM'),
-(99996, '2000-12-12', '2023-12-12', 'testUser1', 'testUser1', '2023-12-14', 'Initiative 테스트용 프로젝트', '프로젝트 objective 4', 0.0, 'mst_K4e8a5s7d6lb6421', '2000-12-12', 'TEAM'),
+(99996, '2000-12-12', '2023-12-12', 'testUser1', 'testUser1', '2023-12-14', 'Initiative 테스트용 프로젝트', '프로젝트 objective 4', 11.0, 'mst_K4e8a5s7d6lb6421', '2000-12-12', 'TEAM'),
 (99995, '2000-12-12', '2023-12-12', 'testUser1', 'testUser1', '2023-12-14', '프로젝트 조회 테스트용 프로젝트', '프로젝트 objective 4', 0.0, 'mst_K4232g4g5rgg6421', '2000-12-12', 'TEAM'),
 (99994, '2001-12-12', '2023-12-12', 'testUser1', 'testUser1', '2023-12-10', '프로젝트 조회 테스트용 프로젝트(프로젝트 완료)', '프로젝트 objective 4', 100.0, 'mst_as3fg34tgg6421', '2000-12-12', 'TEAM'),
 (99993, '2002-12-12', '2023-12-12', 'testUser1', 'testUser1', '2033-12-12', '프로젝트 조회 테스트용 프로젝트(프로젝트 70)', '프로젝트 objective 4', 70.0, 'mst_3gbyy554frgg6421', '2000-12-12', 'TEAM'),
@@ -107,7 +107,9 @@ insert into initiative
 (99996, '2022-12-14', '2022-12-14', 'testUser2', 'testUser2', 'initiative detail4', false, '2023-12-14', 'ini_ixYjj5F43frfdAH8', 88885, 'ini name', '2000-12-12', 88887, 15),
 (99995, '2022-12-14', '2022-12-14', 'testUser2', 'testUser2', 'initiative detail5', false, '2023-12-14', 'ini_f43qerfdgbffhAH8', 88884, 'ini name', '2000-12-12', 88886, 15),
 (99994, '2022-12-14', '2022-12-14', 'testUser2', 'testUser2', 'initiative detail6', false, '2027-11-14', 'ini_ixYjj5nOF432wrH8', 88883, 'ini name', '2000-12-12', 88885, 15),
-(99993, '2022-12-14', '2022-12-14', 'testUser2', 'testUser2', 'initiative detail7', false, '2026-12-14', 'ini_ixYjj5nODqgrg431', 88882, 'ini name', '2000-12-12', 88884, 15);
+(99993, '2022-12-14', '2022-12-14', 'testUser2', 'testUser2', 'initiative detail7', false, '2026-12-14', 'ini_ixYjj5nODqgrg431', 88882, 'ini name', '2000-12-12', 88884, 15),
+(99992, '2022-12-14', '2022-12-14', 'testUser2', 'testUser2', 'initiative detail7', true, '2026-12-14', 'ini_ixYjj5nOD22222221', 99994, 'ini name', '2000-12-12', 99996, 7)
+;
 
 
 insert into notification (notification_id, created_date, last_modified_date, checked, message, notification_token, type, user_seq) values

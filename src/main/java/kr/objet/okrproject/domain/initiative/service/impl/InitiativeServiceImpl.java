@@ -8,6 +8,7 @@ import kr.objet.okrproject.domain.initiative.service.InitiativeReader;
 import kr.objet.okrproject.domain.initiative.service.InitiativeService;
 import kr.objet.okrproject.domain.initiative.service.InitiativeStore;
 import kr.objet.okrproject.domain.keyresult.KeyResult;
+import kr.objet.okrproject.domain.project.ProjectMaster;
 import kr.objet.okrproject.domain.team.TeamMember;
 import kr.objet.okrproject.domain.user.User;
 import lombok.RequiredArgsConstructor;
@@ -31,12 +32,12 @@ public class InitiativeServiceImpl implements InitiativeService {
 	private final InitiativeStore initiativeStore;
 
 	@Override
-	public void validateInitiativeDates(LocalDate sdt, LocalDate edt, KeyResult keyResult) {
+	public void validateInitiativeDates(LocalDate sdt, LocalDate edt, ProjectMaster projectMaster) {
 
-		if (edt.isBefore(keyResult.getProjectMaster().getStartDate()) ||
-			edt.isAfter(keyResult.getProjectMaster().getEndDate()) ||
-			sdt.isBefore(keyResult.getProjectMaster().getStartDate()) ||
-			sdt.isAfter(keyResult.getProjectMaster().getEndDate())
+		if (edt.isBefore(projectMaster.getStartDate()) ||
+			edt.isAfter(projectMaster.getEndDate()) ||
+			sdt.isBefore(projectMaster.getStartDate()) ||
+			sdt.isAfter(projectMaster.getEndDate())
 		) {
 			throw new OkrApplicationException(ErrorCode.INVALID_INITIATIVE_END_DATE);
 		}
@@ -49,8 +50,11 @@ public class InitiativeServiceImpl implements InitiativeService {
 		TeamMember teamMember
 	) {
 
-		Initiative initiative = command.toEntity(keyResult, teamMember);
-		return initiativeStore.store(initiative);
+		ProjectMaster projectMaster = keyResult.getProjectMaster();
+		projectMaster.validateProjectDueDate();
+		validateInitiativeDates(command.getSdt(), command.getEdt(), projectMaster);
+
+		return initiativeStore.store(command.toEntity(keyResult, teamMember));
 	}
 
 	@Override
@@ -99,6 +103,7 @@ public class InitiativeServiceImpl implements InitiativeService {
 	public Integer getCountForFeedbackToGive(User user) {
 		return initiativeReader.getCountForFeedbackToGive(user);
 	}
+
 
 	@Override
 	public Initiative findByInitiativeToken(String initiativeToken) {

@@ -28,15 +28,18 @@ public class InitiativeFacade {
 	private final InitiativeService initiativeService;
 	private final ProjectMasterService projectMasterService;
 
+
 	public String registerInitiative(InitiativeCommand.registerInitiative command, User user) {
+
 		KeyResult keyResult = keyResultService.validateKeyResultWithUser(command.getKeyResultToken(), user);
-		keyResult.getProjectMaster().validateProjectDueDate();
-		initiativeService.validateInitiativeDates(command.getSdt(), command.getEdt(), keyResult);
+
 		Initiative initiative = initiativeService.registerInitiative(
 			command,
 			keyResult,
 			keyResult.getProjectMaster().getTeamMember().get(0)
 		);
+
+		projectMasterService.updateProgress(keyResult.getProjectMaster());
 
 		return initiative.getInitiativeToken();
 

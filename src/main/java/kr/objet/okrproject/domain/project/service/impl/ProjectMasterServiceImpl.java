@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.YearMonth;
 import java.util.List;
@@ -68,5 +69,12 @@ public class ProjectMasterServiceImpl implements ProjectMasterService {
 	public List<ProjectMaster> searchProjectsForCalendar(YearMonth yearMonth, User user) {
 		return projectMasterReader.searchProjectsForCalendar(yearMonth, user);
 	}
- 
+
+	@Transactional
+	@Override
+	public void updateProgress(ProjectMaster projectMaster) {
+		projectMaster.updateProgress(projectMasterReader.calcProjectProgress(projectMaster.getId()));
+	}
+
+
 }

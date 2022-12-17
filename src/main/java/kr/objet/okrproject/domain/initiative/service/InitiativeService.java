@@ -2,6 +2,7 @@ package kr.objet.okrproject.domain.initiative.service;
 
 import kr.objet.okrproject.domain.initiative.Initiative;
 import kr.objet.okrproject.domain.keyresult.KeyResult;
+import kr.objet.okrproject.domain.project.ProjectMaster;
 import kr.objet.okrproject.domain.team.TeamMember;
 import kr.objet.okrproject.domain.user.User;
 import org.springframework.data.domain.Page;
@@ -12,7 +13,7 @@ import java.time.YearMonth;
 import java.util.List;
 
 public interface InitiativeService {
-	void validateInitiativeDates(LocalDate sdt, LocalDate edt, KeyResult keyResult);
+	void validateInitiativeDates(LocalDate sdt, LocalDate edt, ProjectMaster projectMaster);
 
 	Initiative registerInitiative(InitiativeCommand.registerInitiative command, KeyResult keyResult,
 		TeamMember teamMember);
@@ -30,5 +31,6 @@ public interface InitiativeService {
 	Initiative validateUserWithProjectMasterToken(String token, User user);
 
 	Integer getCountForFeedbackToGive(User user);
+
 
 }
