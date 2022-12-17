@@ -2,8 +2,11 @@ package kr.objet.okrproject.infrastructure.project;
 
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import kr.objet.okrproject.common.exception.ErrorCode;
+import kr.objet.okrproject.common.exception.OkrApplicationException;
 import kr.objet.okrproject.domain.project.ProjectMaster;
 import kr.objet.okrproject.domain.user.User;
 import kr.objet.okrproject.interfaces.project.SortType;
@@ -18,6 +21,7 @@ import java.time.YearMonth;
 import java.util.List;
 import java.util.Objects;
 
+import static kr.objet.okrproject.domain.initiative.QInitiative.initiative;
 import static kr.objet.okrproject.domain.project.QProjectMaster.projectMaster;
 import static kr.objet.okrproject.domain.team.QTeamMember.teamMember;
 import static kr.objet.okrproject.domain.user.QUser.user;
@@ -98,5 +102,22 @@ public class ProjectMasterQueryRepository {
 		LocalDate monthStDt = monthEndDt.minusDays(monthEndDt.lengthOfMonth() - 1);
 
 		return projectMaster.endDate.after(monthStDt).and(projectMaster.startDate.before(monthEndDt));
+	}
+
+	public double calcProjectProgress(Long projectId) {
+		List<Double> progress = queryFactory
+				.select((new CaseBuilder()
+						.when(initiative.done.isTrue()).then(1D)
+						.otherwise(0D)
+						.sum()).divide(initiative.count()).multiply(100)
+				)
+				.from(initiative)
+				.where(initiative.keyResult.projectMaster.id.eq(projectId))
+				.fetch();
+
+		if (progress.get(0) == null) {
+			throw new OkrApplicationException(ErrorCode.INVALID_INITIATIVE_INFO);
+		}
+		return progress.get(0);
 	}
 }

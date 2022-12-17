@@ -49,7 +49,7 @@ public class FeedbackFacade {
 	}
 
 	public FeedbackInfo.IniFeedbackResponse getAllFeedbackListForInitiative(String token, User user) {
-		Initiative initiative = initiativeService.validateUserWithProjectMasterToken(token, user);
+		Initiative initiative = initiativeService.validateUserWithInitiativeToken(token, user);
 		return new FeedbackInfo.IniFeedbackResponse(feedbackService.getAllFeedbackListForInitiative(token), initiative, user);
 	}
 

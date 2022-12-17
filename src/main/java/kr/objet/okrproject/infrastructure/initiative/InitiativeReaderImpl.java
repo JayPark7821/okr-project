@@ -51,4 +51,9 @@ public class InitiativeReaderImpl implements InitiativeReader {
 		return initiativeRepository.getCountForFeedbackToGive(user);
 	}
 
+	@Override
+	public Optional<Initiative> validateInitiativeOwnerWithToken(String token, User user) {
+		return initiativeRepository.findByInitiativeTokenAndOwner(token, user);
+	}
+
 }

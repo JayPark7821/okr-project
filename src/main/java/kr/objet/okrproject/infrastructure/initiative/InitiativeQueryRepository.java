@@ -68,4 +68,6 @@ public class InitiativeQueryRepository {
 						.and(initiative.done.eq(false)))
 				.fetch();
 	}
+
+
 }

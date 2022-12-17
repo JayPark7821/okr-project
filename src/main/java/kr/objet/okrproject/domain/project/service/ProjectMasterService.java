@@ -23,4 +23,8 @@ public interface ProjectMasterService {
 
 	List<ProjectMaster> searchProjectsForCalendar(YearMonth yearMonth, User user);
 
+
+	Double updateProgress(Long projectId);
+
+	Double calcProjectProgress(Long projectId);
 }

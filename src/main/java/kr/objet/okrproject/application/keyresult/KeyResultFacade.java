@@ -20,7 +20,7 @@ public class KeyResultFacade {
 	public String registerKeyResult(KeyResultCommand.RegisterKeyResult command, User user) {
 
 		ProjectMaster projectMaster = projectMasterService.validateUserWithProjectMasterToken(command.getProjectToken(), user);
-
+		//TODO 프로젝트 기안인지 validation
 		KeyResult keyResult = keyResultService.registerKeyResult(
 				new KeyResultCommand.RegisterKeyResultWithProject(command.getName(), projectMaster)
 		);

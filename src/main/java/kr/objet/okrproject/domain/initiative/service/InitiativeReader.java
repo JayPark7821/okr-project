@@ -22,4 +22,5 @@ public interface InitiativeReader {
 
 	Integer getCountForFeedbackToGive(User user);
 
+	Optional<Initiative> validateInitiativeOwnerWithToken(String token, User user);
 }
