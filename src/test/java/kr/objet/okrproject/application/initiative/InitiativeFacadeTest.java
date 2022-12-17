@@ -11,6 +11,7 @@ import kr.objet.okrproject.domain.initiative.service.fixture.InitiativeFixture;
 import kr.objet.okrproject.domain.keyresult.KeyResult;
 import kr.objet.okrproject.domain.keyresult.service.KeyResultService;
 import kr.objet.okrproject.domain.keyresult.service.fixture.KeyResultFixture;
+import kr.objet.okrproject.domain.notification.service.NotificationService;
 import kr.objet.okrproject.domain.project.ProjectMaster;
 import kr.objet.okrproject.domain.project.service.ProjectMasterService;
 import kr.objet.okrproject.domain.project.service.fixture.ProjectMasterFixture;
@@ -50,13 +51,18 @@ class InitiativeFacadeTest {
 	@Mock
 	private ProjectMasterService projectMasterService;
 
+	@Mock
+	private NotificationService notificationService;
+
 	@BeforeEach
 	void init() {
 		MockitoAnnotations.openMocks(this);
 		sut = new InitiativeFacade(
 			keyResultService,
 			initiativeService,
-			projectMasterService
+			projectMasterService,
+			notificationService
+
 		);
 	}
 
@@ -77,7 +83,7 @@ class InitiativeFacadeTest {
 			keyResult.getProjectMaster().getTeamMember().get(0)))
 			.willReturn(initiative);
 		doNothing().when(projectMasterService)
-				.updateProgress(projectMaster);
+				.updateProgress(projectMaster.getId());
 		//when
 		String initiativeToken = assertDoesNotThrow(
 			() -> sut.registerInitiative(command, user));

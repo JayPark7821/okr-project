@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
@@ -94,7 +95,7 @@ public class InitiativeServiceImpl implements InitiativeService {
 	}
 
 	@Override
-	public Initiative validateUserWithProjectMasterToken(String token, User user) {
+	public Initiative validateUserWithInitiativeToken(String token, User user) {
 		return initiativeReader.findByInitiativeTokenAndUser(token , user)
 				.orElseThrow(() -> new OkrApplicationException(ErrorCode.INVALID_INITIATIVE_TOKEN));
 	}
@@ -102,6 +103,21 @@ public class InitiativeServiceImpl implements InitiativeService {
 	@Override
 	public Integer getCountForFeedbackToGive(User user) {
 		return initiativeReader.getCountForFeedbackToGive(user);
+	}
+
+	@Transactional
+	@Override
+	public void setInitiativeStatusToDone(Initiative initiative, User user) {
+		if (initiative.isDone()) {
+			throw new OkrApplicationException(ErrorCode.ALREADY_FINISHED_INITIATIVE);
+		}
+		initiative.markInitiativeAsDone();
+	}
+
+	@Override
+	public Initiative validateInitiativeOwnerWithToken(String token, User user) {
+		return initiativeReader.validateInitiativeOwnerWithToken(token , user)
+				.orElseThrow(() -> new OkrApplicationException(ErrorCode.INVALID_INITIATIVE_TOKEN));
 	}
 
 

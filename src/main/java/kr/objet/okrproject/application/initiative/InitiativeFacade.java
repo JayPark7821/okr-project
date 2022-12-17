@@ -6,6 +6,8 @@ import kr.objet.okrproject.domain.initiative.service.InitiativeCommand;
 import kr.objet.okrproject.domain.initiative.service.InitiativeService;
 import kr.objet.okrproject.domain.keyresult.KeyResult;
 import kr.objet.okrproject.domain.keyresult.service.KeyResultService;
+import kr.objet.okrproject.domain.notification.service.NotificationService;
+import kr.objet.okrproject.domain.project.ProjectMaster;
 import kr.objet.okrproject.domain.project.service.ProjectMasterService;
 import kr.objet.okrproject.domain.user.User;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +29,7 @@ public class InitiativeFacade {
 	private final KeyResultService keyResultService;
 	private final InitiativeService initiativeService;
 	private final ProjectMasterService projectMasterService;
+	private final NotificationService notificationService;
 
 
 	public String registerInitiative(InitiativeCommand.registerInitiative command, User user) {
@@ -39,7 +42,7 @@ public class InitiativeFacade {
 			keyResult.getProjectMaster().getTeamMember().get(0)
 		);
 
-		projectMasterService.updateProgress(keyResult.getProjectMaster());
+		projectMasterService.updateProgress(keyResult.getProjectMaster().getId());
 
 		return initiative.getInitiativeToken();
 
@@ -63,5 +66,23 @@ public class InitiativeFacade {
 
 	public List<String> searchActiveInitiativesByDate(YearMonth searchYearMonth, User user) {
 		return initiativeService.searchActiveInitiativesByDate(searchYearMonth, user);
+	}
+
+	public String setInitiativeStatusToDone(String token, User user) {
+		Initiative initiative = initiativeService.validateInitiativeOwnerWithToken(token, user);
+		ProjectMaster projectMaster = initiative.getKeyResult().getProjectMaster();
+
+		Double beforeProgress = projectMasterService.calcProjectProgress(projectMaster.getId());
+		initiativeService.setInitiativeStatusToDone(initiative, user);
+		Double afterProgress = projectMasterService.updateProgress(projectMaster.getId());
+
+		notificationService.sendIniDoneNoti(
+				projectMaster.getTeamMember(),
+				user,
+				initiative.getName()
+		);
+		notificationService.sendProjectProgressNoti(projectMaster, beforeProgress, afterProgress);
+
+		return initiative.getInitiativeToken();
 	}
 }

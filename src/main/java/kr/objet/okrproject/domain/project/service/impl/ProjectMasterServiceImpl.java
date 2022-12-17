@@ -72,9 +72,16 @@ public class ProjectMasterServiceImpl implements ProjectMasterService {
 
 	@Transactional
 	@Override
-	public void updateProgress(ProjectMaster projectMaster) {
-		projectMaster.updateProgress(projectMasterReader.calcProjectProgress(projectMaster.getId()));
+	public Double updateProgress(Long projectId) {
+		double progress = calcProjectProgress(projectId);
+		ProjectMaster projectMaster = projectMasterReader.getReferenceById(projectId);
+		projectMaster.updateProgress(progress);
+		return progress;
 	}
 
+	@Override
+	public Double calcProjectProgress(Long projectId) {
+		return projectMasterReader.calcProjectProgress(projectId);
+	}
 
 }

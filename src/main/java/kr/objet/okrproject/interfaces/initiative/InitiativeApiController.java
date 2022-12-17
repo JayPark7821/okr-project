@@ -86,10 +86,10 @@ public class InitiativeApiController {
 						.collect(Collectors.toList());
 
 		return Response
-				.success(
-						HttpStatus.OK,
-						response
-				);
+			.success(
+				HttpStatus.OK,
+				response
+			);
 	}
 
 	@GetMapping("/yearmonth/{yearmonth}")
@@ -103,12 +103,28 @@ public class InitiativeApiController {
 		User user = ClassUtils.getSafeCastInstance(authentication.getPrincipal(), User.class)
 				.orElseThrow(() -> new OkrApplicationException(ErrorCode.CASTING_USER_FAILED));
 
-				List<String> results = initiativeFacade.searchActiveInitiativesByDate(searchYearMonth, user);
+		List<String> results = initiativeFacade.searchActiveInitiativesByDate(searchYearMonth, user);
 
 		return Response
-				.success(
-						HttpStatus.OK,
-						results
-				);
+			.success(
+				HttpStatus.OK,
+				results
+			);
+	}
+
+	@PutMapping("/{initiativeToken}/done")
+	public ResponseEntity<Response<String>> setInitiativeStatusToDone(
+			@PathVariable("initiativeToken")  String token,
+			Authentication authentication
+	) {
+
+		User user = ClassUtils.getSafeCastInstance(authentication.getPrincipal(), User.class)
+				.orElseThrow(() -> new OkrApplicationException(ErrorCode.CASTING_USER_FAILED));
+
+		return Response
+			.success(
+				HttpStatus.OK,
+				initiativeFacade.setInitiativeStatusToDone(token, user)
+			);
 	}
 }

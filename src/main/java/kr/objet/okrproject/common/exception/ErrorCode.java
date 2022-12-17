@@ -41,6 +41,7 @@ public enum ErrorCode {
 	INITIATIVE_IS_NOT_FINISHED(HttpStatus.BAD_REQUEST, "완료되지 않은 Initative에는 피드백을 남길 수 없습니다."),
 	INVALID_SEARCH_RANGE_TYPE(HttpStatus.BAD_REQUEST, "잘못된 검색 기간입니다."),
 	INVALID_INITIATIVE_INFO(HttpStatus.BAD_REQUEST, "Initiative의 정보 오류 입니다." ),
+	ALREADY_FINISHED_INITIATIVE(HttpStatus.BAD_REQUEST,"이미 완료된 Initiative입니다." ),
     INVALID_FEEDBACK_TOKEN(HttpStatus.BAD_REQUEST, "잘못된 Feedback token 입니다." );
 
 	private HttpStatus status;
