@@ -1,10 +1,5 @@
 package kr.objet.okrproject.interfaces.user;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 import kr.objet.okrproject.domain.guest.GuestCommand;
 import kr.objet.okrproject.domain.user.User;
@@ -14,6 +9,11 @@ import kr.objet.okrproject.domain.user.enums.RoleType;
 import kr.objet.okrproject.domain.user.enums.jobtype.JobFieldDetail;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import javax.validation.Valid;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 public class UserDto {
 
@@ -115,4 +115,34 @@ public class UserDto {
 		}
 	}
 
+	@Getter
+	@NoArgsConstructor
+	public static class Response {
+
+		@Schema(description = "사용자 email", example = "okr@okr.com")
+		private String email;
+		@Schema(description = "사용자 이름", example = "홍길동")
+		private String name;
+
+		@Schema(description = "소셜 타입", example = "GOOGLE")
+		private ProviderType providerType;
+
+		@Schema(description = "권한", example = "USER")
+		private RoleType roleType;
+
+		@Schema(description = "직업", example = "GAME_PLANNER")
+		private JobFieldDetail jobFieldDetail;
+		@Schema(description = "프로필 이미지 링크", example = "프로필 이미지 링크")
+		private String profileImage;
+
+
+		public Response(User user) {
+			this.email = user.getEmail();
+			this.name = user.getUsername();
+			this.profileImage = user.getProfileImageUrl();
+			this.providerType = user.getProviderType();
+			this.roleType = user.getRoleType();
+			this.jobFieldDetail = user.getJobField();
+		}
+	}
 }
