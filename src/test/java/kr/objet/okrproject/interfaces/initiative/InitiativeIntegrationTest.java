@@ -351,4 +351,60 @@ public class InitiativeIntegrationTest {
 		Initiative initiative = initiativeRepository.findByInitiativeToken(iniToken).get();
 		assertThat(initiative.getDetail()).isEqualTo(iniDetail);
 	}
+
+	@Test
+	void initiative_update실패_날짜오류() throws Exception {
+		// given
+		String iniDetail = "change details";
+		String initiativeDetail = "initiative detail";
+		InitiativeDto.UpdateRequest dto = InitiativeDto.UpdateRequest.builder()
+				.edt("2022-01-13")
+				.sdt("2022-01-12")
+				.iniDetail(iniDetail)
+				.build();
+		String iniToken = "ini_ixYjj5nODqgrg431";
+		//when
+		MvcResult mvcResult = mvc.perform(put(initiativeUrl + "/" + iniToken + "/update")
+						.header(HttpHeaders.AUTHORIZATION, "Bearer " + initiativeToken)
+						.contentType(MediaType.APPLICATION_JSON)
+						.characterEncoding(StandardCharsets.UTF_8)
+						.content(objectMapper.writeValueAsBytes(dto))
+				)
+				.andDo(print())
+				.andExpect(status().isBadRequest())
+				.andReturn();
+
+		//then
+		JsonNode jsonNode = objectMapper.readTree(mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8));
+		JsonNode message = jsonNode.get("message");
+		assertThat(message.asText()).contains(ErrorCode.INVALID_INITIATIVE_END_DATE.getMessage());
+	}
+
+	@Test
+	void initiative_update실패_이미완료된_initiative() throws Exception {
+		// given
+		String iniDetail = "change details";
+		String initiativeDetail = "initiative detail";
+		InitiativeDto.UpdateRequest dto = InitiativeDto.UpdateRequest.builder()
+				.edt("2022-01-12")
+				.sdt("2022-01-12")
+				.iniDetail(iniDetail)
+				.build();
+		String iniToken = "ini_ixYjj5nODqtb3AH8";
+		//when
+		MvcResult mvcResult = mvc.perform(put(initiativeUrl + "/" + iniToken + "/update")
+						.header(HttpHeaders.AUTHORIZATION, "Bearer " + initiativeToken)
+						.contentType(MediaType.APPLICATION_JSON)
+						.characterEncoding(StandardCharsets.UTF_8)
+						.content(objectMapper.writeValueAsBytes(dto))
+				)
+				.andDo(print())
+				.andExpect(status().isBadRequest())
+				.andReturn();
+
+		//then
+		JsonNode jsonNode = objectMapper.readTree(mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8));
+		JsonNode message = jsonNode.get("message");
+		assertThat(message.asText()).contains(ErrorCode.ALREADY_FINISHED_INITIATIVE.getMessage());
+	}
 }
