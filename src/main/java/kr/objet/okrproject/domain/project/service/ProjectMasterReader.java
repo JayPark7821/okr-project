@@ -20,4 +20,7 @@ public interface ProjectMasterReader {
 
 	List<ProjectMaster> searchProjectsForCalendar(YearMonth yearMonth, User user);
 
+	double calcProjectProgress(Long projectId);
+
+	ProjectMaster getReferenceById(Long projectId);
 }

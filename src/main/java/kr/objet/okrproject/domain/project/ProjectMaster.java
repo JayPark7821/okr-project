@@ -1,20 +1,5 @@
 package kr.objet.okrproject.domain.project;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
 import kr.objet.okrproject.common.entity.BaseEntity;
 import kr.objet.okrproject.common.exception.ErrorCode;
 import kr.objet.okrproject.common.exception.OkrApplicationException;
@@ -26,6 +11,13 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
@@ -86,6 +78,7 @@ public class ProjectMaster extends BaseEntity {
 			throw new OkrApplicationException(ErrorCode.INVALID_PROJECT_END_DATE);
 		}
 	}
+
 
 	@Builder
 	public ProjectMaster(String name, LocalDate startDate, LocalDate endDate, ProjectType type, String objective,

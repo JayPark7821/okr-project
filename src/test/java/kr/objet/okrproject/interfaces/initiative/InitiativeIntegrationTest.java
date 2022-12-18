@@ -1,13 +1,18 @@
 package kr.objet.okrproject.interfaces.initiative;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
-import java.nio.charset.StandardCharsets;
-import java.util.Objects;
-
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import kr.objet.okrproject.common.exception.ErrorCode;
+import kr.objet.okrproject.common.utils.JwtTokenUtils;
+import kr.objet.okrproject.domain.initiative.Initiative;
+import kr.objet.okrproject.domain.notification.Notification;
+import kr.objet.okrproject.domain.project.ProjectMaster;
+import kr.objet.okrproject.domain.user.User;
+import kr.objet.okrproject.infrastructure.initiative.InitiativeRepository;
+import kr.objet.okrproject.infrastructure.notification.NotificationRepository;
+import kr.objet.okrproject.infrastructure.project.ProjectMasterRepository;
+import kr.objet.okrproject.infrastructure.user.UserRepository;
+import kr.objet.okrproject.interfaces.project.ProjectSaveDtoFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -20,19 +25,18 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Objects;
 
-import kr.objet.okrproject.common.exception.ErrorCode;
-import kr.objet.okrproject.common.utils.JwtTokenUtils;
-import kr.objet.okrproject.domain.initiative.Initiative;
-import kr.objet.okrproject.domain.user.User;
-import kr.objet.okrproject.infrastructure.initiative.InitiativeRepository;
-import kr.objet.okrproject.infrastructure.project.ProjectMasterRepository;
-import kr.objet.okrproject.infrastructure.user.UserRepository;
-import kr.objet.okrproject.interfaces.project.ProjectSaveDtoFixture;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@Transactional
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -49,6 +53,8 @@ public class InitiativeIntegrationTest {
 	private ProjectMasterRepository projectMasterRepository;
 	@Autowired
 	private InitiativeRepository initiativeRepository;
+	@Autowired
+	private NotificationRepository notificationRepository;
 	@Value("${jwt.secret-key}")
 	private String secretKey;
 	@Value("${jwt.token.access-expired-time-ms}")
@@ -105,6 +111,10 @@ public class InitiativeIntegrationTest {
 		Initiative initiative = initiativeRepository.findByInitiativeToken(initiativeToken).orElseThrow();
 		assertThat(initiative.getName()).isEqualTo(initiativeName);
 		assertThat(initiative.getDetail()).isEqualTo(initiativeDetail);
+
+		ProjectMaster projectMaster = projectMasterRepository.findByProjectMasterToken("mst_K4e8a5s7d6lb6421").get();
+		assertThat(projectMaster.getProgress()).isEqualTo(50.0D);
+
 	}
 
 	@Test
@@ -290,5 +300,111 @@ public class InitiativeIntegrationTest {
 		JsonNode jsonNode = objectMapper.readTree(mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8));
 		JsonNode result = jsonNode.get("result");
 		assertThat(result.size()).isEqualTo(14);
+	}
+	@Test
+	void initiative_완료_update성공() throws Exception {
+		// given
+		String iniToken = "ini_ixYjj5nODqgrg431";
+		//when
+		MvcResult mvcResult = mvc.perform(put(initiativeUrl + "/" + iniToken + "/done")
+						.header(HttpHeaders.AUTHORIZATION, "Bearer " + initiativeToken)
+						.contentType(MediaType.APPLICATION_JSON)
+						.characterEncoding(StandardCharsets.UTF_8)
+				)
+				.andDo(print())
+				.andExpect(status().isOk())
+				.andReturn();
+		//then
+		 
+		Initiative initiative = initiativeRepository.findByInitiativeToken(iniToken).get();
+		assertThat(initiative.isDone()).isTrue();
+		List<Notification> notifications = notificationRepository.findAllByEmail("initiativeRetrieveTest@naver.com");
+		assertThat(notifications.size()).isEqualTo(1);
+		assertThat(notifications.get(0).getMsg()).contains("다같이 고생한 팀원에게 수고했다 한마디!");
+		List<Notification> notifications1 = notificationRepository.findAllByEmail("user5@naver.com");
+		assertThat(notifications1.size()).isEqualTo(2);
+	}
+
+	@Test
+	void initiative_update성공() throws Exception {
+		// given
+		String iniDetail = "change details";
+		String initiativeDetail = "initiative detail";
+		InitiativeDto.UpdateRequest dto = InitiativeDto.UpdateRequest.builder()
+				.edt("2022-01-12")
+				.sdt("2022-01-12")
+				.iniDetail(iniDetail)
+				.build();
+		String iniToken = "ini_ixYjj5nODqgrg431";
+		//when
+		MvcResult mvcResult = mvc.perform(put(initiativeUrl + "/" + iniToken + "/update")
+						.header(HttpHeaders.AUTHORIZATION, "Bearer " + initiativeToken)
+						.contentType(MediaType.APPLICATION_JSON)
+						.characterEncoding(StandardCharsets.UTF_8)
+						.content(objectMapper.writeValueAsBytes(dto))
+				)
+				.andDo(print())
+				.andExpect(status().isOk())
+				.andReturn();
+		//then
+
+		Initiative initiative = initiativeRepository.findByInitiativeToken(iniToken).get();
+		assertThat(initiative.getDetail()).isEqualTo(iniDetail);
+	}
+
+	@Test
+	void initiative_update실패_날짜오류() throws Exception {
+		// given
+		String iniDetail = "change details";
+		String initiativeDetail = "initiative detail";
+		InitiativeDto.UpdateRequest dto = InitiativeDto.UpdateRequest.builder()
+				.edt("2022-01-13")
+				.sdt("2022-01-12")
+				.iniDetail(iniDetail)
+				.build();
+		String iniToken = "ini_ixYjj5nODqgrg431";
+		//when
+		MvcResult mvcResult = mvc.perform(put(initiativeUrl + "/" + iniToken + "/update")
+						.header(HttpHeaders.AUTHORIZATION, "Bearer " + initiativeToken)
+						.contentType(MediaType.APPLICATION_JSON)
+						.characterEncoding(StandardCharsets.UTF_8)
+						.content(objectMapper.writeValueAsBytes(dto))
+				)
+				.andDo(print())
+				.andExpect(status().isBadRequest())
+				.andReturn();
+
+		//then
+		JsonNode jsonNode = objectMapper.readTree(mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8));
+		JsonNode message = jsonNode.get("message");
+		assertThat(message.asText()).contains(ErrorCode.INVALID_INITIATIVE_END_DATE.getMessage());
+	}
+
+	@Test
+	void initiative_update실패_이미완료된_initiative() throws Exception {
+		// given
+		String iniDetail = "change details";
+		String initiativeDetail = "initiative detail";
+		InitiativeDto.UpdateRequest dto = InitiativeDto.UpdateRequest.builder()
+				.edt("2022-01-12")
+				.sdt("2022-01-12")
+				.iniDetail(iniDetail)
+				.build();
+		String iniToken = "ini_ixYjj5nODqtb3AH8";
+		//when
+		MvcResult mvcResult = mvc.perform(put(initiativeUrl + "/" + iniToken + "/update")
+						.header(HttpHeaders.AUTHORIZATION, "Bearer " + initiativeToken)
+						.contentType(MediaType.APPLICATION_JSON)
+						.characterEncoding(StandardCharsets.UTF_8)
+						.content(objectMapper.writeValueAsBytes(dto))
+				)
+				.andDo(print())
+				.andExpect(status().isBadRequest())
+				.andReturn();
+
+		//then
+		JsonNode jsonNode = objectMapper.readTree(mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8));
+		JsonNode message = jsonNode.get("message");
+		assertThat(message.asText()).contains(ErrorCode.ALREADY_FINISHED_INITIATIVE.getMessage());
 	}
 }
