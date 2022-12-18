@@ -127,4 +127,22 @@ public class InitiativeApiController {
 				initiativeFacade.setInitiativeStatusToDone(token, user)
 			);
 	}
+
+	@PutMapping("/{initiativeToken}/update")
+	public ResponseEntity<Response<String>> updateInitiative(
+			@PathVariable("initiativeToken")  String token,
+			@RequestBody @Valid InitiativeDto.UpdateRequest request,
+			Authentication authentication
+	) {
+
+		User user = ClassUtils.getSafeCastInstance(authentication.getPrincipal(), User.class)
+				.orElseThrow(() -> new OkrApplicationException(ErrorCode.CASTING_USER_FAILED));
+
+
+		return Response
+			.success(
+				HttpStatus.OK,
+				initiativeFacade.updateInitiative(request.toCommand(), token, user)
+			);
+	}
 }

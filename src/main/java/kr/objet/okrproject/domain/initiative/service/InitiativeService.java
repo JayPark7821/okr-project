@@ -15,8 +15,8 @@ import java.util.List;
 public interface InitiativeService {
 	void validateInitiativeDates(LocalDate sdt, LocalDate edt, ProjectMaster projectMaster);
 
-	Initiative registerInitiative(InitiativeCommand.registerInitiative command, KeyResult keyResult,
-		TeamMember teamMember);
+	Initiative registerInitiative(InitiativeCommand.RegisterInitiative command, KeyResult keyResult,
+								  TeamMember teamMember);
 
 	Page<Initiative> searchInitiatives(String keyResultToken, User user, Pageable page);
 
@@ -36,4 +36,6 @@ public interface InitiativeService {
 	void setInitiativeStatusToDone(Initiative initiative, User user);
 
 	Initiative validateInitiativeOwnerWithToken(String token, User user);
+
+	Initiative updateInitiative(InitiativeCommand.UpdateInitiative request, String token, User user);
 }

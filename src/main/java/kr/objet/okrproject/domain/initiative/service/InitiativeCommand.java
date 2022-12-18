@@ -1,7 +1,5 @@
 package kr.objet.okrproject.domain.initiative.service;
 
-import java.time.LocalDate;
-
 import kr.objet.okrproject.common.exception.ErrorCode;
 import kr.objet.okrproject.common.exception.OkrApplicationException;
 import kr.objet.okrproject.domain.initiative.Initiative;
@@ -10,10 +8,12 @@ import kr.objet.okrproject.domain.team.TeamMember;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.LocalDate;
+
 public class InitiativeCommand {
 
 	@Getter
-	public static class registerInitiative {
+	public static class RegisterInitiative {
 
 		private final String keyResultToken;
 
@@ -26,7 +26,7 @@ public class InitiativeCommand {
 		private final String detail;
 
 		@Builder
-		public registerInitiative(String keyResultToken, String name, LocalDate edt, LocalDate sdt, String detail) {
+		public RegisterInitiative(String keyResultToken, String name, LocalDate edt, LocalDate sdt, String detail) {
 			this.keyResultToken = keyResultToken;
 			this.name = name;
 			this.edt = edt;
@@ -54,5 +54,23 @@ public class InitiativeCommand {
 				.build();
 		}
 	}
+
+	@Getter
+	public static class UpdateInitiative {
+
+		private String iniDetail;
+
+		private LocalDate edt;
+
+		private LocalDate sdt;
+
+		@Builder
+		public UpdateInitiative(String iniDetail, LocalDate edt, LocalDate sdt) {
+			this.iniDetail = iniDetail;
+			this.edt = edt;
+			this.sdt = sdt;
+		}
+	}
+
 
 }

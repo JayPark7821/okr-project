@@ -1,24 +1,5 @@
 package kr.objet.okrproject.domain.initiative;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.persistence.Column;
-import javax.persistence.ConstraintMode;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.ForeignKey;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
 import kr.objet.okrproject.common.entity.BaseEntity;
 import kr.objet.okrproject.common.utils.TokenGenerator;
 import kr.objet.okrproject.domain.feedback.Feedback;
@@ -28,6 +9,13 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
@@ -96,8 +84,10 @@ public class Initiative extends BaseEntity {
 		this.done = true;
 	}
 
-	public void updateIniDetail(String detail) {
+	public void updateInitiative(String detail, LocalDate sdt, LocalDate edt) {
 		this.detail = detail;
+		this.sdt = sdt;
+		this.edt = edt;
 	}
 }
 

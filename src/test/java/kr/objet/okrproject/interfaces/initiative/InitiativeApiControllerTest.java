@@ -1,13 +1,13 @@
 package kr.objet.okrproject.interfaces.initiative;
 
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.BDDMockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
-import java.nio.charset.StandardCharsets;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import kr.objet.okrproject.application.initiative.InitiativeFacade;
+import kr.objet.okrproject.config.WithMockCustomUser;
+import kr.objet.okrproject.domain.initiative.service.InitiativeCommand;
+import kr.objet.okrproject.domain.keyresult.KeyResult;
+import kr.objet.okrproject.domain.keyresult.service.fixture.KeyResultFixture;
+import kr.objet.okrproject.domain.user.User;
+import kr.objet.okrproject.interfaces.project.ProjectSaveDtoFixture;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
@@ -18,15 +18,14 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.web.servlet.MockMvc;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.nio.charset.StandardCharsets;
 
-import kr.objet.okrproject.application.initiative.InitiativeFacade;
-import kr.objet.okrproject.config.WithMockCustomUser;
-import kr.objet.okrproject.domain.initiative.service.InitiativeCommand;
-import kr.objet.okrproject.domain.keyresult.KeyResult;
-import kr.objet.okrproject.domain.keyresult.service.fixture.KeyResultFixture;
-import kr.objet.okrproject.domain.user.User;
-import kr.objet.okrproject.interfaces.project.ProjectSaveDtoFixture;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.BDDMockito.times;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @WebMvcTest(controllers = InitiativeApiController.class)
@@ -68,7 +67,7 @@ class InitiativeApiControllerTest {
 		//then
 		then(initiativeFacade)
 			.should(times(1))
-			.registerInitiative(any(InitiativeCommand.registerInitiative.class), any(User.class));
+			.registerInitiative(any(InitiativeCommand.RegisterInitiative.class), any(User.class));
 	}
 
 }

@@ -32,7 +32,7 @@ public class InitiativeFacade {
 	private final NotificationService notificationService;
 
 
-	public String registerInitiative(InitiativeCommand.registerInitiative command, User user) {
+	public String registerInitiative(InitiativeCommand.RegisterInitiative command, User user) {
 
 		KeyResult keyResult = keyResultService.validateKeyResultWithUser(command.getKeyResultToken(), user);
 
@@ -83,6 +83,11 @@ public class InitiativeFacade {
 		);
 		notificationService.sendProjectProgressNoti(projectMaster, beforeProgress, afterProgress);
 
+		return initiative.getInitiativeToken();
+	}
+
+	public String updateInitiative(InitiativeCommand.UpdateInitiative request, String token, User user) {
+		Initiative initiative = initiativeService.updateInitiative(request, token, user);
 		return initiative.getInitiativeToken();
 	}
 }

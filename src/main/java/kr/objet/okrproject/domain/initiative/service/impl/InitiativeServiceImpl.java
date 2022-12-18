@@ -46,7 +46,7 @@ public class InitiativeServiceImpl implements InitiativeService {
 
 	@Override
 	public Initiative registerInitiative(
-		InitiativeCommand.registerInitiative command,
+		InitiativeCommand.RegisterInitiative command,
 		KeyResult keyResult,
 		TeamMember teamMember
 	) {
@@ -118,6 +118,18 @@ public class InitiativeServiceImpl implements InitiativeService {
 	public Initiative validateInitiativeOwnerWithToken(String token, User user) {
 		return initiativeReader.validateInitiativeOwnerWithToken(token , user)
 				.orElseThrow(() -> new OkrApplicationException(ErrorCode.INVALID_INITIATIVE_TOKEN));
+	}
+
+	@Transactional
+	@Override
+	public Initiative updateInitiative(InitiativeCommand.UpdateInitiative request, String token, User user) {
+		Initiative initiative = validateInitiativeOwnerWithToken(token, user);
+		if (initiative.isDone()) {
+			throw new OkrApplicationException(ErrorCode.ALREADY_FINISHED_INITIATIVE);
+		}
+		validateInitiativeDates(request.getSdt(), request.getEdt(),initiative.getKeyResult().getProjectMaster());
+		initiative.updateInitiative(request.getIniDetail(), request.getSdt(),request.getEdt());
+		return initiative;
 	}
 
 
