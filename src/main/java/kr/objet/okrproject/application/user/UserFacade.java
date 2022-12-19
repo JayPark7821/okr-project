@@ -5,6 +5,8 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -96,4 +98,7 @@ public class UserFacade {
 
 	}
 
+	public UserInfo.Token reGenerateToken(HttpServletRequest request) {
+		refreshTokenService.reGenerateRefreshToken(request);
+	}
 }

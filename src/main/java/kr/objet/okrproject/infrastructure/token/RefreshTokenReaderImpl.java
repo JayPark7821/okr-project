@@ -21,4 +21,9 @@ public class RefreshTokenReaderImpl implements RefreshTokenReader {
 		return repository.findByUserEmail(email);
 	}
 
+	@Override
+	public Optional<RefreshToken> findRefreshTokenByEmailAndRefreshToken(String email, String token) {
+		return repository.findRefreshTokenByEmailAndRefreshToken(email, token);
+	}
+
 }
