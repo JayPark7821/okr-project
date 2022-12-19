@@ -1,8 +1,9 @@
 package kr.objet.okrproject.common.exception;
 
+import org.springframework.http.HttpStatus;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.springframework.http.HttpStatus;
 
 @Getter
 @AllArgsConstructor
@@ -40,9 +41,12 @@ public enum ErrorCode {
 	INVALID_INITIATIVE_TOKEN(HttpStatus.BAD_REQUEST, "잘못된 Initiative token 입니다."),
 	INITIATIVE_IS_NOT_FINISHED(HttpStatus.BAD_REQUEST, "완료되지 않은 Initative에는 피드백을 남길 수 없습니다."),
 	INVALID_SEARCH_RANGE_TYPE(HttpStatus.BAD_REQUEST, "잘못된 검색 기간입니다."),
-	INVALID_INITIATIVE_INFO(HttpStatus.BAD_REQUEST, "Initiative의 정보 오류 입니다." ),
-	ALREADY_FINISHED_INITIATIVE(HttpStatus.BAD_REQUEST,"이미 완료된 Initiative입니다." ),
-    INVALID_FEEDBACK_TOKEN(HttpStatus.BAD_REQUEST, "잘못된 Feedback token 입니다." );
+	INVALID_INITIATIVE_INFO(HttpStatus.BAD_REQUEST, "Initiative의 정보 오류 입니다."),
+	ALREADY_FINISHED_INITIATIVE(HttpStatus.BAD_REQUEST, "이미 완료된 Initiative입니다."),
+	INVALID_FEEDBACK_TOKEN(HttpStatus.BAD_REQUEST, "잘못된 Feedback token 입니다."),
+	CANNOT_FEEDBACK_MORE_THEN_ONCE(HttpStatus.BAD_REQUEST, "이미 feedbackd을 남기신 initiative에는 feedback을 남길 수 없습니다."),
+	CANNOT_FEEDBACK_MYSELF(HttpStatus.BAD_REQUEST, "자기 자신의 initiative에는 feedback을 남길 수 없습니다."),
+	;
 
 	private HttpStatus status;
 	private String message;
