@@ -21,7 +21,11 @@ public class NotificationFacade {
 		return notificationService.findNotificationsByUser(user);
 	}
 
-	public void updateNotificationStatus(User user, String token) {
-		notificationService.updateNotificationStatus(user, token);
+	public void checkNotification(User user, String token) {
+		notificationService.checkNotification(user, token);
+	}
+
+	public void deleteNotification(User user, String token) {
+		notificationService.deleteNotification(user, token);
 	}
 }

@@ -1,5 +1,11 @@
 package kr.objet.okrproject.domain.notification.service.impl;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import kr.objet.okrproject.common.exception.ErrorCode;
 import kr.objet.okrproject.common.exception.OkrApplicationException;
 import kr.objet.okrproject.domain.notification.Notification;
@@ -14,11 +20,6 @@ import kr.objet.okrproject.domain.team.TeamMember;
 import kr.objet.okrproject.domain.user.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -34,13 +35,17 @@ public class NotificationServiceImpl implements NotificationService {
 	private static final double THREE_QUARTERS = 75;
 	private static final double FINISHED = 100;
 
-
 	@Override
-	public void pushNotification(List<NotificationCommand.send> commands) {
+	public void pushNotifications(List<NotificationCommand.send> commands) {
 		commands.forEach(c -> {
 			notificationStore.store(c.toEntity());
 		});
 
+	}
+
+	@Override
+	public void pushNotification(NotificationCommand.send command) {
+		notificationStore.store(command.toEntity());
 	}
 
 	@Override
@@ -52,23 +57,30 @@ public class NotificationServiceImpl implements NotificationService {
 	}
 
 	@Override
-	public void updateNotificationStatus(User user, String token) {
+	public void checkNotification(User user, String token) {
 		Notification notification = notificationReader.findByUserAndNotificationToken(user, token)
 			.orElseThrow(() -> new OkrApplicationException(ErrorCode.INVALID_NOTIFICAION_TOKEN));
-		notification.updateStatus();
+		notification.checkNotification();
+	}
+
+	@Override
+	public void deleteNotification(User user, String token) {
+		Notification notification = notificationReader.findByUserAndNotificationToken(user, token)
+			.orElseThrow(() -> new OkrApplicationException(ErrorCode.INVALID_NOTIFICAION_TOKEN));
+		notification.deleteNotification();
 	}
 
 	@Override
 	public void sendIniDoneNoti(List<TeamMember> teamMember, User user, String initiativeName) {
 		Notifications notiType = Notifications.INITIATIVE_ACHIEVED;
-		teamMember.stream().filter(t->!t.getUser().getEmail().equals(user.getEmail()))
-				.forEach(t->notificationStore.store(
-						new Notification(
-								t.getUser(),
-								notiType,
-								notiType.getMsg(user.getUsername(),initiativeName)
-						)
-				));
+		teamMember.stream().filter(t -> !t.getUser().getEmail().equals(user.getEmail()))
+			.forEach(t -> notificationStore.store(
+				new Notification(
+					t.getUser(),
+					notiType,
+					notiType.getMsg(user.getUsername(), initiativeName)
+				)
+			));
 	}
 
 	@Override
@@ -86,11 +98,13 @@ public class NotificationServiceImpl implements NotificationService {
 				sendProjectProgressNoti(projectMaster, Notifications.PROJECT_FINISHED);
 			}
 		}
-		
+
 	}
 
 	private void sendProjectProgressNoti(ProjectMaster projectMaster, Notifications notiType) {
-		projectMaster.getTeamMember().forEach(t -> notificationStore.store(new Notification(t.getUser(), notiType, notiType.getMsg(projectMaster.getName()))));
+		projectMaster.getTeamMember()
+			.forEach(t -> notificationStore.store(
+				new Notification(t.getUser(), notiType, notiType.getMsg(projectMaster.getName()))));
 	}
 
 	private static Double getProgressAchieve(double beforeProgress, double afterProgress) {
@@ -105,5 +119,5 @@ public class NotificationServiceImpl implements NotificationService {
 		}
 		return null;
 	}
-	
+
 }

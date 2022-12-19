@@ -7,4 +7,7 @@ import kr.objet.okrproject.domain.token.RefreshToken;
 public interface RefreshTokenReader {
 
 	Optional<RefreshToken> findRefreshTokenByEmail(String email);
+
+	Optional<RefreshToken> findRefreshTokenByEmailAndRefreshToken(String email, String token);
+
 }

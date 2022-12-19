@@ -1,7 +1,5 @@
 package kr.objet.okrproject.domain.user.service.impl;
 
-import org.springframework.stereotype.Service;
-
 import kr.objet.okrproject.common.exception.ErrorCode;
 import kr.objet.okrproject.common.exception.OkrApplicationException;
 import kr.objet.okrproject.domain.user.User;
@@ -12,9 +10,9 @@ import kr.objet.okrproject.domain.user.service.UserReader;
 import kr.objet.okrproject.domain.user.service.UserService;
 import kr.objet.okrproject.domain.user.service.UserStore;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor

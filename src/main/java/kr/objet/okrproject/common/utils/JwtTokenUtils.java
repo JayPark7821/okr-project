@@ -20,6 +20,10 @@ public class JwtTokenUtils {
 		return expiration.before(new Date());
 	}
 
+	public static Date getExpired(String token, String key) {
+		return extractClaims(token, key).getExpiration();
+	}
+
 	private static Claims extractClaims(String token, String key) {
 		return Jwts.parserBuilder().setSigningKey(getKey(key))
 			.build().parseClaimsJws(token).getBody();

@@ -1,13 +1,10 @@
 package kr.objet.okrproject.domain.user;
 
-
-import kr.objet.okrproject.common.utils.TokenGenerator;
 import kr.objet.okrproject.domain.guest.Guest;
-import kr.objet.okrproject.domain.guest.GuestInfo;
-import kr.objet.okrproject.domain.user.User;
 import kr.objet.okrproject.domain.user.enums.ProviderType;
 import kr.objet.okrproject.domain.user.enums.RoleType;
 import kr.objet.okrproject.domain.user.enums.jobtype.JobFieldDetail;
+import kr.objet.okrproject.interfaces.user.UserDto;
 import lombok.Getter;
 
 public class UserInfo {
@@ -70,5 +67,22 @@ public class UserInfo {
 				null
 			);
 		}
+	}
+
+	public static class Token {
+
+		private String accessToken;
+
+		private String refreshToken;
+
+		public Token(String accessToken, String refreshToken) {
+			this.accessToken = accessToken;
+			this.refreshToken = refreshToken;
+		}
+
+		public UserDto.Token toDto() {
+			return new UserDto.Token(this.accessToken, this.refreshToken);
+		}
+
 	}
 }

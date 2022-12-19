@@ -1,11 +1,13 @@
 package kr.objet.okrproject.interfaces.feedback;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import kr.objet.okrproject.common.exception.ErrorCode;
-import kr.objet.okrproject.common.utils.JwtTokenUtils;
-import kr.objet.okrproject.domain.feedback.Feedback;
-import kr.objet.okrproject.infrastructure.feedback.FeedbackRepository;
+import static org.assertj.core.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -18,17 +20,22 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.nio.charset.StandardCharsets;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import kr.objet.okrproject.common.exception.ErrorCode;
+import kr.objet.okrproject.common.utils.JwtTokenUtils;
+import kr.objet.okrproject.domain.feedback.Feedback;
+import kr.objet.okrproject.domain.notification.Notification;
+import kr.objet.okrproject.infrastructure.feedback.FeedbackRepository;
+import kr.objet.okrproject.infrastructure.notification.NotificationRepository;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @SpringBootTest
 @AutoConfigureMockMvc
+@Transactional
 public class FeedbackIntegrationTest {
 
 	private final String feedbackUrl = "/api/v1/feedback";
@@ -38,6 +45,8 @@ public class FeedbackIntegrationTest {
 
 	@Autowired
 	private FeedbackRepository feedbackRepository;
+	@Autowired
+	private NotificationRepository notificationRepository;
 	@Value("${jwt.secret-key}")
 	private String secretKey;
 	@Value("${jwt.token.access-expired-time-ms}")
@@ -66,7 +75,7 @@ public class FeedbackIntegrationTest {
 
 		//when
 		MvcResult mvcResult = mvc.perform(post(feedbackUrl)
-				.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+				.header(HttpHeaders.AUTHORIZATION, "Bearer " + feedbackRetrieveToken)
 				.contentType(MediaType.APPLICATION_JSON)
 				.characterEncoding(StandardCharsets.UTF_8)
 				.content(objectMapper.writeValueAsBytes(dto))
@@ -81,6 +90,10 @@ public class FeedbackIntegrationTest {
 		Feedback feedback = feedbackRepository.findByFeedbackToken(feedbackToken).orElseThrow();
 		assertThat(feedback.getOpinion()).isEqualTo(opinion);
 		assertThat(feedback.getGrade().getCode()).isEqualTo(grade);
+
+		List<Notification> notifications = notificationRepository.findAllByEmail("user7@naver.com");
+		assertThat(notifications.size()).isEqualTo(1);
+		assertThat(notifications.get(0).getMsg()).contains("에 피드백을 남기셨어요!");
 	}
 
 	@Test
@@ -135,6 +148,56 @@ public class FeedbackIntegrationTest {
 
 	@Test
 	void feedback_등록_실패_grade오류() throws Exception {
+		// given
+		String opinion = "정말 좋아요!!";
+		String grade = "BEST_RESU222";
+		String initiativeToken = "ini_ix324gfODqtb3AH8";
+		String projectToken = "mst_qq2f4gbffrgg6421";
+		FeedbackDto.Save dto = new FeedbackDto.Save(opinion, grade, projectToken, initiativeToken);
+
+		//when
+		MvcResult mvcResult = mvc.perform(post(feedbackUrl)
+				.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+				.contentType(MediaType.APPLICATION_JSON)
+				.characterEncoding(StandardCharsets.UTF_8)
+				.content(objectMapper.writeValueAsBytes(dto))
+			)
+			.andDo(print())
+			.andExpect(status().isBadRequest())
+			.andReturn();
+		//then
+		JsonNode jsonNode = objectMapper.readTree(mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8));
+		String message = jsonNode.get("message").asText();
+		assertThat(message).isEqualTo(ErrorCode.INVALID_FEEDBACK_TYPE.getMessage());
+	}
+
+	@Test
+	void feedback_등록_실패_요청자_자신의_initiative() throws Exception {
+		// given
+		String opinion = "정말 좋아요!!";
+		String grade = "BEST_RESULT";
+		String initiativeToken = "ini_ixYjj5nOD2233333331";
+		String projectToken = "mst_K4e8a5s7d6lb6421";
+		FeedbackDto.Save dto = new FeedbackDto.Save(opinion, grade, projectToken, initiativeToken);
+
+		//when
+		MvcResult mvcResult = mvc.perform(post(feedbackUrl)
+				.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+				.contentType(MediaType.APPLICATION_JSON)
+				.characterEncoding(StandardCharsets.UTF_8)
+				.content(objectMapper.writeValueAsBytes(dto))
+			)
+			.andDo(print())
+			.andExpect(status().isBadRequest())
+			.andReturn();
+		//then
+		JsonNode jsonNode = objectMapper.readTree(mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8));
+		String message = jsonNode.get("message").asText();
+		assertThat(message).isEqualTo(ErrorCode.CANNOT_FEEDBACK_MYSELF.getMessage());
+	}
+
+	@Test
+	void feedback_등록_실패_이미_feedback을_남김() throws Exception {
 		// given
 		String opinion = "정말 좋아요!!";
 		String grade = "BEST_RESU222";
@@ -230,15 +293,15 @@ public class FeedbackIntegrationTest {
 		String initiativeToken = "ini_ix324gfODqtb3AH8";
 		//when
 		String mvcResult = mvc.perform(get(feedbackUrl + "/" + initiativeToken)
-						.header(HttpHeaders.AUTHORIZATION, "Bearer " + feedbackRetrieveToken)
-						.contentType(MediaType.APPLICATION_JSON)
-						.characterEncoding(StandardCharsets.UTF_8)
-				)
-				.andDo(print())
-				.andExpect(status().isOk())
-				.andReturn()
-				.getResponse()
-				.getContentAsString(StandardCharsets.UTF_8);
+				.header(HttpHeaders.AUTHORIZATION, "Bearer " + feedbackRetrieveToken)
+				.contentType(MediaType.APPLICATION_JSON)
+				.characterEncoding(StandardCharsets.UTF_8)
+			)
+			.andDo(print())
+			.andExpect(status().isOk())
+			.andReturn()
+			.getResponse()
+			.getContentAsString(StandardCharsets.UTF_8);
 		//then
 		JsonNode jsonNode = objectMapper.readTree(mvcResult);
 		JsonNode result = jsonNode.get("result");
@@ -252,18 +315,17 @@ public class FeedbackIntegrationTest {
 		String initiativeToken = "ini_ix324gfODqtb3AH8";
 		String token = JwtTokenUtils.generateToken("notificationTest@naver.com", secretKey, expiredTimeMs);
 
-
 		//when
 		String mvcResult = mvc.perform(get(feedbackUrl + "/" + initiativeToken)
-						.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
-						.contentType(MediaType.APPLICATION_JSON)
-						.characterEncoding(StandardCharsets.UTF_8)
-				)
-				.andDo(print())
-				.andExpect(status().isOk())
-				.andReturn()
-				.getResponse()
-				.getContentAsString(StandardCharsets.UTF_8);
+				.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+				.contentType(MediaType.APPLICATION_JSON)
+				.characterEncoding(StandardCharsets.UTF_8)
+			)
+			.andDo(print())
+			.andExpect(status().isOk())
+			.andReturn()
+			.getResponse()
+			.getContentAsString(StandardCharsets.UTF_8);
 		//then
 		JsonNode jsonNode = objectMapper.readTree(mvcResult);
 		JsonNode result = jsonNode.get("result");
@@ -277,15 +339,15 @@ public class FeedbackIntegrationTest {
 		String initiativeToken = "ini_ixYjj5nODqtb3AH8";
 		//when
 		String mvcResult = mvc.perform(get(feedbackUrl + "/" + initiativeToken)
-						.header(HttpHeaders.AUTHORIZATION, "Bearer " + feedbackRetrieveToken)
-						.contentType(MediaType.APPLICATION_JSON)
-						.characterEncoding(StandardCharsets.UTF_8)
-				)
-				.andDo(print())
-				.andExpect(status().isOk())
-				.andReturn()
-				.getResponse()
-				.getContentAsString(StandardCharsets.UTF_8);
+				.header(HttpHeaders.AUTHORIZATION, "Bearer " + feedbackRetrieveToken)
+				.contentType(MediaType.APPLICATION_JSON)
+				.characterEncoding(StandardCharsets.UTF_8)
+			)
+			.andDo(print())
+			.andExpect(status().isOk())
+			.andReturn()
+			.getResponse()
+			.getContentAsString(StandardCharsets.UTF_8);
 		//then
 		JsonNode jsonNode = objectMapper.readTree(mvcResult);
 		JsonNode result = jsonNode.get("result");
@@ -299,21 +361,22 @@ public class FeedbackIntegrationTest {
 
 		//when
 		String mvcResult = mvc.perform(get(feedbackUrl + "/count")
-						.header(HttpHeaders.AUTHORIZATION, "Bearer " + feedbackRetrieveToken)
-						.contentType(MediaType.APPLICATION_JSON)
-						.characterEncoding(StandardCharsets.UTF_8)
-				)
-				.andDo(print())
-				.andExpect(status().isOk())
-				.andReturn()
-				.getResponse()
-				.getContentAsString(StandardCharsets.UTF_8);
+				.header(HttpHeaders.AUTHORIZATION, "Bearer " + feedbackRetrieveToken)
+				.contentType(MediaType.APPLICATION_JSON)
+				.characterEncoding(StandardCharsets.UTF_8)
+			)
+			.andDo(print())
+			.andExpect(status().isOk())
+			.andReturn()
+			.getResponse()
+			.getContentAsString(StandardCharsets.UTF_8);
 		//then
 		JsonNode jsonNode = objectMapper.readTree(mvcResult);
 		JsonNode result = jsonNode.get("result");
 		assertThat(result.asText()).isEqualTo("2");
 
 	}
+
 	@Test
 	void 작성할_피드백_count2() throws Exception {
 		//given
@@ -321,15 +384,15 @@ public class FeedbackIntegrationTest {
 
 		//when
 		String mvcResult = mvc.perform(get(feedbackUrl + "/count")
-						.header(HttpHeaders.AUTHORIZATION, "Bearer " + feedbackRetrieveToken)
-						.contentType(MediaType.APPLICATION_JSON)
-						.characterEncoding(StandardCharsets.UTF_8)
-				)
-				.andDo(print())
-				.andExpect(status().isOk())
-				.andReturn()
-				.getResponse()
-				.getContentAsString(StandardCharsets.UTF_8);
+				.header(HttpHeaders.AUTHORIZATION, "Bearer " + feedbackRetrieveToken)
+				.contentType(MediaType.APPLICATION_JSON)
+				.characterEncoding(StandardCharsets.UTF_8)
+			)
+			.andDo(print())
+			.andExpect(status().isOk())
+			.andReturn()
+			.getResponse()
+			.getContentAsString(StandardCharsets.UTF_8);
 		//then
 		JsonNode jsonNode = objectMapper.readTree(mvcResult);
 		JsonNode result = jsonNode.get("result");
@@ -346,15 +409,15 @@ public class FeedbackIntegrationTest {
 
 		//when
 		String mvcResult = mvc.perform(put(feedbackUrl + "/" + feedbackToken)
-						.header(HttpHeaders.AUTHORIZATION, "Bearer " + feedbackRetrieveToken)
-						.contentType(MediaType.APPLICATION_JSON)
-						.characterEncoding(StandardCharsets.UTF_8)
-				)
-				.andDo(print())
-				.andExpect(status().isOk())
-				.andReturn()
-				.getResponse()
-				.getContentAsString(StandardCharsets.UTF_8);
+				.header(HttpHeaders.AUTHORIZATION, "Bearer " + feedbackRetrieveToken)
+				.contentType(MediaType.APPLICATION_JSON)
+				.characterEncoding(StandardCharsets.UTF_8)
+			)
+			.andDo(print())
+			.andExpect(status().isOk())
+			.andReturn()
+			.getResponse()
+			.getContentAsString(StandardCharsets.UTF_8);
 		//then
 		JsonNode jsonNode = objectMapper.readTree(mvcResult);
 		JsonNode result = jsonNode.get("result");
@@ -362,8 +425,8 @@ public class FeedbackIntegrationTest {
 		assertThat(result.asText()).isEqualTo("feedback_el6awefwaeyWx39");
 		assertThat(feedback.isChecked()).isTrue();
 
-
 	}
+
 	@Test
 	void 피드백_상태업데이트_실패_본인_피드백토큰아님() throws Exception {
 		//given
@@ -373,22 +436,21 @@ public class FeedbackIntegrationTest {
 
 		//when
 		String mvcResult = mvc.perform(put(feedbackUrl + "/" + feedbackToken)
-						.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
-						.contentType(MediaType.APPLICATION_JSON)
-						.characterEncoding(StandardCharsets.UTF_8)
-				)
-				.andDo(print())
-				.andExpect(status().isBadRequest())
-				.andReturn()
-				.getResponse()
-				.getContentAsString(StandardCharsets.UTF_8);
+				.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+				.contentType(MediaType.APPLICATION_JSON)
+				.characterEncoding(StandardCharsets.UTF_8)
+			)
+			.andDo(print())
+			.andExpect(status().isBadRequest())
+			.andReturn()
+			.getResponse()
+			.getContentAsString(StandardCharsets.UTF_8);
 		//then
 		JsonNode jsonNode = objectMapper.readTree(mvcResult);
 		JsonNode message = jsonNode.get("message");
 		Feedback feedback = feedbackRepository.findByFeedbackToken("feedback_el6awefwaeyWx39").orElseThrow();
 		assertThat(message.asText()).isEqualTo(ErrorCode.INVALID_FEEDBACK_TOKEN.getMessage());
 		assertThat(feedback.isChecked()).isFalse();
-
 
 	}
 }
