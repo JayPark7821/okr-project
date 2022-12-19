@@ -46,6 +46,7 @@ public enum ErrorCode {
 	INVALID_FEEDBACK_TOKEN(HttpStatus.BAD_REQUEST, "잘못된 Feedback token 입니다."),
 	CANNOT_FEEDBACK_MORE_THEN_ONCE(HttpStatus.BAD_REQUEST, "이미 feedbackd을 남기신 initiative에는 feedback을 남길 수 없습니다."),
 	CANNOT_FEEDBACK_MYSELF(HttpStatus.BAD_REQUEST, "자기 자신의 initiative에는 feedback을 남길 수 없습니다."),
+	INVALID_REQUEST(HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),
 	;
 
 	private HttpStatus status;

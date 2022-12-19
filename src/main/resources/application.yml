@@ -19,17 +19,26 @@ spring:
     console:
       enabled: true
   datasource:
-    url:  jdbc:h2:mem:testdb
+    url: jdbc:h2:mem:testdb
     username: sa
     password:
 
 
 
 jwt:
-  secret-key : okr-project-application-2022-11-29.secret-key
+  secret-key: okr-project-application-2022-11-29.secret-key
   token:
-    refresh-expired-time-ms : 259200000
-    access-expired-time-ms : 259200000
+    refresh-expired-time-ms: 259200000
+    access-expired-time-ms: 259200000
 
 google:
-    clientId: 30536199705-2sg1uhnfad1png6biv8clh22gtd5i006.apps.googleusercontent.com
+  clientId: 30536199705-2sg1uhnfad1png6biv8clh22gtd5i006.apps.googleusercontent.com
+
+springdoc:
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json
+  swagger-ui:
+    path: swagger.html
+    disable-swagger-default-url: true
+  paths-to-match:
+    - /api/**

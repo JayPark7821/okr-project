@@ -57,10 +57,17 @@ public class NotificationServiceImpl implements NotificationService {
 	}
 
 	@Override
-	public void updateNotificationStatus(User user, String token) {
+	public void checkNotification(User user, String token) {
 		Notification notification = notificationReader.findByUserAndNotificationToken(user, token)
 			.orElseThrow(() -> new OkrApplicationException(ErrorCode.INVALID_NOTIFICAION_TOKEN));
-		notification.updateStatus();
+		notification.checkNotification();
+	}
+
+	@Override
+	public void deleteNotification(User user, String token) {
+		Notification notification = notificationReader.findByUserAndNotificationToken(user, token)
+			.orElseThrow(() -> new OkrApplicationException(ErrorCode.INVALID_NOTIFICAION_TOKEN));
+		notification.deleteNotification();
 	}
 
 	@Override

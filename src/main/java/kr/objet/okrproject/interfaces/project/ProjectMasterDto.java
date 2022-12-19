@@ -228,8 +228,8 @@ public class ProjectMasterDto {
 	@Getter
 	public static class CalendarResponse {
 
-		@Schema(description = "프로젝트 id", example = "125")
-		private Long id;
+		@Schema(description = "프로젝트 token", example = "125")
+		private String projectToken;
 
 		@Schema(description = "프로젝트 명", example = "OKR 프로젝트")
 		private String name;
@@ -250,7 +250,7 @@ public class ProjectMasterDto {
 		private String projectType;
 
 		public CalendarResponse(ProjectMasterInfo.CalendarResponse response) {
-			this.id = response.getId();
+			this.projectToken = response.getProjectToken();
 			this.name = response.getName();
 			this.objective = response.getObjective();
 			this.progress = response.getProgress();

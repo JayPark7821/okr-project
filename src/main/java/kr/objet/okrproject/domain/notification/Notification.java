@@ -13,6 +13,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import kr.objet.okrproject.common.entity.BaseTimeEntity;
+import kr.objet.okrproject.common.exception.ErrorCode;
+import kr.objet.okrproject.common.exception.OkrApplicationException;
 import kr.objet.okrproject.common.utils.TokenGenerator;
 import kr.objet.okrproject.domain.user.User;
 import lombok.AccessLevel;
@@ -48,10 +50,20 @@ public class Notification extends BaseTimeEntity {
 	@Enumerated(EnumType.STRING)
 	private NotificationCheckType status;
 
-	public void updateStatus() {
-		this.status = this.status.equals(NotificationCheckType.NEW) ?
-			NotificationCheckType.CHECKED :
-			NotificationCheckType.DELETED;
+	public void checkNotification() {
+		if (this.status.equals(NotificationCheckType.NEW)) {
+			this.status = NotificationCheckType.CHECKED;
+		} else {
+			throw new OkrApplicationException(ErrorCode.INVALID_REQUEST);
+		}
+	}
+
+	public void deleteNotification() {
+		if (this.status.equals(NotificationCheckType.CHECKED)) {
+			this.status = NotificationCheckType.DELETED;
+		} else {
+			throw new OkrApplicationException(ErrorCode.INVALID_REQUEST);
+		}
 	}
 
 	public Notification(User user, Notifications type, String msg) {

@@ -15,7 +15,9 @@ public interface NotificationService {
 
 	List<NotificationInfo.Response> findNotificationsByUser(User user);
 
-	void updateNotificationStatus(User user, String token);
+	void checkNotification(User user, String token);
+
+	void deleteNotification(User user, String token);
 
 	void sendIniDoneNoti(List<TeamMember> teamMember, User user, String InitiativeName);
 
