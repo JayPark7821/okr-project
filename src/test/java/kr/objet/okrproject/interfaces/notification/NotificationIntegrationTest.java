@@ -17,15 +17,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import kr.objet.okrproject.common.exception.ErrorCode;
 import kr.objet.okrproject.common.utils.JwtTokenUtils;
 import kr.objet.okrproject.domain.notification.Notification;
 import kr.objet.okrproject.domain.notification.NotificationCheckType;
@@ -35,6 +36,7 @@ import kr.objet.okrproject.infrastructure.notification.NotificationRepository;
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @SpringBootTest
 @AutoConfigureMockMvc
+@Transactional
 class NotificationIntegrationTest {
 
 	private final String notificationUrl = "/api/v1/notification";
@@ -83,8 +85,7 @@ class NotificationIntegrationTest {
 	}
 
 	@Test
-	@Order(1)
-	void 메시지_상태변경_확인() throws Exception {
+	void 메시지_상태변경_확인_checked() throws Exception {
 		//given
 		String notiToken = "noti_111fey1SERx";
 		Optional<Notification> beforeNotification =
@@ -106,6 +107,60 @@ class NotificationIntegrationTest {
 			notificationRepository.findByNotificationToken(notiToken);
 
 		assertThat(afterNotification.get().getStatus()).isEqualTo(NotificationCheckType.CHECKED);
-
 	}
+
+	@Test
+	void 메시지_상태변경_실패_new_to_delete() throws Exception {
+		//given
+		String notiToken = "noti_111fey1SERx";
+		Optional<Notification> beforeNotification =
+			notificationRepository.findByNotificationToken(notiToken);
+
+		assertThat(beforeNotification.get().getStatus()).isEqualTo(NotificationCheckType.NEW);
+
+		//when
+
+		String result = mvc.perform(delete(notificationUrl + "/" + notiToken)
+				.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+				.contentType(MediaType.APPLICATION_JSON)
+				.characterEncoding(StandardCharsets.UTF_8)
+			).andDo(print())
+			.andExpect(status().isBadRequest())
+			.andReturn()
+			.getResponse()
+			.getContentAsString(StandardCharsets.UTF_8);
+
+		JsonNode jsonNode = objectMapper.readTree(result);
+		assertThat(jsonNode.get("message").asText()).isEqualTo(ErrorCode.INVALID_REQUEST.getMessage());
+		Optional<Notification> afterNotification =
+			notificationRepository.findByNotificationToken(notiToken);
+
+		assertThat(afterNotification.get().getStatus()).isEqualTo(NotificationCheckType.NEW);
+	}
+
+	@Test
+	void 메시지_상태변경_확인_deleted() throws Exception {
+		//given
+		String notiToken = "noti_e144441Zey1SERx";
+		Optional<Notification> beforeNotification =
+			notificationRepository.findByNotificationToken(notiToken);
+
+		assertThat(beforeNotification.get().getStatus()).isEqualTo(NotificationCheckType.CHECKED);
+
+		//when
+
+		mvc.perform(delete(notificationUrl + "/" + notiToken)
+				.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+				.contentType(MediaType.APPLICATION_JSON)
+				.characterEncoding(StandardCharsets.UTF_8)
+			).andDo(print())
+			.andExpect(status().isOk())
+			.andReturn();
+
+		Optional<Notification> afterNotification =
+			notificationRepository.findByNotificationToken(notiToken);
+
+		assertThat(afterNotification.get().getStatus()).isEqualTo(NotificationCheckType.DELETED);
+	}
+
 }

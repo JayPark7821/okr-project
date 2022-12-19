@@ -50,6 +50,7 @@ insert into team_member
 ('2022-12-12', '2022-12-12', 'testUser1', 'testUser1', true, 'LEADER', 99997, 11),
 ('2022-12-12', '2022-12-12', 'testUser1', 'testUser1', true, 'LEADER', 99996, 12),
 ('2022-12-12', '2022-12-12', 'testUser1', 'testUser1', true, 'MEMBER', 99996, 3),
+('2022-12-12', '2022-12-12', 'testUser1', 'testUser1', true, 'MEMBER', 99996, 17),
 ('2022-12-12', '2022-12-12', 'testUser1', 'testUser1', false, 'MEMBER', 99995, 13),
 ('2022-12-12', '2022-12-12', 'testUser1', 'testUser1', false, 'LEADER', 99994, 13),
 ('2022-12-12', '2022-12-12', 'testUser1', 'testUser1', true, 'MEMBER', 99994, 2),
@@ -109,7 +110,8 @@ insert into initiative
 (99995, '2022-12-14', '2022-12-14', 'testUser2', 'testUser2', 'initiative detail5', false, '2023-12-14', 'ini_f43qerfdgbffhAH8', 88884, 'ini name', '2000-12-12', 88886, 15),
 (99994, '2022-12-14', '2022-12-14', 'testUser2', 'testUser2', 'initiative detail6', false, '2027-11-14', 'ini_ixYjj5nOF432wrH8', 88883, 'ini name', '2000-12-12', 88885, 15),
 (99993, '2022-12-14', '2022-12-14', 'testUser2', 'testUser2', 'initiative detail7', false, '2026-12-14', 'ini_ixYjj5nODqgrg431', 88882, 'ini name', '2000-12-12', 88884, 15),
-(99992, '2022-12-14', '2022-12-14', 'testUser2', 'testUser2', 'initiative detail7', true, '2026-12-14', 'ini_ixYjj5nOD22222221', 99994, 'ini name', '2000-12-12', 99996, 7)
+(99992, '2022-12-14', '2022-12-14', 'testUser2', 'testUser2', 'initiative detail7', true, '2026-12-14', 'ini_ixYjj5nOD22222221', 99994, 'ini name', '2000-12-12', 99996, 7),
+(99991, '2022-12-14', '2022-12-14', 'testUser2', 'testUser2', 'initiative test', true, '2026-12-14', 'ini_ixYjj5nOD2233333331', 99994, 'ini name', '2000-12-12', 99996, 17)
 ;
 
 

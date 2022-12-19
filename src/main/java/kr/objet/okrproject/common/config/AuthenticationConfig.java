@@ -26,7 +26,9 @@ public class AuthenticationConfig {
 	public WebSecurityCustomizer webSecurityCustomizer() {
 		return web -> web.ignoring().regexMatchers("^(?!/api/).*")
 			.antMatchers(HttpMethod.POST, "/api/*/user/join", "/api/*/user/login/**")
-			.antMatchers(HttpMethod.GET, "/api/*/user/job/category", "/api/*/user/job/*/fields");
+			.antMatchers(HttpMethod.GET, "/api/*/user/job/category", "/api/*/user/job/*/fields")
+			.antMatchers(HttpMethod.GET, "/api/docs", "*/swagger.html")
+			;
 	}
 
 	@Bean

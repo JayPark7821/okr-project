@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -49,7 +50,7 @@ public class NotificationApiController {
 	}
 
 	@PutMapping("/{token}")
-	public ResponseEntity<Response<Void>> updateNotificationStatus(
+	public ResponseEntity<Response<Void>> checkNotification(
 		@PathVariable("token") String token,
 		Authentication authentication
 	) {
@@ -57,7 +58,24 @@ public class NotificationApiController {
 		User user = ClassUtils.getSafeCastInstance(authentication.getPrincipal(), User.class)
 			.orElseThrow(() -> new OkrApplicationException(ErrorCode.CASTING_USER_FAILED));
 
-		notificationFacade.updateNotificationStatus(user, token);
+		notificationFacade.checkNotification(user, token);
+
+		return Response
+			.success(
+				HttpStatus.OK
+			);
+	}
+
+	@DeleteMapping("/{token}")
+	public ResponseEntity<Response<Void>> deleteNotification(
+		@PathVariable("token") String token,
+		Authentication authentication
+	) {
+
+		User user = ClassUtils.getSafeCastInstance(authentication.getPrincipal(), User.class)
+			.orElseThrow(() -> new OkrApplicationException(ErrorCode.CASTING_USER_FAILED));
+
+		notificationFacade.deleteNotification(user, token);
 
 		return Response
 			.success(

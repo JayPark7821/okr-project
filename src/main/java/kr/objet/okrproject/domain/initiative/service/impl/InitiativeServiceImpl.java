@@ -1,5 +1,16 @@
 package kr.objet.okrproject.domain.initiative.service.impl;
 
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import kr.objet.okrproject.common.exception.ErrorCode;
 import kr.objet.okrproject.common.exception.OkrApplicationException;
 import kr.objet.okrproject.domain.initiative.Initiative;
@@ -13,16 +24,6 @@ import kr.objet.okrproject.domain.team.TeamMember;
 import kr.objet.okrproject.domain.user.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDate;
-import java.time.YearMonth;
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -85,22 +86,6 @@ public class InitiativeServiceImpl implements InitiativeService {
 	}
 
 	@Override
-	public Initiative validateInitiativeForFeedback(String initiativeToken) {
-		Initiative initiative = initiativeReader.findByInitiativeToken(initiativeToken)
-			.orElseThrow(() -> new OkrApplicationException(ErrorCode.INVALID_INITIATIVE_TOKEN));
-		if (!initiative.isDone()) {
-			throw new OkrApplicationException(ErrorCode.INITIATIVE_IS_NOT_FINISHED);
-		}
-		return initiative;
-	}
-
-	@Override
-	public Initiative validateUserWithInitiativeToken(String token, User user) {
-		return initiativeReader.findByInitiativeTokenAndUser(token , user)
-				.orElseThrow(() -> new OkrApplicationException(ErrorCode.INVALID_INITIATIVE_TOKEN));
-	}
-
-	@Override
 	public Integer getCountForFeedbackToGive(User user) {
 		return initiativeReader.getCountForFeedbackToGive(user);
 	}
@@ -116,8 +101,8 @@ public class InitiativeServiceImpl implements InitiativeService {
 
 	@Override
 	public Initiative validateInitiativeOwnerWithToken(String token, User user) {
-		return initiativeReader.validateInitiativeOwnerWithToken(token , user)
-				.orElseThrow(() -> new OkrApplicationException(ErrorCode.INVALID_INITIATIVE_TOKEN));
+		return initiativeReader.validateInitiativeOwnerWithToken(token, user)
+			.orElseThrow(() -> new OkrApplicationException(ErrorCode.INVALID_INITIATIVE_TOKEN));
 	}
 
 	@Transactional
@@ -127,11 +112,10 @@ public class InitiativeServiceImpl implements InitiativeService {
 		if (initiative.isDone()) {
 			throw new OkrApplicationException(ErrorCode.ALREADY_FINISHED_INITIATIVE);
 		}
-		validateInitiativeDates(request.getSdt(), request.getEdt(),initiative.getKeyResult().getProjectMaster());
-		initiative.updateInitiative(request.getIniDetail(), request.getSdt(),request.getEdt());
+		validateInitiativeDates(request.getSdt(), request.getEdt(), initiative.getKeyResult().getProjectMaster());
+		initiative.updateInitiative(request.getIniDetail(), request.getSdt(), request.getEdt());
 		return initiative;
 	}
-
 
 	@Override
 	public Initiative findByInitiativeToken(String initiativeToken) {

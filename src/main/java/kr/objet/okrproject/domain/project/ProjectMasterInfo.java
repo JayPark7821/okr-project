@@ -93,7 +93,7 @@ public class ProjectMasterInfo {
 
 	@Getter
 	public static class CalendarResponse {
-		private final Long id;
+		private final String projectToken;
 
 		private final String name;
 
@@ -108,7 +108,7 @@ public class ProjectMasterInfo {
 		private final String projectType;
 
 		public CalendarResponse(ProjectMaster entity) {
-			this.id = entity.getId();
+			this.projectToken = entity.getProjectMasterToken();
 			this.name = entity.getName();
 			this.objective = entity.getObjective();
 			this.progress = entity.getProgress();
