@@ -1,16 +1,5 @@
 package kr.objet.okrproject.application.user;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Service;
-
 import kr.objet.okrproject.common.exception.ErrorCode;
 import kr.objet.okrproject.common.exception.OkrApplicationException;
 import kr.objet.okrproject.common.utils.JwtTokenUtils;
@@ -28,6 +17,15 @@ import kr.objet.okrproject.domain.user.enums.jobtype.JobTypeMapper;
 import kr.objet.okrproject.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -99,6 +97,6 @@ public class UserFacade {
 	}
 
 	public UserInfo.Token reGenerateToken(HttpServletRequest request) {
-		refreshTokenService.reGenerateRefreshToken(request);
+		return refreshTokenService.reGenerateRefreshToken(request);
 	}
 }
