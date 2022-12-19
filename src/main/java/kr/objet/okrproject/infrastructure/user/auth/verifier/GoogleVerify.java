@@ -1,24 +1,21 @@
 package kr.objet.okrproject.infrastructure.user.auth.verifier;
 
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.JsonFactory;
+import com.google.api.client.json.gson.GsonFactory;
+import kr.objet.okrproject.domain.user.auth.OAuth2UserInfo;
+import kr.objet.okrproject.domain.user.enums.ProviderType;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-
-import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
-import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
-import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.json.JsonFactory;
-import com.google.api.client.json.gson.GsonFactory;
-
-import kr.objet.okrproject.domain.user.auth.OAuth2UserInfo;
-import kr.objet.okrproject.domain.user.enums.ProviderType;
-import kr.objet.okrproject.infrastructure.user.auth.info.GoogleOAuth2UserInfo;
 
 @Component
 public class GoogleVerify implements TokenVerifier {
@@ -54,7 +51,7 @@ public class GoogleVerify implements TokenVerifier {
 			attributes.put("name", payload.get("name"));
 			attributes.put("email", payload.get("email"));
 			attributes.put("picture", payload.get("picture"));
-			return new GoogleOAuth2UserInfo(attributes);
+			return new OAuth2UserInfo(attributes);
 
 		} else {
 			throw new IllegalArgumentException("Invalid ID token");
